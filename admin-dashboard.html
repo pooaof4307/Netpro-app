@@ -1,22 +1,335 @@
-<!DOCTYPE html><html lang="th">
+<!DOCTYPE html>
+<html lang="th">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>แผงควบคุมแอดมิน</title>
-  <script src="https://cdn.tailwindcss.com"></script>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Admin Dashboard - จัดการโปรเน็ต & สมาชิก</title>
+<style>
+  /* Reset & base */
+  * {
+    box-sizing: border-box;
+  }
+  body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    margin: 0; padding: 0;
+    background: #f5f7fa;
+    color: #333;
+  }
+  header {
+    background: #0078d7;
+    color: #fff;
+    padding: 15px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  header h1 {
+    margin: 0;
+    font-weight: 600;
+  }
+  header .info {
+    font-size: 14px;
+  }
+  header button.logout-btn {
+    background: #e81123;
+    border: none;
+    color: #fff;
+    padding: 8px 16px;
+    cursor: pointer;
+    border-radius: 4px;
+    font-weight: 600;
+  }
+  main {
+    max-width: 1200px;
+    margin: 20px auto;
+    padding: 0 15px;
+  }
+  section {
+    background: #fff;
+    padding: 20px;
+    margin-bottom: 30px;
+    border-radius: 8px;
+    box-shadow: 0 3px 8px rgb(0 0 0 / 0.1);
+  }
+  section h2 {
+    margin-top: 0;
+    margin-bottom: 15px;
+    color: #0078d7;
+  }
+  form input[type="text"], form input[type="number"], form input[type="password"] {
+    width: 100%;
+    padding: 10px 12px;
+    margin-bottom: 12px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    font-size: 15px;
+    transition: border-color 0.3s ease;
+  }
+  form input[type="text"]:focus, form input[type="number"]:focus, form input[type="password"]:focus {
+    border-color: #0078d7;
+    outline: none;
+  }
+  form button {
+    background: #0078d7;
+    color: white;
+    border: none;
+    padding: 12px 20px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: 600;
+    transition: background-color 0.3s ease;
+  }
+  form button:hover {
+    background: #005a9e;
+  }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+  }
+  th, td {
+    padding: 12px 10px;
+    border-bottom: 1px solid #ddd;
+    text-align: left;
+    font-size: 14px;
+  }
+  th {
+    background: #e1eaff;
+  }
+  tr:hover {
+    background: #f1f7ff;
+  }
+  button.action-btn {
+    background: #e81123;
+    color: white;
+    border: none;
+    padding: 6px 12px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: 600;
+  }
+  button.edit-btn {
+    background: #0078d7;
+    margin-right: 6px;
+  }
+  .flex-row {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+  .flex-row > * {
+    flex: 1 1 200px;
+  }
+  @media (max-width: 768px) {
+    header {
+      flex-direction: column;
+      gap: 10px;
+      align-items: flex-start;
+    }
+    .flex-row {
+      flex-direction: column;
+    }
+  }
+</style>
 </head>
-<body class="bg-gray-100 font-sans">
-  <!-- Header -->
-  <header class="bg-white shadow p-4 flex justify-between items-center">
-    <h1 class="text-xl font-bold">แผงควบคุมแอดมิน</h1>
-    <div class="flex items-center gap-4">
-      <span id="memberCount" class="text-gray-600">สมาชิกทั้งหมด: 0</span>
-      <button onclick="logout()" class="bg-red-500 text-white px-4 py-1 rounded hover:bg-red-600">ออกจากระบบ</button>
-    </div>
-  </header>  <!-- Content -->  <main class="p-6 max-w-4xl mx-auto">
-    <!-- ปุ่มจัดการสมาชิก -->
-    <div class="mb-4">
-      <button onclick="openMemberModal()" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">จัดการสมาชิก</button>
-    </div><!-- ฟอร์มเพิ่มโปรเน็ต -->
-<div class="bg-white p-
+<body>
+<header>
+  <h1>Admin Dashboard</h1>
+  <div class="info">
+    สมาชิกทั้งหมด: <span id="memberCount">0</span> คน
+  </div>
+  <button class="logout-btn" onclick="logout()">ออกจากระบบ</button>
+</header>
 
+<main>
+  <section id="netSection">
+    <h2>จัดการโปรเน็ต</h2>
+    <form id="netForm">
+      <div class="flex-row">
+        <input type="text" id="network" placeholder="เครือข่าย (AIS)" required />
+        <input type="number" id="price" placeholder="ราคา (บาท)" required min="0" />
+      </div>
+      <div class="flex-row">
+        <input type="text" id="speed" placeholder="ความเร็ว (เช่น 1Mbps)" required />
+        <input type="text" id="duration" placeholder="ระยะเวลา (เช่น 7 วัน)" required />
+      </div>
+      <input type="text" id="link" placeholder="ลิงก์สมัคร" required />
+      <button type="submit">เพิ่ม / แก้ไข โปรเน็ต</button>
+    </form>
+
+    <table id="netTable">
+      <thead>
+        <tr>
+          <th>เครือข่าย</th>
+          <th>ราคา</th>
+          <th>ความเร็ว</th>
+          <th>ระยะเวลา</th>
+          <th>ลิงก์สมัคร</th>
+          <th>จัดการ</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+  </section>
+
+  <section id="memberSection">
+    <h2>จัดการสมาชิก</h2>
+    <table id="memberTable">
+      <thead>
+        <tr>
+          <th>ชื่อเล่น</th>
+          <th>เบอร์โทร</th>
+          <th>รหัสผ่าน</th>
+          <th>จัดการ</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+  </section>
+</main>
+
+<script>
+  const netScriptURL = "https://script.google.com/macros/s/AKfycbyV7B2AfgmmULrTdOPbI6oRbJtF3FRM6_4vvHOrJBvrutWKKH0yaa0gEWRyz95cd4gy8Q/exec";
+  const memberScriptURL = "https://script.google.com/macros/s/AKfycbxByM_dY1tUksZ5uZlUsMrMypbZ7ienWpg2boFl32UzvcjDE38l5BChJKJEAtZaDAQ/exec";
+
+  let editingNetId = null;
+
+  document.getElementById('netForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    const network = document.getElementById('network').value.trim();
+    const price = document.getElementById('price').value.trim();
+    const speed = document.getElementById('speed').value.trim();
+    const duration = document.getElementById('duration').value.trim();
+    const link = document.getElementById('link').value.trim();
+
+    if (!network || !price || !speed || !duration || !link) {
+      alert('กรุณากรอกข้อมูลให้ครบถ้วน');
+      return;
+    }
+
+    const data = {
+      action: editingNetId ? 'edit' : 'add',
+      id: editingNetId,
+      network, price, speed, duration, link
+    };
+
+    fetch(netScriptURL, {
+      method: 'POST',
+      body: JSON.stringify(data),
+      headers: { 'Content-Type': 'application/json' }
+    })
+    .then(res => res.json())
+    .then(res => {
+      if (res.success) {
+        alert(editingNetId ? 'แก้ไขโปรเน็ตเรียบร้อย' : 'เพิ่มโปรเน็ตเรียบร้อย');
+        resetNetForm();
+        loadNetData();
+      } else {
+        alert('เกิดข้อผิดพลาด: ' + (res.message || ''));
+      }
+    })
+    .catch(() => alert('เกิดข้อผิดพลาดในการเชื่อมต่อ'));
+  });
+
+  function resetNetForm() {
+    editingNetId = null;
+    document.getElementById('netForm').reset();
+  }
+
+  function loadNetData() {
+    fetch(netScriptURL + "?action=getAll")
+      .then(res => res.json())
+      .then(data => {
+        const tbody = document.querySelector('#netTable tbody');
+        tbody.innerHTML = '';
+        data.forEach((item, idx) => {
+          const tr = document.createElement('tr');
+          tr.innerHTML = `
+            <td>${item.network}</td>
+            <td>${item.price}</td>
+            <td>${item.speed}</td>
+            <td>${item.duration}</td>
+            <td><a href="${item.link}" target="_blank" rel="noopener">ลิงก์สมัคร</a></td>
+            <td>
+              <button class="action-btn edit-btn" onclick="editNet(${idx})">แก้ไข</button>
+              <button class="action-btn" onclick="deleteNet(${idx})">ลบ</button>
+            </td>
+          `;
+          tbody.appendChild(tr);
+        });
+      })
+      .catch(() => alert('โหลดข้อมูลโปรเน็ตล้มเหลว'));
+  }
+
+  function editNet(index) {
+    fetch(netScriptURL + "?action=getAll")
+      .then(res => res.json())
+      .then(data => {
+        const item = data[index];
+        if (item) {
+          editingNetId = item.id || index;
+          document.getElementById('network').value = item.network;
+          document.getElementById('price').value = item.price;
+          document.getElementById('speed').value = item.speed;
+          document.getElementById('duration').value = item.duration;
+          document.getElementById('link').value = item.link;
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+      });
+  }
+
+  function deleteNet(index) {
+    if (!confirm('ต้องการลบโปรเน็ตนี้หรือไม่?')) return;
+    fetch(netScriptURL + "?action=getAll")
+      .then(res => res.json())
+      .then(data => {
+        const id = data[index]?.id || index;
+        fetch(netScriptURL, {
+          method: 'POST',
+          body: JSON.stringify({ action: 'delete', id }),
+          headers: { 'Content-Type': 'application/json' }
+        })
+        .then(res => res.json())
+        .then(res => {
+          if (res.success) {
+            alert('ลบโปรเน็ตเรียบร้อย');
+            loadNetData();
+          } else {
+            alert('ลบโปรเน็ตล้มเหลว');
+          }
+        });
+      });
+  }
+
+  // สมาชิก
+  function loadMemberData() {
+    fetch(memberScriptURL + "?action=getAll")
+      .then(res => res.json())
+      .then(data => {
+        document.getElementById('memberCount').textContent = data.length;
+        const tbody = document.querySelector('#memberTable tbody');
+        tbody.innerHTML = '';
+        data.forEach((item, idx) => {
+          const tr = document.createElement('tr');
+          tr.innerHTML = `
+            <td>${item.nickname}</td>
+            <td>${item.phone}</td>
+            <td>••••••••</td>
+            <td><button class="action-btn" onclick="deleteMember(${idx})">ลบ</button></td>
+          `;
+          tbody.appendChild(tr);
+        });
+      })
+      .catch(() => alert('โหลดข้อมูลสมาชิกล้มเหลว'));
+  }
+
+  function deleteMember(index) {
+    if (!confirm('ต้องการลบสมาชิกนี้หรือไม่?')) return;
+    fetch(memberScriptURL + "?action=getAll")
+      .then(res => res.json())
+      .then(data => {
+        const id = data[index]?.id || index;
+        fetch(memberScriptURL, {
+          method: 'POST',
+          body: JSON.stringify({ action: 'delete', id
