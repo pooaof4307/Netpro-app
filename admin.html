@@ -1,212 +1,208 @@
-<!DOCTYPE html>
-<html lang="th">
+<!DOCTYPE html><html lang="th">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>ระบบหลังบ้าน Admin</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ระบบหลังบ้าน</title>
   <style>
     body {
-      font-family: sans-serif;
+      font-family: 'Segoe UI', sans-serif;
+      background: #f4f6f9;
       margin: 0;
-      background: #f2f2f2;
+      padding: 0;
     }
     .container {
-      max-width: 768px;
-      margin: 20px auto;
+      max-width: 900px;
+      margin: auto;
       padding: 20px;
-      background: #fff;
-      border-radius: 16px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
     }
     h2 {
-      color: #007aff;
-      text-align: center;
+      color: #333;
     }
     .section {
-      margin-bottom: 30px;
-    }
-    .section h3 {
-      color: #444;
-      border-bottom: 1px solid #ddd;
-      padding-bottom: 8px;
+      margin-bottom: 40px;
+      background: #fff;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.05);
     }
     table {
       width: 100%;
       border-collapse: collapse;
       margin-top: 10px;
     }
-    table, th, td {
-      border: 1px solid #ccc;
-    }
     th, td {
+      border: 1px solid #ccc;
       padding: 10px;
-      font-size: 14px;
       text-align: left;
     }
+    th {
+      background: #007aff;
+      color: white;
+    }
     button {
-      padding: 6px 10px;
+      padding: 6px 12px;
       border: none;
-      border-radius: 8px;
+      border-radius: 5px;
       cursor: pointer;
-      font-weight: bold;
-      font-size: 13px;
+      margin: 5px 3px 0 0;
     }
-    .btn-edit { background: #34c759; color: #fff; }
-    .btn-del { background: #ff3b30; color: #fff; }
-    .btn-logout { background: #333; color: #fff; float: right; }
-    .btn-alert { background: #ff9500; color: #fff; margin-top: 10px; }
-    input[type="text"], input[type="number"] {
-      padding: 8px;
+    .btn-delete { background: #e74c3c; color: white; }
+    .btn-edit { background: #f39c12; color: white; }
+    .btn-status { background: #3498db; color: white; }
+    .btn-notify { background: #2ecc71; color: white; }
+    .btn-logout, .btn-change-pass { background: #bdc3c7; color: #333; }
+    .input-inline {
       width: 100%;
+      padding: 6px;
       margin-top: 5px;
-      margin-bottom: 10px;
-      border: 1px solid #ccc;
-      border-radius: 8px;
     }
-    @media (max-width: 600px) {
-      table, th, td {
-        font-size: 12px;
-      }
+    .checkbox { transform: scale(1.2); }
+    .admin-controls {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 20px;
     }
   </style>
 </head>
 <body>
-
   <div class="container">
-    <h2>ระบบหลังบ้าน Admin</h2>
-    <button class="btn-logout" onclick="logout()">ออกจากระบบ</button>
-
-    <div class="section">
-      <h3>จัดการสมาชิก</h3>
-      <table id="userTable">
-        <thead>
-          <tr>
-            <th>เบอร์โทร</th>
-            <th>รหัสผ่าน</th>
-            <th>สถานะ</th>
-            <th>จัดการ</th>
-          </tr>
-        </thead>
-        <tbody></tbody>
-      </table>
-    </div>
-
-    <div class="section">
-      <h3>จัดการโปรเน็ต</h3>
-      <input type="text" id="pkgName" placeholder="ชื่อโปรเน็ต" />
-      <input type="number" id="pkgPrice" placeholder="ราคา (บาท)" />
-      <button class="btn-edit" onclick="addPackage()">เพิ่มโปรเน็ต</button>
-      <table id="pkgTable">
-        <thead>
-          <tr>
-            <th>ชื่อ</th>
-            <th>ราคา</th>
-            <th>จัดการ</th>
-          </tr>
-        </thead>
-        <tbody></tbody>
-      </table>
-    </div>
-
-    <div class="section">
-      <h3>ส่งประกาศ/แจ้งเตือน</h3>
-      <input type="text" id="alertMsg" placeholder="ข้อความแจ้งเตือน" />
-      <button class="btn-alert" onclick="sendAlert()">ส่งแจ้งเตือน</button>
-    </div>
+    <div class="admin-controls">
+      <h2>ระบบหลังบ้าน</h2>
+      <div>
+        <button class="btn-change-pass" onclick="changeAdminPassword()">เปลี่ยนรหัสผ่าน</button>
+        <button class="btn-logout" onclick="logout()">ออกจากระบบ</button>
+      </div>
+    </div><div class="section">
+  <h3>จัดการโปรเน็ต</h3>
+  <div>
+    <input type="text" id="netName" placeholder="ชื่อโปรเน็ต" class="input-inline">
+    <input type="text" id="netPrice" placeholder="ราคา" class="input-inline">
+    <input type="text" id="netDesc" placeholder="รายละเอียด" class="input-inline">
+    <button onclick="addPackage()">เพิ่มโปรเน็ต</button>
   </div>
+  <table>
+    <thead>
+      <tr><th>ชื่อ</th><th>ราคา</th><th>รายละเอียด</th><th>การจัดการ</th></tr>
+    </thead>
+    <tbody id="packageTable"></tbody>
+  </table>
+</div>
 
-  <script>
-    let users = JSON.parse(localStorage.getItem('users') || '[]');
-    let packages = JSON.parse(localStorage.getItem('packages') || '[]');
+<div class="section">
+  <h3>จัดการสมาชิก</h3>
+  <table>
+    <thead>
+      <tr><th>ชื่อ</th><th>เบอร์</th><th>รหัสผ่าน</th><th>สถานะ</th><th>เลือก</th><th>การจัดการ</th></tr>
+    </thead>
+    <tbody id="userTable"></tbody>
+  </table>
+  <button class="btn-notify" onclick="sendNotification()">ส่งแจ้งเตือน</button>
+</div>
 
-    const userTable = document.querySelector("#userTable tbody");
-    const pkgTable = document.querySelector("#pkgTable tbody");
+  </div><script>
+  const packageTable = document.getElementById('packageTable');
+  const userTable = document.getElementById('userTable');
+  const netName = document.getElementById('netName');
+  const netPrice = document.getElementById('netPrice');
+  const netDesc = document.getElementById('netDesc');
 
-    function renderUsers() {
-      userTable.innerHTML = '';
-      users.forEach((u, i) => {
-        const tr = document.createElement('tr');
-        tr.innerHTML = `
-          <td>${u.phone}</td>
-          <td>${u.password || '-'}</td>
+  let packages = JSON.parse(localStorage.getItem('packages') || '[]');
+  let users = JSON.parse(localStorage.getItem('users') || '[]');
+
+  function renderPackages() {
+    packageTable.innerHTML = '';
+    packages.forEach((pkg, i) => {
+      packageTable.innerHTML += `
+        <tr>
+          <td>${pkg.name}</td><td>${pkg.price}</td><td>${pkg.description || ''}</td>
           <td>
-            <select onchange="changeStatus(${i}, this.value)">
-              <option ${u.status === 'ปกติ' ? 'selected' : ''}>ปกติ</option>
-              <option ${u.status === 'แบรนด์' ? 'selected' : ''}>แบรนด์</option>
-            </select>
+            <button class="btn-edit" onclick="editPackage(${i})">แก้ไข</button>
+            <button class="btn-delete" onclick="deletePackage(${i})">ลบ</button>
           </td>
-          <td><button class="btn-del" onclick="deleteUser(${i})">ลบ</button></td>
-        `;
-        userTable.appendChild(tr);
-      });
-    }
+        </tr>`;
+    });
+  }
 
-    function renderPackages() {
-      pkgTable.innerHTML = '';
-      packages.forEach((p, i) => {
-        const tr = document.createElement('tr');
-        tr.innerHTML = `
-          <td>${p.name}</td>
-          <td>${p.price}</td>
+  function renderUsers() {
+    userTable.innerHTML = '';
+    users.forEach((u, i) => {
+      userTable.innerHTML += `
+        <tr>
+          <td>${u.name || '-'}</td><td>${u.phone}</td><td>${u.password}</td>
+          <td>${u.status || 'active'}</td>
+          <td><input type="checkbox" class="checkbox" data-index="${i}"></td>
           <td>
-            <button class="btn-del" onclick="deletePackage(${i})">ลบ</button>
+            <button class="btn-status" onclick="toggleStatus(${i})">เปลี่ยนสถานะ</button>
+            <button class="btn-delete" onclick="deleteUser(${i})">ลบ</button>
           </td>
-        `;
-        pkgTable.appendChild(tr);
-      });
-    }
+        </tr>`;
+    });
+  }
 
-    function addPackage() {
-      const name = document.getElementById("pkgName").value;
-      const price = parseFloat(document.getElementById("pkgPrice").value);
-      if (name && price) {
-        packages.push({ name, price });
-        localStorage.setItem('packages', JSON.stringify(packages));
-        renderPackages();
-        document.getElementById("pkgName").value = '';
-        document.getElementById("pkgPrice").value = '';
-      }
+  function addPackage() {
+    if (netName.value && netPrice.value) {
+      packages.push({ name: netName.value, price: netPrice.value, description: netDesc.value });
+      localStorage.setItem('packages', JSON.stringify(packages));
+      netName.value = netPrice.value = netDesc.value = '';
+      renderPackages();
     }
+  }
 
-    function deletePackage(index) {
-      if (confirm("ยืนยันลบโปรเน็ตนี้?")) {
-        packages.splice(index, 1);
-        localStorage.setItem('packages', JSON.stringify(packages));
-        renderPackages();
-      }
+  function deletePackage(index) {
+    if (confirm('ยืนยันการลบโปรเน็ตนี้')) {
+      packages.splice(index, 1);
+      localStorage.setItem('packages', JSON.stringify(packages));
+      renderPackages();
     }
+  }
 
-    function deleteUser(index) {
-      if (confirm("ต้องการลบสมาชิกนี้หรือไม่?")) {
-        users.splice(index, 1);
-        localStorage.setItem('users', JSON.stringify(users));
-        renderUsers();
-      }
-    }
+  function editPackage(index) {
+    const pkg = packages[index];
+    netName.value = pkg.name;
+    netPrice.value = pkg.price;
+    netDesc.value = pkg.description;
+    deletePackage(index);
+  }
 
-    function changeStatus(index, status) {
-      users[index].status = status;
+  function deleteUser(index) {
+    if (confirm('ยืนยันการลบสมาชิกนี้')) {
+      users.splice(index, 1);
       localStorage.setItem('users', JSON.stringify(users));
+      renderUsers();
     }
+  }
 
-    function sendAlert() {
-      const msg = document.getElementById('alertMsg').value;
-      if (msg) {
-        localStorage.setItem('userAlert', msg);
-        alert("ส่งข้อความแจ้งเตือนเรียบร้อยแล้ว");
-        document.getElementById('alertMsg').value = '';
-      }
-    }
-
-    function logout() {
-      localStorage.removeItem('admin');
-      window.location.href = 'index.html';
-    }
-
-    // เริ่มต้น
+  function toggleStatus(index) {
+    users[index].status = users[index].status === 'active' ? 'inactive' : 'active';
+    localStorage.setItem('users', JSON.stringify(users));
     renderUsers();
-    renderPackages();
-  </script>
+  }
 
-</body>
+  function sendNotification() {
+    const checkboxes = document.querySelectorAll('.checkbox');
+    const selectedUsers = [];
+    checkboxes.forEach(c => {
+      if (c.checked) selectedUsers.push(users[c.dataset.index].phone);
+    });
+    const message = prompt('ข้อความที่ต้องการแจ้งเตือน:');
+    if (!message) return;
+    localStorage.setItem('notification', JSON.stringify({ message, targets: selectedUsers.length ? selectedUsers : 'all' }));
+    alert('ส่งแจ้งเตือนเรียบร้อย');
+  }
+
+  function changeAdminPassword() {
+    const newPass = prompt('กรอกรหัสผ่านใหม่:');
+    if (newPass) {
+      localStorage.setItem('adminPassword', newPass);
+      alert('เปลี่ยนรหัสผ่านแอดมินเรียบร้อย');
+    }
+  }
+
+  function logout() {
+    window.location.href = 'index.html';
+  }
+
+  renderPackages();
+  renderUsers();
+</script></body>
 </html>
