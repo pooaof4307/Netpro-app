@@ -1,335 +1,247 @@
 <!DOCTYPE html>
 <html lang="th">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Admin Dashboard - จัดการโปรเน็ต & สมาชิก</title>
-<style>
-  /* Reset & base */
-  * {
-    box-sizing: border-box;
-  }
-  body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    margin: 0; padding: 0;
-    background: #f5f7fa;
-    color: #333;
-  }
-  header {
-    background: #0078d7;
-    color: #fff;
-    padding: 15px 20px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-  }
-  header h1 {
-    margin: 0;
-    font-weight: 600;
-  }
-  header .info {
-    font-size: 14px;
-  }
-  header button.logout-btn {
-    background: #e81123;
-    border: none;
-    color: #fff;
-    padding: 8px 16px;
-    cursor: pointer;
-    border-radius: 4px;
-    font-weight: 600;
-  }
-  main {
-    max-width: 1200px;
-    margin: 20px auto;
-    padding: 0 15px;
-  }
-  section {
-    background: #fff;
-    padding: 20px;
-    margin-bottom: 30px;
-    border-radius: 8px;
-    box-shadow: 0 3px 8px rgb(0 0 0 / 0.1);
-  }
-  section h2 {
-    margin-top: 0;
-    margin-bottom: 15px;
-    color: #0078d7;
-  }
-  form input[type="text"], form input[type="number"], form input[type="password"] {
-    width: 100%;
-    padding: 10px 12px;
-    margin-bottom: 12px;
-    border: 1px solid #ccc;
-    border-radius: 6px;
-    font-size: 15px;
-    transition: border-color 0.3s ease;
-  }
-  form input[type="text"]:focus, form input[type="number"]:focus, form input[type="password"]:focus {
-    border-color: #0078d7;
-    outline: none;
-  }
-  form button {
-    background: #0078d7;
-    color: white;
-    border: none;
-    padding: 12px 20px;
-    border-radius: 6px;
-    cursor: pointer;
-    font-size: 16px;
-    font-weight: 600;
-    transition: background-color 0.3s ease;
-  }
-  form button:hover {
-    background: #005a9e;
-  }
-  table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-top: 10px;
-  }
-  th, td {
-    padding: 12px 10px;
-    border-bottom: 1px solid #ddd;
-    text-align: left;
-    font-size: 14px;
-  }
-  th {
-    background: #e1eaff;
-  }
-  tr:hover {
-    background: #f1f7ff;
-  }
-  button.action-btn {
-    background: #e81123;
-    color: white;
-    border: none;
-    padding: 6px 12px;
-    border-radius: 4px;
-    cursor: pointer;
-    font-weight: 600;
-  }
-  button.edit-btn {
-    background: #0078d7;
-    margin-right: 6px;
-  }
-  .flex-row {
-    display: flex;
-    gap: 12px;
-    flex-wrap: wrap;
-  }
-  .flex-row > * {
-    flex: 1 1 200px;
-  }
-  @media (max-width: 768px) {
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>ระบบหลังบ้านจัดการโปรเน็ต</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@500&display=swap');
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: #121212;
+      color: #eee;
+      margin: 0; padding: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-height: 100vh;
+    }
     header {
-      flex-direction: column;
-      gap: 10px;
-      align-items: flex-start;
+      background: #1f1f1f;
+      width: 100%;
+      padding: 1.5rem 2rem;
+      box-shadow: 0 2px 10px #000;
+      font-size: 1.6rem;
+      font-weight: 600;
+      color: #d4af37;
+      user-select: none;
+      text-align: center;
     }
-    .flex-row {
-      flex-direction: column;
+    main {
+      flex-grow: 1;
+      width: 100%;
+      max-width: 960px;
+      padding: 2rem;
     }
-  }
-</style>
+    form {
+      background: #222;
+      padding: 1.8rem 2rem;
+      border-radius: 12px;
+      box-shadow: 0 0 20px #bfa76f33;
+      margin-bottom: 2rem;
+    }
+    form > div {
+      margin-bottom: 1rem;
+    }
+    label {
+      display: block;
+      margin-bottom: 0.4rem;
+      font-weight: 600;
+      color: #d4af37;
+    }
+    input[type="text"],
+    input[type="number"],
+    textarea {
+      width: 100%;
+      padding: 10px 14px;
+      border: none;
+      border-radius: 8px;
+      background: #333;
+      color: #eee;
+      font-size: 1rem;
+      resize: vertical;
+    }
+    textarea {
+      min-height: 70px;
+    }
+    button {
+      background: #d4af37;
+      border: none;
+      padding: 12px 28px;
+      border-radius: 30px;
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: #121212;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+    button:hover {
+      background: #f0d473;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: #222;
+      box-shadow: 0 0 20px #bfa76f33;
+      border-radius: 12px;
+      overflow: hidden;
+    }
+    th, td {
+      padding: 12px 16px;
+      text-align: left;
+      color: #eee;
+      border-bottom: 1px solid #444;
+    }
+    th {
+      background: #2f2f2f;
+      font-weight: 700;
+      color: #d4af37;
+      user-select: none;
+    }
+    tr:hover {
+      background: #333;
+    }
+    .action-btn {
+      background: transparent;
+      border: none;
+      cursor: pointer;
+      font-size: 1.2rem;
+      margin-right: 8px;
+      color: #d4af37;
+      transition: color 0.25s ease;
+    }
+    .action-btn:hover {
+      color: #f0d473;
+    }
+    .msg {
+      margin-bottom: 1rem;
+      padding: 0.8rem 1.2rem;
+      background: #444;
+      border-radius: 10px;
+      color: #d4af37;
+      font-weight: 600;
+      text-align: center;
+      user-select: none;
+    }
+  </style>
 </head>
 <body>
-<header>
-  <h1>Admin Dashboard</h1>
-  <div class="info">
-    สมาชิกทั้งหมด: <span id="memberCount">0</span> คน
-  </div>
-  <button class="logout-btn" onclick="logout()">ออกจากระบบ</button>
-</header>
+  <header>ระบบจัดการโปรเน็ต (Admin Dashboard)</header>
 
-<main>
-  <section id="netSection">
-    <h2>จัดการโปรเน็ต</h2>
-    <form id="netForm">
-      <div class="flex-row">
-        <input type="text" id="network" placeholder="เครือข่าย (AIS)" required />
-        <input type="number" id="price" placeholder="ราคา (บาท)" required min="0" />
+  <main>
+    <form id="packageForm">
+      <input type="hidden" id="packageId" value="" />
+      <div>
+        <label for="network">เครือข่าย</label>
+        <input type="text" id="network" placeholder="เช่น AIS, True, Dtac" required />
       </div>
-      <div class="flex-row">
-        <input type="text" id="speed" placeholder="ความเร็ว (เช่น 1Mbps)" required />
-        <input type="text" id="duration" placeholder="ระยะเวลา (เช่น 7 วัน)" required />
+      <div>
+        <label for="price">ราคา (บาท)</label>
+        <input type="number" id="price" min="0" placeholder="เช่น 299" required />
       </div>
-      <input type="text" id="link" placeholder="ลิงก์สมัคร" required />
-      <button type="submit">เพิ่ม / แก้ไข โปรเน็ต</button>
+      <div>
+        <label for="speed">ความเร็ว</label>
+        <input type="text" id="speed" placeholder="เช่น 5GB/วัน" required />
+      </div>
+      <div>
+        <label for="duration">ระยะเวลา</label>
+        <input type="text" id="duration" placeholder="เช่น 7 วัน" required />
+      </div>
+      <div>
+        <label for="description">รายละเอียดเพิ่มเติม</label>
+        <textarea id="description" placeholder="เช่น เล่นเน็ตไม่อั้น, โทรฟรี"></textarea>
+      </div>
+      <button type="submit" id="submitBtn">เพิ่มโปรเน็ต</button>
     </form>
 
-    <table id="netTable">
+    <div class="msg" id="message" style="display:none;"></div>
+
+    <table id="packageTable" aria-label="รายการโปรเน็ต">
       <thead>
         <tr>
           <th>เครือข่าย</th>
-          <th>ราคา</th>
+          <th>ราคา (บาท)</th>
           <th>ความเร็ว</th>
           <th>ระยะเวลา</th>
-          <th>ลิงก์สมัคร</th>
+          <th>รายละเอียด</th>
           <th>จัดการ</th>
         </tr>
       </thead>
-      <tbody></tbody>
+      <tbody>
+        <!-- แถวโปรเน็ตจะมาแสดงที่นี่ -->
+      </tbody>
     </table>
-  </section>
+  </main>
 
-  <section id="memberSection">
-    <h2>จัดการสมาชิก</h2>
-    <table id="memberTable">
-      <thead>
-        <tr>
-          <th>ชื่อเล่น</th>
-          <th>เบอร์โทร</th>
-          <th>รหัสผ่าน</th>
-          <th>จัดการ</th>
-        </tr>
-      </thead>
-      <tbody></tbody>
-    </table>
-  </section>
-</main>
+  <script>
+    const scriptURL = 'https://script.google.com/macros/s/AKfycbyV7B2AfgmmULrTdOPbI6oRbJtF3FRM6_4vvHOrJBvrutWKKH0yaa0gEWRyz95cd4gy8Q/exec';
 
-<script>
-  const netScriptURL = "https://script.google.com/macros/s/AKfycbyV7B2AfgmmULrTdOPbI6oRbJtF3FRM6_4vvHOrJBvrutWKKH0yaa0gEWRyz95cd4gy8Q/exec";
-  const memberScriptURL = "https://script.google.com/macros/s/AKfycbxByM_dY1tUksZ5uZlUsMrMypbZ7ienWpg2boFl32UzvcjDE38l5BChJKJEAtZaDAQ/exec";
+    const form = document.getElementById('packageForm');
+    const packageIdInput = document.getElementById('packageId');
+    const networkInput = document.getElementById('network');
+    const priceInput = document.getElementById('price');
+    const speedInput = document.getElementById('speed');
+    const durationInput = document.getElementById('duration');
+    const descriptionInput = document.getElementById('description');
+    const submitBtn = document.getElementById('submitBtn');
+    const messageDiv = document.getElementById('message');
+    const tbody = document.querySelector('#packageTable tbody');
 
-  let editingNetId = null;
+    let packages = [];
 
-  document.getElementById('netForm').addEventListener('submit', function(e) {
-    e.preventDefault();
-    const network = document.getElementById('network').value.trim();
-    const price = document.getElementById('price').value.trim();
-    const speed = document.getElementById('speed').value.trim();
-    const duration = document.getElementById('duration').value.trim();
-    const link = document.getElementById('link').value.trim();
-
-    if (!network || !price || !speed || !duration || !link) {
-      alert('กรุณากรอกข้อมูลให้ครบถ้วน');
-      return;
+    // แสดงข้อความสถานะ
+    function showMessage(text, duration = 3000) {
+      messageDiv.textContent = text;
+      messageDiv.style.display = 'block';
+      setTimeout(() => messageDiv.style.display = 'none', duration);
     }
 
-    const data = {
-      action: editingNetId ? 'edit' : 'add',
-      id: editingNetId,
-      network, price, speed, duration, link
-    };
-
-    fetch(netScriptURL, {
-      method: 'POST',
-      body: JSON.stringify(data),
-      headers: { 'Content-Type': 'application/json' }
-    })
-    .then(res => res.json())
-    .then(res => {
-      if (res.success) {
-        alert(editingNetId ? 'แก้ไขโปรเน็ตเรียบร้อย' : 'เพิ่มโปรเน็ตเรียบร้อย');
-        resetNetForm();
-        loadNetData();
-      } else {
-        alert('เกิดข้อผิดพลาด: ' + (res.message || ''));
+    // ดึงข้อมูลโปรเน็ตทั้งหมด
+    async function loadPackages() {
+      try {
+        const res = await fetch(scriptURL);
+        if (!res.ok) throw new Error('ไม่สามารถโหลดข้อมูลได้');
+        const data = await res.json();
+        packages = data.records || [];
+        renderTable();
+      } catch (err) {
+        showMessage('โหลดข้อมูลล้มเหลว');
+        console.error(err);
       }
-    })
-    .catch(() => alert('เกิดข้อผิดพลาดในการเชื่อมต่อ'));
-  });
+    }
 
-  function resetNetForm() {
-    editingNetId = null;
-    document.getElementById('netForm').reset();
-  }
+    // แสดงข้อมูลในตาราง
+    function renderTable() {
+      if (packages.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="6" style="text-align:center;color:#d4af37;">ไม่มีโปรเน็ตในระบบ</td></tr>`;
+        return;
+      }
+      tbody.innerHTML = packages.map((pkg, idx) => `
+        <tr>
+          <td>${pkg.network}</td>
+          <td>${pkg.price}</td>
+          <td>${pkg.speed}</td>
+          <td>${pkg.duration}</td>
+          <td>${pkg.description || '-'}</td>
+          <td>
+            <button class="action-btn" aria-label="แก้ไขโปรเน็ต" data-index="${idx}" onclick="editPackage(${idx})">✏️</button>
+            <button class="action-btn" aria-label="ลบโปรเน็ต" data-index="${idx}" onclick="deletePackage(${idx})">🗑️</button>
+          </td>
+        </tr>
+      `).join('');
+    }
 
-  function loadNetData() {
-    fetch(netScriptURL + "?action=getAll")
-      .then(res => res.json())
-      .then(data => {
-        const tbody = document.querySelector('#netTable tbody');
-        tbody.innerHTML = '';
-        data.forEach((item, idx) => {
-          const tr = document.createElement('tr');
-          tr.innerHTML = `
-            <td>${item.network}</td>
-            <td>${item.price}</td>
-            <td>${item.speed}</td>
-            <td>${item.duration}</td>
-            <td><a href="${item.link}" target="_blank" rel="noopener">ลิงก์สมัคร</a></td>
-            <td>
-              <button class="action-btn edit-btn" onclick="editNet(${idx})">แก้ไข</button>
-              <button class="action-btn" onclick="deleteNet(${idx})">ลบ</button>
-            </td>
-          `;
-          tbody.appendChild(tr);
-        });
-      })
-      .catch(() => alert('โหลดข้อมูลโปรเน็ตล้มเหลว'));
-  }
+    // รีเซ็ตฟอร์ม
+    function resetForm() {
+      packageIdInput.value = '';
+      form.reset();
+      submitBtn.textContent = 'เพิ่มโปรเน็ต';
+    }
 
-  function editNet(index) {
-    fetch(netScriptURL + "?action=getAll")
-      .then(res => res.json())
-      .then(data => {
-        const item = data[index];
-        if (item) {
-          editingNetId = item.id || index;
-          document.getElementById('network').value = item.network;
-          document.getElementById('price').value = item.price;
-          document.getElementById('speed').value = item.speed;
-          document.getElementById('duration').value = item.duration;
-          document.getElementById('link').value = item.link;
-          window.scrollTo({ top: 0, behavior: 'smooth' });
-        }
-      });
-  }
+    // เพิ่มหรือแก้ไขโปรเน็ต
+    form.addEventListener('submit', async e => {
+      e.preventDefault();
 
-  function deleteNet(index) {
-    if (!confirm('ต้องการลบโปรเน็ตนี้หรือไม่?')) return;
-    fetch(netScriptURL + "?action=getAll")
-      .then(res => res.json())
-      .then(data => {
-        const id = data[index]?.id || index;
-        fetch(netScriptURL, {
-          method: 'POST',
-          body: JSON.stringify({ action: 'delete', id }),
-          headers: { 'Content-Type': 'application/json' }
-        })
-        .then(res => res.json())
-        .then(res => {
-          if (res.success) {
-            alert('ลบโปรเน็ตเรียบร้อย');
-            loadNetData();
-          } else {
-            alert('ลบโปรเน็ตล้มเหลว');
-          }
-        });
-      });
-  }
-
-  // สมาชิก
-  function loadMemberData() {
-    fetch(memberScriptURL + "?action=getAll")
-      .then(res => res.json())
-      .then(data => {
-        document.getElementById('memberCount').textContent = data.length;
-        const tbody = document.querySelector('#memberTable tbody');
-        tbody.innerHTML = '';
-        data.forEach((item, idx) => {
-          const tr = document.createElement('tr');
-          tr.innerHTML = `
-            <td>${item.nickname}</td>
-            <td>${item.phone}</td>
-            <td>••••••••</td>
-            <td><button class="action-btn" onclick="deleteMember(${idx})">ลบ</button></td>
-          `;
-          tbody.appendChild(tr);
-        });
-      })
-      .catch(() => alert('โหลดข้อมูลสมาชิกล้มเหลว'));
-  }
-
-  function deleteMember(index) {
-    if (!confirm('ต้องการลบสมาชิกนี้หรือไม่?')) return;
-    fetch(memberScriptURL + "?action=getAll")
-      .then(res => res.json())
-      .then(data => {
-        const id = data[index]?.id || index;
-        fetch(memberScriptURL, {
-          method: 'POST',
-          body: JSON.stringify({ action: 'delete', id
+      const network = networkInput.value.trim();
+      const price = priceInput.value.trim();
+      const speed = speedInput.value.trim
