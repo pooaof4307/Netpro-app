@@ -1,0 +1,46 @@
+<?php
+session_start();
+$db = new PDO('sqlite:database.sqlite');
+
+// ดึงโปรทั้งหมด
+$stm = $db->query("SELECT * FROM packages");
+$packages = $stm->fetchAll(PDO::FETCH_ASSOC);
+
+$service_fee = 5; // ค่าบริการเพิ่ม 5 บาท
+
+function h($str) {
+    return htmlspecialchars($str, ENT_QUOTES, 'UTF-8');
+}
+?>
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8" />
+<title>สมัครโปรเน็ตมือถือ</title>
+<link rel="stylesheet" href="style.css" />
+</head>
+<body>
+<h1>โปรเน็ตมือถือ</h1>
+<table>
+<thead>
+<tr><th>ชื่อโปร</th><th>ราคา (บาท)</th><th>สมัคร</th></tr>
+</thead>
+<tbody>
+<?php foreach($packages as $p): ?>
+<tr>
+<td><?=h($p['name'])?></td>
+<td><?=number_format($p['price'], 2)?></td>
+<td>
+<form method="post" action="subscribe.php">
+<input type="hidden" name="id" value="<?=h($p['id'])?>" />
+<input type="submit" value="สมัครโปร" />
+</form>
+</td>
+</tr>
+<?php endforeach; ?>
+</tbody>
+</table>
+<p>** ค่าบริการเพิ่ม <?=number_format($service_fee, 2)?> บาท ต่อการสมัครแต่ละครั้ง</p>
+<p><a href="login.php">เข้าสู่ระบบหลังบ้าน (admin)</a></p>
+</body>
+</html>
