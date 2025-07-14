@@ -1,152 +1,119 @@
-<!DOCTYPE html><html lang="th">
+<!DOCTYPE html>
+<html lang="th">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>หน้าแรก</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>เข้าสู่ระบบ</title>
   <style>
     body {
       margin: 0;
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-      background-color: #f9fafb;
-      color: #333;
-    }
-    header {
-      background: #ffffff;
-      padding: 20px;
+      padding: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background: linear-gradient(to bottom, #f0f4f8, #dce3ea);
       display: flex;
-      justify-content: space-between;
       align-items: center;
-      border-bottom: 1px solid #ddd;
-      position: sticky;
-      top: 0;
-      z-index: 999;
+      justify-content: center;
+      height: 100vh;
     }
-    .logo {
-      font-size: 1.4rem;
-      font-weight: bold;
-      color: #007aff;
-    }
-    .nav-buttons button {
-      background: #007aff;
-      color: #fff;
-      border: none;
-      border-radius: 10px;
-      padding: 10px 16px;
-      margin-left: 10px;
-      font-size: 1rem;
-      cursor: pointer;
-    }
-    .container {
-      padding: 20px;
-      max-width: 1000px;
-      margin: auto;
-    }
-    .filter-section {
-      margin-bottom: 20px;
-      display: flex;
-      gap: 10px;
-      flex-wrap: wrap;
-    }
-    .network-button {
-      padding: 10px 16px;
-      border-radius: 12px;
-      border: 1px solid #007aff;
-      background: #fff;
-      color: #007aff;
-      font-weight: 600;
-      cursor: pointer;
-      transition: all 0.3s ease;
-    }
-    .network-button.active, .network-button:hover {
-      background: #007aff;
-      color: white;
-    }
-    .package-card {
+
+    .login-container {
       background: white;
-      border-radius: 16px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-      padding: 20px;
+      padding: 30px;
+      border-radius: 20px;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+      width: 90%;
+      max-width: 400px;
+    }
+
+    h2 {
+      text-align: center;
+      color: #333;
       margin-bottom: 20px;
-      transition: transform 0.3s ease;
     }
-    .package-card:hover {
-      transform: translateY(-4px);
-    }
-    .package-title {
-      font-size: 1.2rem;
-      font-weight: 600;
-      color: #007aff;
+
+    label {
+      display: block;
       margin-bottom: 6px;
-    }
-    .package-info {
-      margin-top: 6px;
       color: #555;
+    }
+
+    input[type="text"], input[type="password"] {
+      width: 100%;
+      padding: 12px;
+      margin-bottom: 20px;
+      border: 1px solid #ccc;
+      border-radius: 12px;
+      font-size: 16px;
+      box-sizing: border-box;
+    }
+
+    button {
+      width: 100%;
+      padding: 12px;
+      background-color: #007aff;
+      border: none;
+      border-radius: 12px;
+      color: white;
+      font-size: 16px;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
+
+    button:hover {
+      background-color: #005fc3;
+    }
+
+    .error {
+      color: red;
+      text-align: center;
+      margin-bottom: 10px;
+    }
+
+    .back-link {
+      text-align: center;
+      margin-top: 15px;
+    }
+
+    .back-link a {
+      text-decoration: none;
+      color: #007aff;
+      font-size: 14px;
     }
   </style>
 </head>
 <body>
-  <header>
-    <div class="logo">โปรเน็ตมือถือ</div>
-    <div class="nav-buttons" id="navButtons">
-      <button onclick="location.href='login.html'">เข้าสู่ระบบ</button>
-      <button onclick="location.href='register.html'">สมัครสมาชิก</button>
-      <button onclick="location.href='admin.html'">เข้าสู่ระบบแอดมิน</button>
+  <div class="login-container">
+    <h2>เข้าสู่ระบบสมาชิก</h2>
+    <div class="error" id="errorMsg"></div>
+    <label for="phone">เบอร์โทรศัพท์</label>
+    <input type="text" id="phone" placeholder="กรอกเบอร์โทรศัพท์" />
+
+    <label for="password">รหัสผ่าน</label>
+    <input type="password" id="password" placeholder="กรอกรหัสผ่าน" />
+
+    <button onclick="login()">เข้าสู่ระบบ</button>
+
+    <div class="back-link">
+      <a href="index.html">← กลับหน้าแรก</a>
     </div>
-  </header>  <div class="container">
-    <div class="filter-section" id="networkFilters">
-      <button class="network-button active" data-network="all">ทั้งหมด</button>
-      <button class="network-button" data-network="ais">AIS</button>
-      <button class="network-button" data-network="dtac">DTAC</button>
-      <button class="network-button" data-network="true">TRUE</button>
-    </div><div id="packageList"></div>
+  </div>
 
-  </div>  <script>
-    let packages = JSON.parse(localStorage.getItem('packages') || '[]');
-    const user = JSON.parse(localStorage.getItem('loggedInUser'));
+  <script>
+    function login() {
+      const phone = document.getElementById('phone').value.trim();
+      const password = document.getElementById('password').value.trim();
+      const errorMsg = document.getElementById('errorMsg');
 
-    const nav = document.getElementById('navButtons');
-    if (user) {
-      nav.innerHTML = `<span>👤 ${user.name} (${user.phone})</span>
-        <button onclick="logout()">ออกจากระบบ</button>`;
+      const users = JSON.parse(localStorage.getItem('users') || '[]');
+      const user = users.find(u => u.phone === phone && u.password === password);
+
+      if (user) {
+        localStorage.setItem('currentUser', JSON.stringify(user));
+        window.location.href = 'customer.html';
+      } else {
+        errorMsg.textContent = 'เบอร์หรือรหัสผ่านไม่ถูกต้อง';
+      }
     }
-
-    function logout() {
-      localStorage.removeItem('loggedInUser');
-      location.reload();
-    }
-
-    const listEl = document.getElementById('packageList');
-    const filters = document.querySelectorAll('.network-button');
-
-    filters.forEach(btn => {
-      btn.addEventListener('click', () => {
-        document.querySelector('.network-button.active').classList.remove('active');
-        btn.classList.add('active');
-        renderPackages(btn.dataset.network);
-      });
-    });
-
-    function renderPackages(filter = 'all') {
-      listEl.innerHTML = '';
-      packages.filter(p => filter === 'all' || (p.network && p.network.toLowerCase() === filter)).forEach(pkg => {
-        listEl.innerHTML += `
-          <div class="package-card">
-            <div class="package-title">${pkg.name}</div>
-            <div class="package-info">เครือข่าย: ${pkg.network || '-'}</div>
-            <div class="package-info">ราคา: ${pkg.price} บาท</div>
-            <div class="package-info">รายละเอียด: ${pkg.description || '-'}</div>
-          </div>
-        `;
-      });
-    }
-
-    function autoRefresh() {
-      packages = JSON.parse(localStorage.getItem('packages') || '[]');
-      const active = document.querySelector('.network-button.active');
-      renderPackages(active ? active.dataset.network : 'all');
-    }
-
-    renderPackages();
-    setInterval(autoRefresh, 3000);
-  </script></body>
+  </script>
+</body>
 </html>
