@@ -1,72 +1,212 @@
-<!-- ตัวอย่างส่วนจัดการสมาชิกในระบบหลังบ้าน -->
-<div>
-  <h2>จัดการสมาชิก</h2>
-  <table id="membersTable" border="1" cellspacing="0" cellpadding="8" style="width:100%; border-collapse: collapse;">
-    <thead>
-      <tr>
-        <th>เบอร์โทร</th>
-        <th>ชื่อเล่น</th>
-        <th>รหัสผ่าน</th>
-        <th>สถานะบัญชี</th>
-        <th>แก้ไขสถานะ</th>
-        <th>ลบสมาชิก</th>
-      </tr>
-    </thead>
-    <tbody id="membersTbody"></tbody>
-  </table>
-</div>
-
-<script>
-  function loadMembers() {
-    const users = JSON.parse(localStorage.getItem('users') || '[]');
-    const tbody = document.getElementById('membersTbody');
-    tbody.innerHTML = '';
-
-    users.forEach((user, index) => {
-      const tr = document.createElement('tr');
-
-      tr.innerHTML = `
-        <td>${user.phone}</td>
-        <td>${user.name || '-'}</td>
-        <td>${user.password || '-'}</td>
-        <td>${user.status || 'ปกติ'}</td>
-        <td>
-          <select onchange="changeStatus(${index}, this.value)">
-            <option value="ปกติ" ${user.status === 'ปกติ' ? 'selected' : ''}>ปกติ</option>
-            <option value="แบรนด์" ${user.status === 'แบรนด์' ? 'selected' : ''}>แบรนด์</option>
-          </select>
-          <button onclick="saveStatus(${index})">บันทึก</button>
-        </td>
-        <td>
-          <button onclick="deleteMember(${index})" style="color: red;">ลบ</button>
-        </td>
-      `;
-
-      tbody.appendChild(tr);
-    });
-  }
-
-  function changeStatus(index, newStatus) {
-    const users = JSON.parse(localStorage.getItem('users') || '[]');
-    users[index].status = newStatus;
-    localStorage.setItem('users', JSON.stringify(users));
-  }
-
-  function saveStatus(index) {
-    alert('บันทึกสถานะเรียบร้อยแล้ว');
-    loadMembers();
-  }
-
-  function deleteMember(index) {
-    if (confirm('ต้องการลบสมาชิกนี้หรือไม่?')) {
-      const users = JSON.parse(localStorage.getItem('users') || '[]');
-      users.splice(index, 1);
-      localStorage.setItem('users', JSON.stringify(users));
-      loadMembers();
-      alert('ลบสมาชิกเรียบร้อยแล้ว');
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>ระบบหลังบ้าน Admin</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      margin: 0;
+      background: #f2f2f2;
     }
-  }
+    .container {
+      max-width: 768px;
+      margin: 20px auto;
+      padding: 20px;
+      background: #fff;
+      border-radius: 16px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+    h2 {
+      color: #007aff;
+      text-align: center;
+    }
+    .section {
+      margin-bottom: 30px;
+    }
+    .section h3 {
+      color: #444;
+      border-bottom: 1px solid #ddd;
+      padding-bottom: 8px;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 10px;
+    }
+    table, th, td {
+      border: 1px solid #ccc;
+    }
+    th, td {
+      padding: 10px;
+      font-size: 14px;
+      text-align: left;
+    }
+    button {
+      padding: 6px 10px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: bold;
+      font-size: 13px;
+    }
+    .btn-edit { background: #34c759; color: #fff; }
+    .btn-del { background: #ff3b30; color: #fff; }
+    .btn-logout { background: #333; color: #fff; float: right; }
+    .btn-alert { background: #ff9500; color: #fff; margin-top: 10px; }
+    input[type="text"], input[type="number"] {
+      padding: 8px;
+      width: 100%;
+      margin-top: 5px;
+      margin-bottom: 10px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+    }
+    @media (max-width: 600px) {
+      table, th, td {
+        font-size: 12px;
+      }
+    }
+  </style>
+</head>
+<body>
 
-  // โหลดสมาชิกตอนหน้าเปิด
-  loadMembers();
-</script>
+  <div class="container">
+    <h2>ระบบหลังบ้าน Admin</h2>
+    <button class="btn-logout" onclick="logout()">ออกจากระบบ</button>
+
+    <div class="section">
+      <h3>จัดการสมาชิก</h3>
+      <table id="userTable">
+        <thead>
+          <tr>
+            <th>เบอร์โทร</th>
+            <th>รหัสผ่าน</th>
+            <th>สถานะ</th>
+            <th>จัดการ</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
+
+    <div class="section">
+      <h3>จัดการโปรเน็ต</h3>
+      <input type="text" id="pkgName" placeholder="ชื่อโปรเน็ต" />
+      <input type="number" id="pkgPrice" placeholder="ราคา (บาท)" />
+      <button class="btn-edit" onclick="addPackage()">เพิ่มโปรเน็ต</button>
+      <table id="pkgTable">
+        <thead>
+          <tr>
+            <th>ชื่อ</th>
+            <th>ราคา</th>
+            <th>จัดการ</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
+
+    <div class="section">
+      <h3>ส่งประกาศ/แจ้งเตือน</h3>
+      <input type="text" id="alertMsg" placeholder="ข้อความแจ้งเตือน" />
+      <button class="btn-alert" onclick="sendAlert()">ส่งแจ้งเตือน</button>
+    </div>
+  </div>
+
+  <script>
+    let users = JSON.parse(localStorage.getItem('users') || '[]');
+    let packages = JSON.parse(localStorage.getItem('packages') || '[]');
+
+    const userTable = document.querySelector("#userTable tbody");
+    const pkgTable = document.querySelector("#pkgTable tbody");
+
+    function renderUsers() {
+      userTable.innerHTML = '';
+      users.forEach((u, i) => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td>${u.phone}</td>
+          <td>${u.password || '-'}</td>
+          <td>
+            <select onchange="changeStatus(${i}, this.value)">
+              <option ${u.status === 'ปกติ' ? 'selected' : ''}>ปกติ</option>
+              <option ${u.status === 'แบรนด์' ? 'selected' : ''}>แบรนด์</option>
+            </select>
+          </td>
+          <td><button class="btn-del" onclick="deleteUser(${i})">ลบ</button></td>
+        `;
+        userTable.appendChild(tr);
+      });
+    }
+
+    function renderPackages() {
+      pkgTable.innerHTML = '';
+      packages.forEach((p, i) => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td>${p.name}</td>
+          <td>${p.price}</td>
+          <td>
+            <button class="btn-del" onclick="deletePackage(${i})">ลบ</button>
+          </td>
+        `;
+        pkgTable.appendChild(tr);
+      });
+    }
+
+    function addPackage() {
+      const name = document.getElementById("pkgName").value;
+      const price = parseFloat(document.getElementById("pkgPrice").value);
+      if (name && price) {
+        packages.push({ name, price });
+        localStorage.setItem('packages', JSON.stringify(packages));
+        renderPackages();
+        document.getElementById("pkgName").value = '';
+        document.getElementById("pkgPrice").value = '';
+      }
+    }
+
+    function deletePackage(index) {
+      if (confirm("ยืนยันลบโปรเน็ตนี้?")) {
+        packages.splice(index, 1);
+        localStorage.setItem('packages', JSON.stringify(packages));
+        renderPackages();
+      }
+    }
+
+    function deleteUser(index) {
+      if (confirm("ต้องการลบสมาชิกนี้หรือไม่?")) {
+        users.splice(index, 1);
+        localStorage.setItem('users', JSON.stringify(users));
+        renderUsers();
+      }
+    }
+
+    function changeStatus(index, status) {
+      users[index].status = status;
+      localStorage.setItem('users', JSON.stringify(users));
+    }
+
+    function sendAlert() {
+      const msg = document.getElementById('alertMsg').value;
+      if (msg) {
+        localStorage.setItem('userAlert', msg);
+        alert("ส่งข้อความแจ้งเตือนเรียบร้อยแล้ว");
+        document.getElementById('alertMsg').value = '';
+      }
+    }
+
+    function logout() {
+      localStorage.removeItem('admin');
+      window.location.href = 'index.html';
+    }
+
+    // เริ่มต้น
+    renderUsers();
+    renderPackages();
+  </script>
+
+</body>
+</html>
