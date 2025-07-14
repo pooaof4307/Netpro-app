@@ -3,29 +3,29 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Login / สมัครสมาชิก</title>
+<title>สมัครสมาชิก / โปรเน็ตมือถือ</title>
 <style>
   body {
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
     background: #f2f2f7;
-    margin:0; padding:0;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
+    margin:0; padding:20px;
     color: #1c1c1e;
+    max-width: 480px;
+    margin-left: auto;
+    margin-right: auto;
   }
-  .container {
+  .top-section {
     background: white;
-    padding: 30px 25px;
+    padding: 20px;
     border-radius: 16px;
     box-shadow: 0 4px 16px rgba(0,0,0,0.1);
-    width: 320px;
+    margin-bottom: 24px;
   }
   h2 {
-    text-align: center;
-    margin-bottom: 24px;
     color: #007aff;
+    font-weight: 600;
+    margin-bottom: 16px;
+    text-align: center;
   }
   input[type="text"], input[type="password"] {
     width: 100%;
@@ -34,6 +34,7 @@
     border: 1px solid #ccc;
     border-radius: 12px;
     font-size: 1rem;
+    box-sizing: border-box;
   }
   button {
     width: 100%;
@@ -65,85 +66,128 @@
     margin-bottom: 12px;
     text-align: center;
   }
+  .nets-section {
+    background: white;
+    border-radius: 16px;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+    padding: 20px;
+  }
+  .net-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 14px 0;
+    border-bottom: 1px solid #e5e5ea;
+    font-size: 1rem;
+  }
+  .net-item:last-child {
+    border-bottom: none;
+  }
+  .price {
+    font-weight: 700;
+    color: #007aff;
+  }
 </style>
 </head>
 <body>
-  <div class="container" id="login-container">
-    <h2>เข้าสู่ระบบลูกค้า</h2>
-    <div id="error-msg" class="error"></div>
-    <input type="text" id="login-username" placeholder="ชื่อผู้ใช้" />
-    <input type="password" id="login-password" placeholder="รหัสผ่าน" />
-    <button onclick="login()">เข้าสู่ระบบ</button>
-    <button class="link-btn" onclick="showSignup()">สมัครสมาชิก</button>
-    <button class="link-btn" onclick="goAdmin()">เข้าสู่ระบบ Admin</button>
-  </div>
 
-  <div class="container" id="signup-container" style="display:none;">
-    <h2>สมัครสมาชิกลูกค้า</h2>
-    <div id="signup-error" class="error"></div>
-    <input type="text" id="signup-username" placeholder="ชื่อผู้ใช้" />
-    <input type="password" id="signup-password" placeholder="รหัสผ่าน" />
-    <button onclick="signup()">สมัครสมาชิก</button>
-    <button class="link-btn" onclick="showLogin()">กลับไปหน้าเข้าสู่ระบบ</button>
+<div class="top-section" id="auth-section">
+  <h2>เข้าสู่ระบบลูกค้า / สมัครสมาชิก</h2>
+  <div id="error-msg" class="error"></div>
+  <input type="text" id="username" placeholder="ชื่อผู้ใช้" />
+  <input type="password" id="password" placeholder="รหัสผ่าน" />
+  <button id="login-btn">เข้าสู่ระบบ</button>
+  <button id="signup-btn">สมัครสมาชิก</button>
+  <button id="admin-btn" style="margin-top: 12px; background:#444;">เข้าสู่ระบบ Admin</button>
+</div>
+
+<div class="nets-section" id="net-list">
+  <h2>โปรเน็ตมือถือ</h2>
+  <div id="nets-container">
+    <!-- โปรเน็ตจะถูกแสดงที่นี่ -->
   </div>
+</div>
 
 <script>
-  function showSignup() {
-    document.getElementById('login-container').style.display = 'none';
-    document.getElementById('signup-container').style.display = 'block';
-    clearErrors();
-  }
-  function showLogin() {
-    document.getElementById('signup-container').style.display = 'none';
-    document.getElementById('login-container').style.display = 'block';
-    clearErrors();
-  }
-  function clearErrors() {
-    document.getElementById('error-msg').textContent = '';
-    document.getElementById('signup-error').textContent = '';
+  const errorMsg = document.getElementById('error-msg');
+  const usernameInput = document.getElementById('username');
+  const passwordInput = document.getElementById('password');
+  const loginBtn = document.getElementById('login-btn');
+  const signupBtn = document.getElementById('signup-btn');
+  const adminBtn = document.getElementById('admin-btn');
+  const netsContainer = document.getElementById('nets-container');
+
+  // แสดงโปรเน็ตจาก localStorage
+  function renderNets() {
+    let nets = JSON.parse(localStorage.getItem('netpro-list') || '[]');
+    if(nets.length === 0){
+      netsContainer.innerHTML = '<p style="text-align:center; color:#888;">ยังไม่มีโปรเน็ตในระบบ</p>';
+      return;
+    }
+    netsContainer.innerHTML = '';
+    nets.forEach(net => {
+      const div = document.createElement('div');
+      div.className = 'net-item';
+      div.innerHTML = `
+        <span>${net.name}</span>
+        <span class="price">${net.price} บาท</span>
+      `;
+      netsContainer.appendChild(div);
+    });
   }
 
-  // เก็บ users ใน localStorage key: "users"
-  function signup() {
-    clearErrors();
-    const u = document.getElementById('signup-username').value.trim();
-    const p = document.getElementById('signup-password').value.trim();
+  renderNets();
+
+  // ล้างข้อความ error
+  function clearError() {
+    errorMsg.textContent = '';
+  }
+
+  // สมัครสมาชิก
+  signupBtn.addEventListener('click', () => {
+    clearError();
+    const u = usernameInput.value.trim();
+    const p = passwordInput.value.trim();
     if(!u || !p) {
-      document.getElementById('signup-error').textContent = 'กรุณากรอกชื่อผู้ใช้และรหัสผ่าน';
+      errorMsg.textContent = 'กรุณากรอกชื่อผู้ใช้และรหัสผ่าน';
       return;
     }
     let users = JSON.parse(localStorage.getItem('users') || '[]');
     if(users.find(user => user.username === u)) {
-      document.getElementById('signup-error').textContent = 'ชื่อผู้ใช้นี้มีอยู่แล้ว';
+      errorMsg.textContent = 'ชื่อผู้ใช้นี้มีอยู่แล้ว';
       return;
     }
     users.push({username: u, password: p});
     localStorage.setItem('users', JSON.stringify(users));
     alert('สมัครสมาชิกสำเร็จ! กรุณาเข้าสู่ระบบ');
-    showLogin();
-  }
+    usernameInput.value = '';
+    passwordInput.value = '';
+  });
 
-  function login() {
-    clearErrors();
-    const u = document.getElementById('login-username').value.trim();
-    const p = document.getElementById('login-password').value.trim();
+  // ล็อกอินลูกค้า
+  loginBtn.addEventListener('click', () => {
+    clearError();
+    const u = usernameInput.value.trim();
+    const p = passwordInput.value.trim();
     if(!u || !p) {
-      document.getElementById('error-msg').textContent = 'กรุณากรอกชื่อผู้ใช้และรหัสผ่าน';
+      errorMsg.textContent = 'กรุณากรอกชื่อผู้ใช้และรหัสผ่าน';
       return;
     }
     let users = JSON.parse(localStorage.getItem('users') || '[]');
     let user = users.find(user => user.username === u && user.password === p);
-    if(user) {
+    if(user){
       localStorage.setItem('loggedInUser', u);
       window.location.href = 'netpro.html';
     } else {
-      document.getElementById('error-msg').textContent = 'ชื่อผู้ใช้หรือรหัสผ่านไม่ถูกต้อง';
+      errorMsg.textContent = 'ชื่อผู้ใช้หรือรหัสผ่านไม่ถูกต้อง';
     }
-  }
+  });
 
-  function goAdmin() {
+  // ไปหน้า admin
+  adminBtn.addEventListener('click', () => {
     window.location.href = 'admin.html';
-  }
+  });
 </script>
+
 </body>
 </html>
