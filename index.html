@@ -2,208 +2,131 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ระบบหลังบ้าน</title>
+  <title>หน้าแรก</title>
   <style>
     body {
       font-family: 'Segoe UI', sans-serif;
-      background: #f4f6f9;
+      background: #f8f9fa;
       margin: 0;
       padding: 0;
-    }
-    .container {
-      max-width: 900px;
-      margin: auto;
-      padding: 20px;
-    }
-    h2 {
       color: #333;
     }
-    .section {
-      margin-bottom: 40px;
-      background: #fff;
-      padding: 20px;
-      border-radius: 10px;
-      box-shadow: 0 4px 8px rgba(0,0,0,0.05);
-    }
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      margin-top: 10px;
-    }
-    th, td {
-      border: 1px solid #ccc;
-      padding: 10px;
-      text-align: left;
-    }
-    th {
-      background: #007aff;
-      color: white;
-    }
-    button {
-      padding: 6px 12px;
-      border: none;
-      border-radius: 5px;
-      cursor: pointer;
-      margin: 5px 3px 0 0;
-    }
-    .btn-delete { background: #e74c3c; color: white; }
-    .btn-edit { background: #f39c12; color: white; }
-    .btn-status { background: #3498db; color: white; }
-    .btn-notify { background: #2ecc71; color: white; }
-    .btn-logout, .btn-change-pass { background: #bdc3c7; color: #333; }
-    .input-inline {
-      width: 100%;
-      padding: 6px;
-      margin-top: 5px;
-    }
-    .checkbox { transform: scale(1.2); }
-    .admin-controls {
+    .topbar {
       display: flex;
       justify-content: space-between;
-      margin-bottom: 20px;
-      flex-wrap: wrap;
+      align-items: center;
+      padding: 10px 20px;
+      background: #ffffff;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+    .topbar .buttons button {
+      margin-left: 10px;
+      padding: 8px 16px;
+      border: none;
+      border-radius: 8px;
+      background: #007bff;
+      color: white;
+      cursor: pointer;
+    }
+    .topbar .buttons button.logout {
+      background: #6c757d;
+    }
+    .container {
+      max-width: 1000px;
+      margin: 20px auto;
+      padding: 10px;
+    }
+    h2 {
+      margin-bottom: 10px;
+      color: #007bff;
+    }
+    .net-card {
+      background: #fff;
+      border-radius: 12px;
+      padding: 15px;
+      margin-bottom: 15px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    }
+    .net-card h4 {
+      margin: 0 0 8px 0;
+      color: #333;
+    }
+    .net-card .info {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.95em;
+      color: #666;
+    }
+    .account-status {
+      font-size: 0.95em;
+      color: #28a745;
     }
   </style>
 </head>
 <body>
-  <div class="container">
-    <div class="admin-controls">
-      <h2>ระบบหลังบ้าน</h2>
-      <div>
-        <button class="btn-change-pass" onclick="changeAdminPassword()">เปลี่ยนรหัสผ่าน</button>
-        <button class="btn-logout" onclick="logout()">ออกจากระบบ</button>
-      </div>
-    </div><div class="section">
-  <h3>จัดการโปรเน็ต</h3>
-  <div>
-    <input type="text" id="netName" placeholder="ชื่อโปรเน็ต" class="input-inline">
-    <input type="text" id="netPrice" placeholder="ราคา" class="input-inline">
-    <input type="text" id="netDesc" placeholder="รายละเอียด" class="input-inline">
-    <button onclick="addPackage()">เพิ่มโปรเน็ต</button>
-  </div>
-  <table>
-    <thead>
-      <tr><th>ชื่อ</th><th>ราคา</th><th>รายละเอียด</th><th>การจัดการ</th></tr>
-    </thead>
-    <tbody id="packageTable"></tbody>
-  </table>
-</div>
-
-<div class="section">
-  <h3>จัดการสมาชิก</h3>
-  <table>
-    <thead>
-      <tr><th>ชื่อ</th><th>เบอร์</th><th>รหัสผ่าน</th><th>สถานะ</th><th>เลือก</th><th>การจัดการ</th></tr>
-    </thead>
-    <tbody id="userTable"></tbody>
-  </table>
-  <button class="btn-notify" onclick="sendNotification()">ส่งแจ้งเตือน</button>
-</div>
-
+  <div class="topbar">
+    <div id="accountStatus"></div>
+    <div class="buttons" id="topButtons">
+      <button onclick="goToLogin()">เข้าสู่ระบบ</button>
+      <button onclick="goToRegister()">สมัครสมาชิก</button>
+      <button onclick="goToAdmin()">เข้าสู่ระบบแอดมิน</button>
+    </div>
+  </div>  <div class="container">
+    <h2>โปรเน็ตที่มีตอนนี้</h2>
+    <div id="netList"></div>
   </div><script>
-  const packageTable = document.getElementById('packageTable');
-  const userTable = document.getElementById('userTable');
-  const netName = document.getElementById('netName');
-  const netPrice = document.getElementById('netPrice');
-  const netDesc = document.getElementById('netDesc');
-
   let packages = JSON.parse(localStorage.getItem('packages') || '[]');
-  let users = JSON.parse(localStorage.getItem('users') || '[]');
+  let currentUser = JSON.parse(localStorage.getItem('currentUser') || 'null');
 
-  function renderPackages() {
-    packageTable.innerHTML = '';
-    packages.forEach((pkg, i) => {
-      packageTable.innerHTML += `
-        <tr>
-          <td>${pkg.name}</td><td>${pkg.price}</td><td>${pkg.description || ''}</td>
-          <td>
-            <button class="btn-edit" onclick="editPackage(${i})">แก้ไข</button>
-            <button class="btn-delete" onclick="deletePackage(${i})">ลบ</button>
-          </td>
-        </tr>`;
+  function renderTopbar() {
+    const statusDiv = document.getElementById('accountStatus');
+    const buttonDiv = document.getElementById('topButtons');
+    if (currentUser) {
+      statusDiv.innerHTML = `<div class='account-status'>👤 ${currentUser.name} (${currentUser.phone})</div>`;
+      buttonDiv.innerHTML = `<button class="logout" onclick="logout()">ออกจากระบบ</button>`;
+    }
+  }
+
+  function renderNetPackages() {
+    const netList = document.getElementById('netList');
+    let html = '';
+    packages.forEach(pkg => {
+      html += `
+        <div class="net-card">
+          <h4>${pkg.name}</h4>
+          <div class="info">
+            <span>💰 ราคา: ${pkg.price}</span>
+            <span>📶 เครือข่าย: ${pkg.description}</span>
+          </div>
+        </div>
+      `;
     });
-  }
-
-  function renderUsers() {
-    userTable.innerHTML = '';
-    users.forEach((u, i) => {
-      userTable.innerHTML += `
-        <tr>
-          <td>${u.name || '-'}</td><td>${u.phone}</td><td>${u.password}</td>
-          <td>${u.status || 'active'}</td>
-          <td><input type="checkbox" class="checkbox" data-index="${i}"></td>
-          <td>
-            <button class="btn-status" onclick="toggleStatus(${i})">เปลี่ยนสถานะ</button>
-            <button class="btn-delete" onclick="deleteUser(${i})">ลบ</button>
-          </td>
-        </tr>`;
-    });
-  }
-
-  function addPackage() {
-    if (netName.value && netPrice.value) {
-      packages.push({ name: netName.value, price: netPrice.value, description: netDesc.value });
-      localStorage.setItem('packages', JSON.stringify(packages));
-      netName.value = netPrice.value = netDesc.value = '';
-      renderPackages();
-    }
-  }
-
-  function deletePackage(index) {
-    if (confirm('ยืนยันการลบโปรเน็ตนี้')) {
-      packages.splice(index, 1);
-      localStorage.setItem('packages', JSON.stringify(packages));
-      renderPackages();
-    }
-  }
-
-  function editPackage(index) {
-    const pkg = packages[index];
-    netName.value = pkg.name;
-    netPrice.value = pkg.price;
-    netDesc.value = pkg.description;
-    deletePackage(index);
-  }
-
-  function deleteUser(index) {
-    if (confirm('ยืนยันการลบสมาชิกนี้')) {
-      users.splice(index, 1);
-      localStorage.setItem('users', JSON.stringify(users));
-      renderUsers();
-    }
-  }
-
-  function toggleStatus(index) {
-    users[index].status = users[index].status === 'active' ? 'inactive' : 'active';
-    localStorage.setItem('users', JSON.stringify(users));
-    renderUsers();
-  }
-
-  function sendNotification() {
-    const checkboxes = document.querySelectorAll('.checkbox');
-    const selectedUsers = [];
-    checkboxes.forEach(c => {
-      if (c.checked) selectedUsers.push(users[c.dataset.index].phone);
-    });
-    const message = prompt('ข้อความที่ต้องการแจ้งเตือน:');
-    if (!message) return;
-    localStorage.setItem('notification', JSON.stringify({ message, targets: selectedUsers.length ? selectedUsers : 'all' }));
-    alert('ส่งแจ้งเตือนเรียบร้อย');
-  }
-
-  function changeAdminPassword() {
-    const newPass = prompt('กรอกรหัสผ่านใหม่:');
-    if (newPass) {
-      localStorage.setItem('adminPassword', newPass);
-      alert('เปลี่ยนรหัสผ่านแอดมินเรียบร้อย');
-    }
+    netList.innerHTML = html;
   }
 
   function logout() {
-    window.location.href = 'index.html';
+    localStorage.removeItem('currentUser');
+    location.reload();
   }
 
-  renderPackages();
-  renderUsers();
+  function goToLogin() {
+    window.location.href = 'login.html';
+  }
+  function goToRegister() {
+    window.location.href = 'register.html';
+  }
+  function goToAdmin() {
+    window.location.href = 'admin.html';
+  }
+
+  renderTopbar();
+  renderNetPackages();
+  setInterval(() => {
+    packages = JSON.parse(localStorage.getItem('packages') || '[]');
+    renderNetPackages();
+  }, 3000);
 </script></body>
 </html>
