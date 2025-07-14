@@ -3,101 +3,179 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>ระบบหลังบ้าน - สมาชิก</title>
+<title>หน้าสมาชิก - เลือกสมัครโปรเน็ต</title>
 <style>
-  body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; background:#f9f9f9; padding: 20px; }
-  h2 { margin-bottom: 10px; }
-  #summary { margin-bottom: 20px; padding: 10px; background: #fff; border-radius: 8px; box-shadow: 0 0 5px #ccc; }
-  table { width: 100%; border-collapse: collapse; background: #fff; border-radius: 8px; overflow: hidden; box-shadow: 0 0 5px #ccc; }
-  th, td { padding: 12px; text-align: left; border-bottom: 1px solid #eee; }
-  th { background: #007aff; color: white; }
-  button { padding: 6px 12px; background: #ff3b30; color: white; border: none; border-radius: 4px; cursor: pointer; }
-  button:hover { background: #d32f2f; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    background: #f7f7f7;
+    margin: 0; padding: 20px;
+  }
+  .container {
+    max-width: 480px;
+    margin: 0 auto;
+    background: white;
+    border-radius: 10px;
+    padding: 20px;
+    box-shadow: 0 0 15px #ccc;
+  }
+  h2 {
+    color: #007aff;
+    margin-bottom: 10px;
+  }
+  .user-info {
+    background: #e6f0ff;
+    padding: 15px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+  }
+  .user-info div {
+    font-size: 18px;
+    margin-bottom: 6px;
+  }
+  .package-list {
+    list-style: none;
+    padding: 0;
+  }
+  .package-item {
+    background: #f0f4ff;
+    margin-bottom: 12px;
+    padding: 15px;
+    border-radius: 8px;
+    box-shadow: 0 0 5px #d0d7ff;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .package-name {
+    font-weight: 600;
+    font-size: 17px;
+  }
+  .package-price {
+    font-weight: 500;
+    color: #007aff;
+    margin-right: 20px;
+  }
+  button.subscribe-btn {
+    background: #007aff;
+    color: white;
+    border: none;
+    padding: 8px 15px;
+    border-radius: 7px;
+    cursor: pointer;
+    font-size: 16px;
+  }
+  button.subscribe-btn:hover {
+    background: #005bb5;
+  }
+  #message {
+    margin-top: 20px;
+    font-size: 16px;
+    color: green;
+  }
 </style>
 </head>
 <body>
 
-<h2>สรุปสมาชิก</h2>
-<div id="summary">
-  <div>จำนวนสมาชิก: <span id="total-users">0</span></div>
-  <div>สถานะบัญชีสมาชิก:</div>
-  <ul id="status-list"></ul>
+<div class="container">
+  <h2>ข้อมูลสมาชิก</h2>
+  <div class="user-info" id="user-info">
+    <div>เบอร์โทร: <span id="user-phone">กำลังโหลด...</span></div>
+    <div>สถานะบัญชี: <span id="user-status">กำลังโหลด...</span></div>
+  </div>
+
+  <h2>โปรเน็ตที่มีให้สมัคร</h2>
+  <ul class="package-list" id="package-list">
+    <!-- รายการโปรเน็ตจะถูกแทรกที่นี่ -->
+  </ul>
+
+  <div id="message"></div>
 </div>
 
-<h2>ข้อมูลสมาชิก</h2>
-<table id="users-table">
-  <thead>
-    <tr>
-      <th>ชื่อผู้ใช้</th>
-      <th>เบอร์โทร</th>
-      <th>โปรเน็ตที่สมัคร</th>
-      <th>สถานะบัญชี</th>
-      <th>ลบ</th>
-    </tr>
-  </thead>
-  <tbody></tbody>
-</table>
-
 <script>
-// ตัวอย่างข้อมูลสมาชิกเก็บใน localStorage
-// structure: [{username, phone, net, status}, ...]
-if (!localStorage.getItem('users')) {
-  localStorage.setItem('users', JSON.stringify([
-    { username: "somchai", phone: "0812345678", net: "โปรเน็ต A", status: "Active" },
-    { username: "somsri", phone: "0898765432", net: "โปรเน็ต B", status: "Inactive" }
-  ]));
+// ตัวอย่างข้อมูลผู้ใช้ (จริงๆ ควรได้จากการ login หรือดึงจาก localStorage)
+const currentUser = JSON.parse(localStorage.getItem('currentUser')) || {
+  phone: '0812345678',
+  status: 'Active',
+};
+
+// ตัวอย่างข้อมูลโปรเน็ตเก็บใน localStorage
+let packages = JSON.parse(localStorage.getItem('packages') || '[]');
+if (packages.length === 0) {
+  // ถ้าไม่มีข้อมูลให้ตั้งตัวอย่าง
+  packages = [
+    {name: 'โปรเน็ต 1GB', price: 100},
+    {name: 'โปรเน็ต 5GB', price: 300},
+    {name: 'โปรเน็ต 10GB', price: 500},
+  ];
+  localStorage.setItem('packages', JSON.stringify(packages));
 }
 
-const usersTableBody = document.querySelector('#users-table tbody');
-const totalUsersSpan = document.getElementById('total-users');
-const statusList = document.getElementById('status-list');
+const userPhoneSpan = document.getElementById('user-phone');
+const userStatusSpan = document.getElementById('user-status');
+const packageList = document.getElementById('package-list');
+const messageDiv = document.getElementById('message');
 
-function renderUsers() {
-  let users = JSON.parse(localStorage.getItem('users') || '[]');
-  usersTableBody.innerHTML = '';
+function showUserInfo() {
+  userPhoneSpan.textContent = currentUser.phone;
+  userStatusSpan.textContent = currentUser.status;
+}
 
-  // แสดงจำนวนสมาชิก
-  totalUsersSpan.textContent = users.length;
-
-  // นับสถานะสมาชิกแต่ละประเภท
-  let statusCount = {};
-  users.forEach(user => {
-    statusCount[user.status] = (statusCount[user.status] || 0) + 1;
+function renderPackages() {
+  packageList.innerHTML = '';
+  packages.forEach((pkg, index) => {
+    const li = document.createElement('li');
+    li.className = 'package-item';
+    li.innerHTML = `
+      <span class="package-name">${pkg.name}</span>
+      <span class="package-price">${pkg.price} บาท</span>
+      <button class="subscribe-btn" data-index="${index}">สมัคร</button>
+    `;
+    packageList.appendChild(li);
   });
 
-  // แสดงสถานะบัญชี
-  statusList.innerHTML = '';
-  for (const [status, count] of Object.entries(statusCount)) {
-    const li = document.createElement('li');
-    li.textContent = `${status}: ${count} คน`;
-    statusList.appendChild(li);
+  // เพิ่ม event listener ปุ่มสมัคร
+  document.querySelectorAll('.subscribe-btn').forEach(button => {
+    button.addEventListener('click', () => {
+      const idx = button.getAttribute('data-index');
+      subscribePackage(idx);
+    });
+  });
+}
+
+function subscribePackage(index) {
+  if (currentUser.status !== 'Active') {
+    messageDiv.style.color = 'red';
+    messageDiv.textContent = 'บัญชีของคุณไม่สามารถสมัครโปรเน็ตได้เนื่องจากสถานะไม่ Active';
+    return;
   }
 
-  // แสดงข้อมูลสมาชิกในตาราง
-  users.forEach((user, i) => {
-    const tr = document.createElement('tr');
-    tr.innerHTML = `
-      <td>${user.username}</td>
-      <td>${user.phone}</td>
-      <td>${user.net}</td>
-      <td>${user.status}</td>
-      <td><button data-index="${i}">ลบ</button></td>
-    `;
-    tr.querySelector('button').addEventListener('click', () => {
-      deleteUser(i);
-    });
-    usersTableBody.appendChild(tr);
-  });
-}
-
-function deleteUser(index) {
+  const selectedPackage = packages[index];
+  // บันทึกข้อมูลสมาชิกใน localStorage ว่าสมัครโปรเน็ตอะไร
   let users = JSON.parse(localStorage.getItem('users') || '[]');
-  users.splice(index, 1);
+
+  // หา user ในระบบ
+  let userIndex = users.findIndex(u => u.phone === currentUser.phone);
+  if(userIndex === -1) {
+    // เพิ่มสมาชิกใหม่ถ้ายังไม่มี
+    users.push({
+      username: currentUser.phone,
+      phone: currentUser.phone,
+      net: selectedPackage.name,
+      status: currentUser.status,
+    });
+  } else {
+    // อัพเดตโปรเน็ตที่สมัคร
+    users[userIndex].net = selectedPackage.name;
+  }
   localStorage.setItem('users', JSON.stringify(users));
-  renderUsers();
+
+  messageDiv.style.color = 'green';
+  messageDiv.textContent = `สมัครโปรเน็ต "${selectedPackage.name}" เรียบร้อยแล้ว!`;
 }
 
-renderUsers();
+showUserInfo();
+renderPackages();
+
 </script>
 
 </body>
