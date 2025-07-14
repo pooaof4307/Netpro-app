@@ -3,121 +3,101 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>ระบบจัดการโปรเน็ต (Admin)</title>
+<title>จัดการโปรเน็ตหลังบ้าน</title>
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap');
-
   body {
-    font-family: 'Inter', sans-serif;
-    background: #f8f9fa;
-    margin: 0; padding: 1rem;
-    color: #333;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     max-width: 900px;
-    margin-left: auto;
-    margin-right: auto;
+    margin: 2rem auto;
+    background: #f4f6f8;
+    color: #222;
   }
-
   h1 {
     text-align: center;
     margin-bottom: 1.5rem;
     color: #2c3e50;
   }
-
   form {
-    background: #fff;
-    padding: 1.5rem;
+    background: white;
+    padding: 1rem 1.5rem;
     border-radius: 8px;
-    box-shadow: 0 4px 10px rgb(0 0 0 / 0.1);
+    box-shadow: 0 2px 8px rgb(0 0 0 / 0.1);
     margin-bottom: 2rem;
   }
-
   label {
     display: block;
+    margin-bottom: 0.3rem;
     font-weight: 600;
-    margin-bottom: 0.4rem;
-    color: #34495e;
   }
-
-  input[type=text], input[type=number], textarea {
+  input, textarea {
     width: 100%;
     padding: 0.5rem 0.6rem;
-    margin-bottom: 1.1rem;
-    border: 1px solid #ced4da;
-    border-radius: 5px;
+    margin-bottom: 1rem;
+    border-radius: 6px;
+    border: 1px solid #ccc;
     font-size: 1rem;
+    box-sizing: border-box;
+  }
+  textarea {
     resize: vertical;
   }
-
   button {
-    background-color: #27ae60;
-    color: white;
-    padding: 0.7rem 1.3rem;
+    background-color: #007bff;
     border: none;
-    border-radius: 6px;
+    color: white;
+    padding: 0.6rem 1.2rem;
     font-weight: 600;
+    border-radius: 6px;
     cursor: pointer;
-    transition: background-color 0.3s ease;
+    transition: background-color 0.25s ease;
   }
   button:hover {
-    background-color: #219150;
+    background-color: #0056b3;
   }
-
-  .list {
-    background: #fff;
-    border-radius: 8px;
-    box-shadow: 0 4px 10px rgb(0 0 0 / 0.1);
+  .list-container {
+    background: white;
     padding: 1rem;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgb(0 0 0 / 0.1);
   }
-
-  .item {
-    border-bottom: 1px solid #ddd;
-    padding: 0.9rem 0;
+  .package-item {
     display: flex;
     justify-content: space-between;
-    align-items: center;
+    padding: 0.6rem 0;
+    border-bottom: 1px solid #ddd;
   }
-  .item:last-child {
-    border-bottom: none;
+  .package-info {
+    max-width: 80%;
   }
-
-  .info {
-    max-width: 75%;
-  }
-  .info strong {
-    display: block;
+  .package-info strong {
     font-size: 1.1rem;
-    color: #2c3e50;
   }
-  .info small {
-    color: #666;
-    font-size: 0.9rem;
+  .package-info small {
+    color: #555;
   }
-
   .btn-delete {
-    background-color: #e74c3c;
+    background-color: #dc3545;
     border: none;
     color: white;
-    padding: 0.4rem 0.7rem;
+    padding: 0.3rem 0.7rem;
     border-radius: 5px;
     cursor: pointer;
     font-weight: 600;
-    transition: background-color 0.3s ease;
+    align-self: center;
   }
   .btn-delete:hover {
-    background-color: #c0392b;
+    background-color: #b02a37;
   }
-
-  #message {
+  #msg {
+    text-align: center;
     margin-bottom: 1rem;
     font-weight: 600;
-    color: #27ae60;
-    text-align: center;
   }
-  #error {
-    margin-bottom: 1rem;
-    font-weight: 600;
-    color: #e74c3c;
-    text-align: center;
+  #msg.success {
+    color: #28a745;
+  }
+  #msg.error {
+    color: #dc3545;
   }
 </style>
 </head>
@@ -125,20 +105,19 @@
 
 <h1>ระบบจัดการโปรเน็ต (Admin)</h1>
 
-<div id="message"></div>
-<div id="error"></div>
+<div id="msg"></div>
 
-<form id="addForm">
+<form id="addPackageForm">
   <label for="network">ชื่อเครือข่าย</label>
-  <input type="text" id="network" name="network" placeholder="เช่น AIS, TrueMove, dtac" required />
+  <input type="text" id="network" name="network" placeholder="เช่น AIS, TrueMove" required />
 
   <label for="price">ราคา (บาท)</label>
   <input type="number" id="price" name="price" placeholder="เช่น 199" required min="1" />
 
-  <label for="speed">ความเร็ว (เช่น 4G/5G Unlimited)</label>
+  <label for="speed">ความเร็ว</label>
   <input type="text" id="speed" name="speed" placeholder="เช่น 4G Unlimited" required />
 
-  <label for="duration">ระยะเวลา (เช่น 30 วัน)</label>
+  <label for="duration">ระยะเวลา</label>
   <input type="text" id="duration" name="duration" placeholder="เช่น 30 วัน" required />
 
   <label for="description">รายละเอียดเพิ่มเติม</label>
@@ -147,106 +126,135 @@
   <button type="submit">เพิ่มโปรเน็ต</button>
 </form>
 
-<div class="list" id="packageList">
-  <!-- รายการโปรเน็ตจะขึ้นที่นี่ -->
+<div class="list-container" id="packageList">
+  กำลังโหลดข้อมูล...
 </div>
 
 <script>
   const scriptURL = 'https://script.google.com/macros/s/AKfycbxuFiHXVxbcDiw4Y0q0cLFPhFEG5etsgQ61gmGiDjOyurNAhE-Rl3AIu7kPVP_jsJnqWg/exec';
 
-  const form = document.getElementById('addForm');
-  const listEl = document.getElementById('packageList');
-  const messageEl = document.getElementById('message');
-  const errorEl = document.getElementById('error');
+  const form = document.getElementById('addPackageForm');
+  const listContainer = document.getElementById('packageList');
+  const msg = document.getElementById('msg');
 
-  // โหลดรายการโปรเน็ต
+  // โหลดข้อมูลโปรเน็ต
   async function loadPackages() {
-    listEl.innerHTML = 'กำลังโหลดข้อมูล...';
+    listContainer.innerHTML = 'กำลังโหลดข้อมูล...';
     try {
       const res = await fetch(scriptURL);
-      if (!res.ok) throw new Error('เกิดข้อผิดพลาดในการโหลดข้อมูล');
+      if (!res.ok) throw new Error('ไม่สามารถโหลดข้อมูลได้');
       const data = await res.json();
       const packages = data.records || data;
       if (!packages.length) {
-        listEl.innerHTML = '<p>ยังไม่มีโปรเน็ตในระบบ</p>';
+        listContainer.innerHTML = '<p>ยังไม่มีโปรเน็ตในระบบ</p>';
         return;
       }
-      listEl.innerHTML = '';
+      listContainer.innerHTML = '';
       packages.forEach(pkg => {
+        const id = pkg.id || pkg.row || '';
         const item = document.createElement('div');
-        item.className = 'item';
+        item.className = 'package-item';
         item.innerHTML = `
-          <div class="info">
-            <strong>${pkg.network || '-'}</strong>
-            <small>ราคา: ${pkg.price || '-'} บาท | ความเร็ว: ${pkg.speed || '-'} | ระยะเวลา: ${pkg.duration || '-'}</small>
+          <div class="package-info">
+            <strong>${pkg.network || '-'}</strong><br/>
+            <small>ราคา: ${pkg.price || '-'} บาท | ความเร็ว: ${pkg.speed || '-'} | ระยะเวลา: ${pkg.duration || '-'}</small><br/>
             <small>รายละเอียด: ${pkg.description || '-'}</small>
           </div>
-          <button class="btn-delete" data-id="${pkg.id || pkg.row || ''}">ลบ</button>
+          <button class="btn-delete" data-id="${id}">ลบ</button>
         `;
-        listEl.appendChild(item);
+        listContainer.appendChild(item);
       });
       attachDeleteListeners();
-    } catch (err) {
-      listEl.innerHTML = '<p>ไม่สามารถโหลดข้อมูลได้</p>';
-      console.error(err);
+    } catch (error) {
+      listContainer.innerHTML = `<p style="color:red;">${error.message}</p>`;
     }
   }
 
-  // ลบโปรเน็ต
-  async function deletePackage(id) {
-    if (!id) return alert('ไม่พบข้อมูล ID สำหรับลบ');
-    try {
-      const res = await fetch(scriptURL, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ action: 'delete', id })
+  // ผูก event ลบ
+  function attachDeleteListeners() {
+    const deleteButtons = document.querySelectorAll('.btn-delete');
+    deleteButtons.forEach(btn => {
+      btn.addEventListener('click', async e => {
+        const id = e.target.getAttribute('data-id');
+        if (!id) return alert('ไม่พบข้อมูลที่จะลบ');
+        if (!confirm('ยืนยันการลบโปรเน็ตนี้?')) return;
+
+        try {
+          const res = await fetch(scriptURL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ action: 'delete', id })
+          });
+          const result = await res.json();
+          if (result.success) {
+            showMessage('ลบโปรเน็ตเรียบร้อย', true);
+            loadPackages();
+          } else {
+            throw new Error(result.error || 'ลบไม่สำเร็จ');
+          }
+        } catch (error) {
+          showMessage(error.message, false);
+        }
       });
-      const result = await res.json();
-      if (result.success) {
-        messageEl.textContent = 'ลบโปรเน็ตเรียบร้อยแล้ว';
-        errorEl.textContent = '';
-        loadPackages();
-      } else {
-        throw new Error(result.error || 'ลบไม่สำเร็จ');
-      }
-    } catch (err) {
-      errorEl.textContent = 'เกิดข้อผิดพลาด: ' + err.message;
-      messageEl.textContent = '';
-      console.error(err);
-    }
+    });
   }
 
   // เพิ่มโปรเน็ต
   form.addEventListener('submit', async e => {
     e.preventDefault();
-    messageEl.textContent = '';
-    errorEl.textContent = '';
+    clearMessage();
 
-    const formData = {
-      action: 'add',
-      network: form.network.value.trim(),
-      price: form.price.value.trim(),
-      speed: form.speed.value.trim(),
-      duration: form.duration.value.trim(),
-      description: form.description.value.trim()
-    };
+    const network = form.network.value.trim();
+    const price = form.price.value.trim();
+    const speed = form.speed.value.trim();
+    const duration = form.duration.value.trim();
+    const description = form.description.value.trim();
 
-    if (!formData.network || !formData.price || !formData.speed || !formData.duration) {
-      errorEl.textContent = 'กรุณากรอกข้อมูลให้ครบถ้วน';
+    if (!network || !price || !speed || !duration) {
+      showMessage('กรุณากรอกข้อมูลให้ครบถ้วน', false);
       return;
     }
+
+    const data = {
+      action: 'add',
+      network,
+      price,
+      speed,
+      duration,
+      description
+    };
 
     try {
       const res = await fetch(scriptURL, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formData)
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify(data)
       });
       const result = await res.json();
       if (result.success) {
-        messageEl.textContent = 'เพิ่มโปรเน็ตเรียบร้อยแล้ว';
-        errorEl.textContent = '';
+        showMessage('เพิ่มโปรเน็ตเรียบร้อย', true);
         form.reset();
         loadPackages();
       } else {
-        throw new Error(result.error || 'เพิ่มโปรเน็ตไม่สำ
+        throw new Error(result.error || 'เพิ่มโปรเน็ตไม่สำเร็จ');
+      }
+    } catch (error) {
+      showMessage(error.message, false);
+    }
+  });
+
+  function showMessage(text, success=true) {
+    msg.textContent = text;
+    msg.className = success ? 'success' : 'error';
+  }
+
+  function clearMessage() {
+    msg.textContent = '';
+    msg.className = '';
+  }
+
+  loadPackages();
+</script>
+
+</body>
+</html>
