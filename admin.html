@@ -17,6 +17,7 @@
       <input type="text" id="price" placeholder="ราคา (99 บาท)" required>
       <input type="text" id="speed" placeholder="ความเร็ว (1Mbps)" required>
       <input type="text" id="duration" placeholder="ระยะเวลา (7 วัน)" required>
+      <input type="text" id="description" placeholder="รายละเอียดเพิ่มเติม" required>
       <input type="text" id="link" placeholder="ลิงก์สมัคร" required>
       <button type="submit">บันทึกโปรเน็ต</button>
     </form>
@@ -29,6 +30,7 @@
         price: this.price.value,
         speed: this.speed.value,
         duration: this.duration.value,
+        description: this.description.value,
         link: this.link.value
       };
       fetch("https://script.google.com/macros/s/AKfycbyIVmvxLxNDqevnwYmjRkNNhSQNewWB6KxN3gDf43cOB3avHMmMBO2x5H2HFPIlVPrm9Q/exec", {
