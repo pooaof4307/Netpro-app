@@ -3,190 +3,216 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>สมัครสมาชิก / โปรเน็ตมือถือ</title>
+<title>สมัครโปรเน็ตมือถือ</title>
 <style>
-  body {
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-    background: #f2f2f7;
-    margin:0; padding:20px;
-    color: #1c1c1e;
-    max-width: 480px;
-    margin-left: auto;
-    margin-right: auto;
-  }
-  .top-section {
-    background: white;
-    padding: 20px;
-    border-radius: 16px;
-    box-shadow: 0 4px 16px rgba(0,0,0,0.1);
-    margin-bottom: 24px;
-  }
-  h2 {
-    color: #007aff;
-    font-weight: 600;
-    margin-bottom: 16px;
-    text-align: center;
-  }
-  input[type="text"], input[type="password"] {
-    width: 100%;
-    padding: 12px;
-    margin-bottom: 16px;
-    border: 1px solid #ccc;
-    border-radius: 12px;
-    font-size: 1rem;
+  /* Reset และตั้งค่าพื้นฐาน */
+  * {
     box-sizing: border-box;
   }
-  button {
-    width: 100%;
-    padding: 12px;
-    background: #007aff;
-    border: none;
-    border-radius: 12px;
-    color: white;
-    font-size: 1rem;
-    cursor: pointer;
-    margin-bottom: 12px;
+  body {
+    margin: 0; padding: 0;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+    color: #333;
+    min-height: 100vh;
   }
-  button:hover {
-    background: #005bb5;
-  }
-  .link-btn {
-    background: none;
-    color: #007aff;
-    border: none;
-    cursor: pointer;
-    text-decoration: underline;
-    font-size: 0.9rem;
-    display: block;
-    margin: 8px auto 0 auto;
-    text-align: center;
-  }
-  .error {
-    color: #ff3b30;
-    margin-bottom: 12px;
-    text-align: center;
-  }
-  .nets-section {
-    background: white;
+  .container {
+    max-width: 480px;
+    margin: 30px auto;
+    background: #fff;
     border-radius: 16px;
-    box-shadow: 0 4px 16px rgba(0,0,0,0.1);
-    padding: 20px;
+    padding: 30px 25px;
+    box-shadow: 0 15px 30px rgba(0,0,0,0.1);
   }
-  .net-item {
+  h1 {
+    text-align: center;
+    color: #007aff;
+    margin-bottom: 25px;
+    font-weight: 700;
+    font-size: 28px;
+  }
+  /* บล็อกล็อกอินและสมัครสมาชิก */
+  .top-buttons {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 25px;
+  }
+  .btn {
+    flex: 1;
+    background: #007aff;
+    color: #fff;
+    border: none;
+    padding: 12px 0;
+    border-radius: 12px;
+    font-size: 18px;
+    font-weight: 600;
+    cursor: pointer;
+    box-shadow: 0 6px 12px rgba(0, 122, 255, 0.4);
+    transition: background 0.3s ease;
+    margin: 0 5px;
+  }
+  .btn:first-child {
+    margin-left: 0;
+  }
+  .btn:last-child {
+    margin-right: 0;
+    background: #34c759;
+    box-shadow: 0 6px 12px rgba(52, 199, 89, 0.4);
+  }
+  .btn:hover {
+    opacity: 0.85;
+  }
+  /* แสดงข้อมูลโปรเน็ต */
+  .package-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  .package-item {
+    background: #e0f7ff;
+    border-radius: 14px;
+    padding: 15px 20px;
+    margin-bottom: 16px;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 14px 0;
-    border-bottom: 1px solid #e5e5ea;
-    font-size: 1rem;
+    box-shadow: 0 6px 12px rgba(0, 122, 255, 0.15);
+    transition: background 0.3s ease;
   }
-  .net-item:last-child {
-    border-bottom: none;
+  .package-item:hover {
+    background: #c2e9ff;
   }
-  .price {
-    font-weight: 700;
+  .package-name {
+    font-size: 18px;
+    font-weight: 600;
+    color: #005bb5;
+  }
+  .package-price {
+    font-size: 18px;
+    font-weight: 600;
     color: #007aff;
+    margin-right: 15px;
+  }
+  .btn-subscribe {
+    background: #007aff;
+    color: #fff;
+    border: none;
+    padding: 9px 18px;
+    border-radius: 12px;
+    cursor: pointer;
+    font-weight: 700;
+    font-size: 16px;
+    box-shadow: 0 5px 10px rgba(0,122,255,0.4);
+    transition: background 0.3s ease;
+  }
+  .btn-subscribe:hover {
+    background: #005bb5;
+  }
+  #message {
+    margin-top: 20px;
+    font-size: 17px;
+    font-weight: 600;
+    color: #28a745;
+    text-align: center;
   }
 </style>
 </head>
 <body>
 
-<div class="top-section" id="auth-section">
-  <h2>เข้าสู่ระบบลูกค้า / สมัครสมาชิก</h2>
-  <div id="error-msg" class="error"></div>
-  <input type="text" id="username" placeholder="ชื่อผู้ใช้" />
-  <input type="password" id="password" placeholder="รหัสผ่าน" />
-  <button id="login-btn">เข้าสู่ระบบ</button>
-  <button id="signup-btn">สมัครสมาชิก</button>
-  <button id="admin-btn" style="margin-top: 12px; background:#444;">เข้าสู่ระบบ Admin</button>
-</div>
+<div class="container">
+  <h1>สมัครโปรเน็ตมือถือ</h1>
 
-<div class="nets-section" id="net-list">
-  <h2>โปรเน็ตมือถือ</h2>
-  <div id="nets-container">
-    <!-- โปรเน็ตจะถูกแสดงที่นี่ -->
+  <div class="top-buttons">
+    <button class="btn" id="loginAdminBtn">เข้าสู่ระบบ Admin</button>
+    <button class="btn" id="registerUserBtn">สมัครสมาชิก</button>
   </div>
+
+  <ul class="package-list" id="packageList">
+    <!-- รายการโปรเน็ตจะถูกเพิ่มที่นี่ -->
+  </ul>
+
+  <div id="message"></div>
 </div>
 
 <script>
-  const errorMsg = document.getElementById('error-msg');
-  const usernameInput = document.getElementById('username');
-  const passwordInput = document.getElementById('password');
-  const loginBtn = document.getElementById('login-btn');
-  const signupBtn = document.getElementById('signup-btn');
-  const adminBtn = document.getElementById('admin-btn');
-  const netsContainer = document.getElementById('nets-container');
+  // ตัวอย่างข้อมูลโปรเน็ต (ใช้ localStorage เก็บได้จริง)
+  let packages = JSON.parse(localStorage.getItem('packages') || '[]');
+  if (packages.length === 0) {
+    packages = [
+      {name: 'โปรเน็ต 1GB', price: 100},
+      {name: 'โปรเน็ต 5GB', price: 300},
+      {name: 'โปรเน็ต 10GB', price: 500}
+    ];
+    localStorage.setItem('packages', JSON.stringify(packages));
+  }
 
-  // แสดงโปรเน็ตจาก localStorage
-  function renderNets() {
-    let nets = JSON.parse(localStorage.getItem('netpro-list') || '[]');
-    if(nets.length === 0){
-      netsContainer.innerHTML = '<p style="text-align:center; color:#888;">ยังไม่มีโปรเน็ตในระบบ</p>';
-      return;
-    }
-    netsContainer.innerHTML = '';
-    nets.forEach(net => {
-      const div = document.createElement('div');
-      div.className = 'net-item';
-      div.innerHTML = `
-        <span>${net.name}</span>
-        <span class="price">${net.price} บาท</span>
+  const packageListEl = document.getElementById('packageList');
+  const messageEl = document.getElementById('message');
+
+  function renderPackages() {
+    packageListEl.innerHTML = '';
+    packages.forEach((pkg, i) => {
+      const li = document.createElement('li');
+      li.className = 'package-item';
+      li.innerHTML = `
+        <span class="package-name">${pkg.name}</span>
+        <span class="package-price">${pkg.price} บาท</span>
+        <button class="btn-subscribe" data-index="${i}">สมัคร</button>
       `;
-      netsContainer.appendChild(div);
+      packageListEl.appendChild(li);
+    });
+
+    document.querySelectorAll('.btn-subscribe').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const idx = btn.getAttribute('data-index');
+        subscribePackage(idx);
+      });
     });
   }
 
-  renderNets();
+  function subscribePackage(index) {
+    // สมมติ user ที่ล็อกอินอยู่ หรือแสดงข้อความถ้ายังไม่ได้สมัครสมาชิก
+    let currentUser = JSON.parse(localStorage.getItem('currentUser'));
+    if (!currentUser) {
+      messageEl.style.color = 'red';
+      messageEl.textContent = 'กรุณาสมัครสมาชิกก่อนสมัครโปรเน็ต';
+      return;
+    }
+    if(currentUser.status !== 'Active'){
+      messageEl.style.color = 'red';
+      messageEl.textContent = 'บัญชีคุณไม่สามารถสมัครโปรเน็ตได้ (สถานะไม่ Active)';
+      return;
+    }
 
-  // ล้างข้อความ error
-  function clearError() {
-    errorMsg.textContent = '';
+    const pkg = packages[index];
+    // บันทึกข้อมูลสมาชิกที่สมัครโปรเน็ต
+    let users = JSON.parse(localStorage.getItem('users') || '[]');
+    let userIndex = users.findIndex(u => u.phone === currentUser.phone);
+
+    if (userIndex === -1) {
+      users.push({
+        phone: currentUser.phone,
+        net: pkg.name,
+        status: currentUser.status,
+      });
+    } else {
+      users[userIndex].net = pkg.name;
+    }
+    localStorage.setItem('users', JSON.stringify(users));
+
+    messageEl.style.color = 'green';
+    messageEl.textContent = `สมัครโปรเน็ต "${pkg.name}" เรียบร้อยแล้ว!`;
   }
 
-  // สมัครสมาชิก
-  signupBtn.addEventListener('click', () => {
-    clearError();
-    const u = usernameInput.value.trim();
-    const p = passwordInput.value.trim();
-    if(!u || !p) {
-      errorMsg.textContent = 'กรุณากรอกชื่อผู้ใช้และรหัสผ่าน';
-      return;
-    }
-    let users = JSON.parse(localStorage.getItem('users') || '[]');
-    if(users.find(user => user.username === u)) {
-      errorMsg.textContent = 'ชื่อผู้ใช้นี้มีอยู่แล้ว';
-      return;
-    }
-    users.push({username: u, password: p});
-    localStorage.setItem('users', JSON.stringify(users));
-    alert('สมัครสมาชิกสำเร็จ! กรุณาเข้าสู่ระบบ');
-    usernameInput.value = '';
-    passwordInput.value = '';
+  // ปุ่มล็อกอินแอดมิน และสมัครสมาชิก (ใช้ redirect ไปหน้าอื่นหรือแสดงฟอร์ม)
+  document.getElementById('loginAdminBtn').addEventListener('click', () => {
+    window.location.href = 'admin.html'; // ปรับ URL ให้ตรงกับไฟล์หลังบ้านของคุณ
+  });
+  document.getElementById('registerUserBtn').addEventListener('click', () => {
+    window.location.href = 'register.html'; // ปรับ URL ให้ตรงกับไฟล์สมัครสมาชิก
   });
 
-  // ล็อกอินลูกค้า
-  loginBtn.addEventListener('click', () => {
-    clearError();
-    const u = usernameInput.value.trim();
-    const p = passwordInput.value.trim();
-    if(!u || !p) {
-      errorMsg.textContent = 'กรุณากรอกชื่อผู้ใช้และรหัสผ่าน';
-      return;
-    }
-    let users = JSON.parse(localStorage.getItem('users') || '[]');
-    let user = users.find(user => user.username === u && user.password === p);
-    if(user){
-      localStorage.setItem('loggedInUser', u);
-      window.location.href = 'netpro.html';
-    } else {
-      errorMsg.textContent = 'ชื่อผู้ใช้หรือรหัสผ่านไม่ถูกต้อง';
-    }
-  });
-
-  // ไปหน้า admin
-  adminBtn.addEventListener('click', () => {
-    window.location.href = 'admin.html';
-  });
+  renderPackages();
 </script>
 
 </body>
