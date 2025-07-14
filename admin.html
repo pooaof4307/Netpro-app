@@ -1,127 +1,139 @@
-<!DOCTYPE html><html lang="th">
+<!DOCTYPE html>
+<html lang="th">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ระบบหลังบ้าน</title>
+  <title>ระบบหลังบ้านแอดมิน</title>
   <style>
     body {
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-      background: #f2f2f7;
       margin: 0;
-      padding: 0;
-      color: #1c1c1e;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+      background: #f9fafb;
+      color: #333;
     }
     .container {
-      max-width: 900px;
+      max-width: 960px;
       margin: auto;
       padding: 20px;
     }
     h2 {
-      color: #1c1c1e;
+      margin-bottom: 10px;
+      color: #111;
     }
-    .section {
-      margin-bottom: 40px;
-      background: #fff;
+    .card {
+      background: white;
+      border-radius: 16px;
+      box-shadow: 0 10px 20px rgba(0,0,0,0.05);
       padding: 20px;
-      border-radius: 20px;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+      margin-bottom: 30px;
+    }
+    input, select {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 12px;
+      margin: 5px 0 15px;
+    }
+    button {
+      padding: 10px 16px;
+      border: none;
+      border-radius: 12px;
+      cursor: pointer;
+      transition: 0.3s ease;
+      font-weight: bold;
+    }
+    .btn-add { background: #007aff; color: white; }
+    .btn-edit { background: #f0ad4e; color: white; }
+    .btn-delete { background: #e74c3c; color: white; }
+    .btn-status { background: #5bc0de; color: white; }
+    .btn-notify { background: #28a745; color: white; }
+    .btn-logout, .btn-change-pass {
+      background: #ddd;
+      color: #333;
+      margin-left: 10px;
     }
     table {
       width: 100%;
       border-collapse: collapse;
-      margin-top: 10px;
     }
     th, td {
-      border-bottom: 1px solid #ccc;
-      padding: 12px;
+      padding: 10px;
+      border-bottom: 1px solid #eee;
       text-align: left;
     }
     th {
-      background: #007aff;
-      color: white;
-      border-radius: 12px 12px 0 0;
+      background: #f0f0f0;
     }
-    button {
-      padding: 8px 16px;
-      border: none;
-      border-radius: 12px;
-      cursor: pointer;
-      margin: 5px 5px 0 0;
-      font-size: 14px;
-    }
-    .btn-delete { background: #ff3b30; color: white; }
-    .btn-edit { background: #ff9500; color: white; }
-    .btn-notify { background: #34c759; color: white; }
-    .btn-logout, .btn-change-pass { background: #d1d1d6; color: #1c1c1e; }
-    .input-inline {
-      width: 100%;
-      padding: 10px;
-      margin-top: 8px;
-      border-radius: 10px;
-      border: 1px solid #ccc;
-    }
-    .checkbox { transform: scale(1.2); }
-    .admin-controls {
+    .header-controls {
       display: flex;
       justify-content: space-between;
-      margin-bottom: 20px;
       align-items: center;
+      margin-bottom: 20px;
+    }
+    .logo {
+      font-size: 22px;
+      font-weight: bold;
     }
   </style>
 </head>
 <body>
-  <div class="container">
-    <div class="admin-controls">
-      <h2>ระบบหลังบ้าน</h2>
-      <div>
-        <button class="btn-change-pass" onclick="changeAdminPassword()">เปลี่ยนรหัสผ่าน</button>
-        <button class="btn-logout" onclick="logout()">ออกจากระบบ</button>
-      </div>
-    </div><div class="section">
-  <h3>จัดการโปรเน็ต</h3>
-  <div>
-    <input type="text" id="netName" placeholder="ชื่อโปรเน็ต" class="input-inline">
-    <input type="text" id="netPrice" placeholder="ราคา" class="input-inline">
-    <input type="text" id="netDuration" placeholder="ระยะเวลา" class="input-inline">
-    <input type="text" id="netNetwork" placeholder="เครือข่าย (เช่น AIS, DTAC)" class="input-inline">
-    <button onclick="addPackage()">เพิ่มโปรเน็ต</button>
+<div class="container">
+  <div class="header-controls">
+    <h2 class="logo">ระบบหลังบ้าน</h2>
+    <div>
+      <button class="btn-change-pass" onclick="changeAdminPassword()">เปลี่ยนรหัสผ่าน</button>
+      <button class="btn-logout" onclick="logout()">ออกจากระบบ</button>
+    </div>
   </div>
-  <table>
-    <thead>
-      <tr><th>ชื่อ</th><th>ราคา</th><th>ระยะเวลา</th><th>เครือข่าย</th><th>การจัดการ</th></tr>
-    </thead>
-    <tbody id="packageTable"></tbody>
-  </table>
+
+  <div class="card">
+    <h3>จัดการโปรเน็ต</h3>
+    <input type="text" id="netName" placeholder="ชื่อโปรเน็ต">
+    <input type="text" id="netPrice" placeholder="ราคา">
+    <input type="text" id="netDesc" placeholder="รายละเอียด">
+    <select id="netNetwork">
+      <option value="AIS">AIS</option>
+      <option value="TRUE">TRUE</option>
+      <option value="DTAC">DTAC</option>
+    </select>
+    <button class="btn-add" onclick="addPackage()">เพิ่มโปรเน็ต</button>
+    <table>
+      <thead><tr><th>ชื่อ</th><th>ราคา</th><th>รายละเอียด</th><th>เครือข่าย</th><th>จัดการ</th></tr></thead>
+      <tbody id="packageTable"></tbody>
+    </table>
+  </div>
+
+  <div class="card">
+    <h3>จัดการสมาชิก</h3>
+    <table>
+      <thead><tr><th>ชื่อ</th><th>เบอร์</th><th>รหัสผ่าน</th><th>เลือก</th><th>จัดการ</th></tr></thead>
+      <tbody id="userTable"></tbody>
+    </table>
+    <button class="btn-notify" onclick="sendNotification()">ส่งแจ้งเตือน</button>
+  </div>
 </div>
 
-<div class="section">
-  <h3>จัดการสมาชิก</h3>
-  <table>
-    <thead>
-      <tr><th>ชื่อ</th><th>เบอร์</th><th>รหัสผ่าน</th><th>เลือก</th><th>การจัดการ</th></tr>
-    </thead>
-    <tbody id="userTable"></tbody>
-  </table>
-  <button class="btn-notify" onclick="sendNotification()">ส่งแจ้งเตือน</button>
-</div>
-
-  </div><script>
+<script>
   const packageTable = document.getElementById('packageTable');
   const userTable = document.getElementById('userTable');
   const netName = document.getElementById('netName');
   const netPrice = document.getElementById('netPrice');
-  const netDuration = document.getElementById('netDuration');
+  const netDesc = document.getElementById('netDesc');
   const netNetwork = document.getElementById('netNetwork');
 
   let packages = JSON.parse(localStorage.getItem('packages') || '[]');
   let users = JSON.parse(localStorage.getItem('users') || '[]');
 
   function renderPackages() {
+    packages = JSON.parse(localStorage.getItem('packages') || '[]');
     packageTable.innerHTML = '';
     packages.forEach((pkg, i) => {
       packageTable.innerHTML += `
         <tr>
-          <td>${pkg.name}</td><td>${pkg.price}</td><td>${pkg.duration || '-'}</td><td>${pkg.network || '-'}</td>
+          <td>${pkg.name}</td>
+          <td>${pkg.price}</td>
+          <td>${pkg.description || '-'}</td>
+          <td>${pkg.network || '-'}</td>
           <td>
             <button class="btn-edit" onclick="editPackage(${i})">แก้ไข</button>
             <button class="btn-delete" onclick="deletePackage(${i})">ลบ</button>
@@ -131,12 +143,15 @@
   }
 
   function renderUsers() {
+    users = JSON.parse(localStorage.getItem('users') || '[]');
     userTable.innerHTML = '';
     users.forEach((u, i) => {
       userTable.innerHTML += `
         <tr>
-          <td>${u.name || '-'}</td><td>${u.phone}</td><td>${u.password}</td>
-          <td><input type="checkbox" class="checkbox" data-index="${i}"></td>
+          <td>${u.name || '-'}</td>
+          <td>${u.phone}</td>
+          <td>${u.password}</td>
+          <td><input type="checkbox" data-index="${i}"></td>
           <td>
             <button class="btn-delete" onclick="deleteUser(${i})">ลบ</button>
           </td>
@@ -146,17 +161,14 @@
 
   function addPackage() {
     if (netName.value && netPrice.value) {
-      packages.push({ name: netName.value, price: netPrice.value, duration: netDuration.value, network: netNetwork.value });
+      packages.push({
+        name: netName.value,
+        price: netPrice.value,
+        description: netDesc.value,
+        network: netNetwork.value
+      });
       localStorage.setItem('packages', JSON.stringify(packages));
-      netName.value = netPrice.value = netDuration.value = netNetwork.value = '';
-      renderPackages();
-    }
-  }
-
-  function deletePackage(index) {
-    if (confirm('ยืนยันการลบโปรเน็ตนี้')) {
-      packages.splice(index, 1);
-      localStorage.setItem('packages', JSON.stringify(packages));
+      netName.value = netPrice.value = netDesc.value = '';
       renderPackages();
     }
   }
@@ -165,9 +177,17 @@
     const pkg = packages[index];
     netName.value = pkg.name;
     netPrice.value = pkg.price;
-    netDuration.value = pkg.duration;
+    netDesc.value = pkg.description;
     netNetwork.value = pkg.network;
     deletePackage(index);
+  }
+
+  function deletePackage(index) {
+    if (confirm('ยืนยันการลบโปรเน็ตนี้')) {
+      packages.splice(index, 1);
+      localStorage.setItem('packages', JSON.stringify(packages));
+      renderPackages();
+    }
   }
 
   function deleteUser(index) {
@@ -179,22 +199,22 @@
   }
 
   function sendNotification() {
-    const checkboxes = document.querySelectorAll('.checkbox');
-    const selectedUsers = [];
+    const checkboxes = document.querySelectorAll('input[type=checkbox]');
+    const selected = [];
     checkboxes.forEach(c => {
-      if (c.checked) selectedUsers.push(users[c.dataset.index].phone);
+      if (c.checked) selected.push(users[c.dataset.index].phone);
     });
-    const message = prompt('ข้อความที่ต้องการแจ้งเตือน:');
+    const message = prompt('ข้อความแจ้งเตือน:');
     if (!message) return;
-    localStorage.setItem('notification', JSON.stringify({ message, targets: selectedUsers.length ? selectedUsers : 'all' }));
-    alert('ส่งแจ้งเตือนเรียบร้อย');
+    localStorage.setItem('notification', JSON.stringify({ message, targets: selected.length ? selected : 'all' }));
+    alert('ส่งแจ้งเตือนแล้ว');
   }
 
   function changeAdminPassword() {
-    const newPass = prompt('กรอกรหัสผ่านใหม่:');
+    const newPass = prompt('รหัสผ่านใหม่:');
     if (newPass) {
       localStorage.setItem('adminPassword', newPass);
-      alert('เปลี่ยนรหัสผ่านแอดมินเรียบร้อย');
+      alert('เปลี่ยนรหัสผ่านเรียบร้อย');
     }
   }
 
@@ -202,7 +222,27 @@
     window.location.href = 'index.html';
   }
 
+  // รีเฟรชข้อมูลทุก 3 วินาที
+  setInterval(() => {
+    renderPackages();
+    renderUsers();
+  }, 3000);
+
   renderPackages();
   renderUsers();
-</script></body>
+</script>
+</body>
 </html>
+
+
+อัปเดตเรียบร้อยแล้วครับ ✅
+
+สิ่งที่เปลี่ยนแปลงในระบบหลังบ้าน:
+
+✅ รีเฟรชข้อมูล ทุก 3 วินาที
+
+✅ ปรับปรุง UI ให้ ดูหรูแบบ iOS Style ด้วยโทนสีเรียบสะอาด
+
+✅
+
+
