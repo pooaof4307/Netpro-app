@@ -1,181 +1,103 @@
-
 <!DOCTYPE html>
 <html lang="th">
 <head>
   <meta charset="UTF-8">
-  <title>NET DD</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>เว็บเชื่อมต่อ Google Sheet</title>
   <style>
-    * {
-      box-sizing: border-box;
-      font-family: 'Segoe UI', sans-serif;
-    }
     body {
-      margin: 0;
-      background: linear-gradient(to right, #fdfbfb, #ebedee);
-      color: #333;
-    }
-    header {
-      background: rgba(255, 255, 255, 0.75);
-      backdrop-filter: blur(8px);
-      border-bottom: 1px solid #ddd;
-      padding: 1rem 2rem;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      position: sticky;
-      top: 0;
-      z-index: 100;
-    }
-    .logo {
-      font-size: 1.5rem;
-      font-weight: bold;
-      color: #007aff;
-    }
-    .nav-buttons button {
-      background: #fff;
-      border: 1px solid #ccc;
-      border-radius: 10px;
-      padding: 8px 14px;
-      margin-left: 10px;
-      cursor: pointer;
-      transition: all 0.3s ease;
-    }
-    .nav-buttons button:hover {
-      background: #007aff;
-      color: white;
-      border-color: #007aff;
-    }
-    .container {
+      font-family: Arial, sans-serif;
       padding: 20px;
-      max-width: 1000px;
+      max-width: 600px;
       margin: auto;
     }
-    .network-filters {
-      margin: 20px 0;
-      display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
-      justify-content: center;
+    input {
+      display: block;
+      margin-bottom: 10px;
+      padding: 8px;
+      width: 100%;
     }
-    .network-filters button {
-      padding: 8px 16px;
-      border: none;
-      border-radius: 20px;
-      background: #f0f0f0;
+    button {
+      padding: 10px 20px;
+      font-size: 16px;
       cursor: pointer;
-      transition: 0.3s;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
     }
-    .network-filters button:hover {
-      background: #007aff;
-      color: white;
+    ul {
+      list-style: none;
+      padding: 0;
     }
-    .package-card {
-      background: white;
-      border-radius: 16px;
-      box-shadow: 0 6px 20px rgba(0,0,0,0.06);
-      padding: 20px;
-      margin-bottom: 20px;
-      transition: transform 0.3s ease, box-shadow 0.3s ease;
-    }
-    .package-card:hover {
-      transform: translateY(-5px);
-      box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-    }
-    .package-header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-    }
-    .package-title {
-      font-size: 1.25rem;
-      font-weight: 600;
-      color: #007aff;
-    }
-    .carrier-logo {
-      width: 32px;
-      height: 32px;
-      border-radius: 50%;
-      object-fit: cover;
-    }
-    .package-details {
-      margin-top: 10px;
-      line-height: 1.6;
-    }
-    @media screen and (max-width: 600px) {
-      .nav-buttons {
-        display: flex;
-        flex-direction: column;
-        align-items: flex-end;
-      }
-      .nav-buttons button {
-        margin: 5px 0;
-      }
+    li {
+      background: #f1f1f1;
+      padding: 8px;
+      margin-bottom: 5px;
+      border-radius: 6px;
     }
   </style>
 </head>
 <body>
-  <header>
-    <div class="logo">โปรเน็ตมือถือ</div>
-    <div class="nav-buttons">
-      <button onclick="window.location='login.html'">เข้าสู่ระบบ</button>
-      <button onclick="window.location='register.html'">สมัครสมาชิก</button>
-      <button onclick="window.location='admin.html'">เข้าสู่ระบบแอดมิน</button>
-    </div>
-  </header>
+  <h2>ข้อมูลจาก Google Sheet</h2>
+  <ul id="data-list">กำลังโหลดข้อมูล...</ul>
 
-  <div class="container">
-    <div class="network-filters">
-      <button>ทั้งหมด</button>
-      <button>AIS</button>
-      <button>TRUE</button>
-      <button>DTAC</button>
-    </div>
-
-    <div id="packageList">
-      <!-- ตัวอย่างรายการ -->
-      <div class="package-card">
-        <div class="package-header">
-          <div class="package-title">เน็ตไม่อั้นไม่ลดสปีด</div>
-          <img class="carrier-logo" src="https://upload.wikimedia.org/wikipedia/en/thumb/f/fd/AIS_logo.svg/1200px-AIS_logo.svg.png" alt="AIS">
-        </div>
-        <div class="package-details">
-          <strong>ราคา:</strong> 150 บาท<br>
-          <strong>ระยะเวลา:</strong> 7 วัน<br>
-          <strong>รายละเอียด:</strong> เน็ตเต็มสปีด 10Mbps ใช้ได้ไม่อั้น
-        </div>
-      </div>
-
-      <!-- เพิ่มรายการโปรเน็ตอื่นๆ ผ่าน JavaScript ดึงจาก localStorage -->
-    </div>
-  </div>
+  <h2>เพิ่มข้อมูลใหม่</h2>
+  <input type="text" id="name" placeholder="ชื่อ">
+  <input type="text" id="phone" placeholder="เบอร์โทร">
+  <button onclick="sendData()">บันทึก</button>
 
   <script>
-    function loadPackages() {
-      const packages = JSON.parse(localStorage.getItem('packages') || '[]');
-      const container = document.getElementById('packageList');
-      container.innerHTML = '';
+    const scriptURL = "https://script.google.com/macros/s/AKfycbyIVmvxLxNDqevnwYmjRkNNhSQNewWB6KxN3gDf43cOB3avHMmMBO2x5H2HFPIlVPrm9Q/exec";
 
-      packages.forEach(pkg => {
-        container.innerHTML += `
-          <div class="package-card">
-            <div class="package-header">
-              <div class="package-title">${pkg.name}</div>
-              <img class="carrier-logo" src="${pkg.networkLogo || 'https://via.placeholder.com/32'}" alt="${pkg.network || ''}">
-            </div>
-            <div class="package-details">
-              <strong>ราคา:</strong> ${pkg.price} บาท<br>
-              <strong>ระยะเวลา:</strong> ${pkg.duration || '-'}<br>
-              <strong>รายละเอียด:</strong> ${pkg.description || '-'}
-            </div>
-          </div>`;
+    // ฟังก์ชันโหลดข้อมูลจาก Google Sheet
+    function loadData() {
+      fetch(scriptURL)
+        .then(res => res.json())
+        .then(data => {
+          const list = document.getElementById('data-list');
+          list.innerHTML = "";
+          data.forEach(item => {
+            const li = document.createElement('li');
+            li.textContent = `${item.name} - ${item.phone}`;
+            list.appendChild(li);
+          });
+        })
+        .catch(error => {
+          document.getElementById('data-list').innerHTML = "เกิดข้อผิดพลาดในการโหลดข้อมูล";
+          console.error("Error loading data:", error);
+        });
+    }
+
+    // ฟังก์ชันส่งข้อมูลไป Google Sheet
+    function sendData() {
+      const name = document.getElementById('name').value.trim();
+      const phone = document.getElementById('phone').value.trim();
+
+      if (!name || !phone) {
+        alert("กรุณากรอกชื่อและเบอร์โทร");
+        return;
+      }
+
+      const payload = { name, phone };
+
+      fetch(scriptURL, {
+        method: 'POST',
+        body: JSON.stringify(payload),
+        headers: {
+          "Content-Type": "application/json"
+        }
+      })
+      .then(res => res.text())
+      .then(response => {
+        alert("บันทึกข้อมูลสำเร็จ!");
+        document.getElementById('name').value = "";
+        document.getElementById('phone').value = "";
+        loadData(); // โหลดข้อมูลใหม่
+      })
+      .catch(error => {
+        alert("เกิดข้อผิดพลาดในการส่งข้อมูล");
+        console.error("Error sending data:", error);
       });
     }
 
-    setInterval(loadPackages, 3000); // รีเฟรชทุก 3 วิ
-    window.onload = loadPackages;
+    // โหลดข้อมูลเมื่อหน้าเว็บเปิด
+    window.onload = loadData;
   </script>
 </body>
 </html>
-
