@@ -1,0 +1,60 @@
+body {
+  font-family: 'Prompt', sans-serif;
+  background: #f4f4f4;
+  padding: 20px;
+  margin: 0;
+}
+
+header {
+  text-align: center;
+  background: #2c3e50;
+  color: white;
+  padding: 1rem 0;
+  margin-bottom: 1rem;
+}
+
+form {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  justify-content: center;
+}
+
+input, button {
+  padding: 10px;
+  font-size: 1rem;
+}
+
+button {
+  background: #27ae60;
+  color: white;
+  border: none;
+  cursor: pointer;
+}
+
+button:hover {
+  background: #219150;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  background: white;
+  margin-top: 20px;
+}
+
+th, td {
+  padding: 10px;
+  border: 1px solid #ddd;
+  text-align: center;
+}
+
+th {
+  background: #3498db;
+  color: white;
+}
+
+td a {
+  color: #2980b9;
+  text-decoration: none;
+}
