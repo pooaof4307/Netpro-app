@@ -3,187 +3,102 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>โปรเน็ตมือถือ</title>
+<title>ระบบหลังบ้าน - สมาชิก</title>
 <style>
-  body {
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-    background-color: #f2f2f7;
-    margin: 0;
-    padding: 0 20px;
-    color: #1c1c1e;
-    display: flex;
-    flex-direction: column;
-    min-height: 100vh;
-  }
-  header {
-    text-align: center;
-    padding: 30px 0 20px;
-    font-weight: 600;
-    font-size: 1.8rem;
-    color: #007aff;
-  }
-  main {
-    flex: 1;
-    max-width: 480px;
-    margin: 0 auto;
-    width: 100%;
-  }
-  .card {
-    background: white;
-    border-radius: 16px;
-    padding: 24px;
-    box-shadow: 0 4px 16px rgba(0,0,0,0.1);
-    margin-bottom: 20px;
-    transition: box-shadow 0.3s ease;
-  }
-  h2 {
-    margin-top: 0;
-    font-weight: 600;
-    font-size: 1.4rem;
-    color: #1c1c1e;
-    margin-bottom: 12px;
-  }
-  .net-item {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 14px 0;
-    border-bottom: 1px solid #e5e5ea;
-    font-size: 1rem;
-  }
-  .net-item:last-child {
-    border-bottom: none;
-  }
-  .price {
-    font-weight: 700;
-    color: #007aff;
-  }
-  button.subscribe-btn {
-    background-color: #007aff;
-    color: white;
-    border: none;
-    border-radius: 12px;
-    padding: 12px 18px;
-    font-size: 1rem;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-    box-shadow: 0 4px 12px rgba(0, 122, 255, 0.4);
-  }
-  button.subscribe-btn:hover {
-    background-color: #005bb5;
-  }
-  #summary {
-    display:none;
-  }
-  footer {
-    text-align: center;
-    padding: 20px 0;
-    color: #8e8e93;
-    font-size: 0.9rem;
-  }
-  @media (max-width: 480px) {
-    header {
-      font-size: 1.5rem;
-      padding: 30px 0 15px;
-    }
-    .card {
-      padding: 18px;
-    }
-    button.subscribe-btn {
-      width: 100%;
-    }
-  }
-  .logout-btn {
-    background: none;
-    border: none;
-    color: #007aff;
-    cursor: pointer;
-    font-size: 0.9rem;
-    margin-bottom: 15px;
-    text-decoration: underline;
-  }
+  body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; background:#f9f9f9; padding: 20px; }
+  h2 { margin-bottom: 10px; }
+  #summary { margin-bottom: 20px; padding: 10px; background: #fff; border-radius: 8px; box-shadow: 0 0 5px #ccc; }
+  table { width: 100%; border-collapse: collapse; background: #fff; border-radius: 8px; overflow: hidden; box-shadow: 0 0 5px #ccc; }
+  th, td { padding: 12px; text-align: left; border-bottom: 1px solid #eee; }
+  th { background: #007aff; color: white; }
+  button { padding: 6px 12px; background: #ff3b30; color: white; border: none; border-radius: 4px; cursor: pointer; }
+  button:hover { background: #d32f2f; }
 </style>
 </head>
 <body>
-<header>โปรเน็ตมือถือ</header>
-<main>
-  <button class="logout-btn" onclick="logout()">ออกจากระบบ</button>
-  <div class="card" id="net-list">
-    <h2>โปรเน็ตยอดนิยม</h2>
-  </div>
-  <div class="card" id="summary">
-    <h2>สรุปการสมัคร</h2>
-    <p id="summary-text"></p>
-    <p>ค่าบริการ 5 บาท</p>
-    <p><strong>ยอดรวม: <span id="total-price"></span> บาท</strong></p>
-  </div>
-</main>
-<footer>© 2025 สมัครโปรเน็ตมือถือ</footer>
+
+<h2>สรุปสมาชิก</h2>
+<div id="summary">
+  <div>จำนวนสมาชิก: <span id="total-users">0</span></div>
+  <div>สถานะบัญชีสมาชิก:</div>
+  <ul id="status-list"></ul>
+</div>
+
+<h2>ข้อมูลสมาชิก</h2>
+<table id="users-table">
+  <thead>
+    <tr>
+      <th>ชื่อผู้ใช้</th>
+      <th>เบอร์โทร</th>
+      <th>โปรเน็ตที่สมัคร</th>
+      <th>สถานะบัญชี</th>
+      <th>ลบ</th>
+    </tr>
+  </thead>
+  <tbody></tbody>
+</table>
+
 <script>
-  const netList = document.getElementById('net-list');
-  const summaryEl = document.getElementById('summary');
-  const summaryText = document.getElementById('summary-text');
-  const totalPriceEl = document.getElementById('total-price');
+// ตัวอย่างข้อมูลสมาชิกเก็บใน localStorage
+// structure: [{username, phone, net, status}, ...]
+if (!localStorage.getItem('users')) {
+  localStorage.setItem('users', JSON.stringify([
+    { username: "somchai", phone: "0812345678", net: "โปรเน็ต A", status: "Active" },
+    { username: "somsri", phone: "0898765432", net: "โปรเน็ต B", status: "Inactive" }
+  ]));
+}
 
-  // ตรวจสอบล็อกอิน
-  const loggedInUser = localStorage.getItem('loggedInUser');
-  if(!loggedInUser) {
-    alert('กรุณาเข้าสู่ระบบก่อนใช้งาน');
-    window.location.href = 'index.html';
+const usersTableBody = document.querySelector('#users-table tbody');
+const totalUsersSpan = document.getElementById('total-users');
+const statusList = document.getElementById('status-list');
+
+function renderUsers() {
+  let users = JSON.parse(localStorage.getItem('users') || '[]');
+  usersTableBody.innerHTML = '';
+
+  // แสดงจำนวนสมาชิก
+  totalUsersSpan.textContent = users.length;
+
+  // นับสถานะสมาชิกแต่ละประเภท
+  let statusCount = {};
+  users.forEach(user => {
+    statusCount[user.status] = (statusCount[user.status] || 0) + 1;
+  });
+
+  // แสดงสถานะบัญชี
+  statusList.innerHTML = '';
+  for (const [status, count] of Object.entries(statusCount)) {
+    const li = document.createElement('li');
+    li.textContent = `${status}: ${count} คน`;
+    statusList.appendChild(li);
   }
 
-  // โหลดโปรเน็ตจาก localStorage
-  let nets = JSON.parse(localStorage.getItem('netpro-list') || '[]');
-
-  function renderNets() {
-    if(nets.length === 0) {
-      netList.innerHTML += '<p>ยังไม่มีโปรเน็ตในระบบ</p>';
-      return;
-    }
-    nets.forEach((net, i) => {
-      const div = document.createElement('div');
-      div.className = 'net-item';
-      div.innerHTML = `
-        <span>${net.name}</span>
-        <span class="price">${net.price} บาท</span>
-        <button class="subscribe-btn" onclick="subscribe(${i})">สมัคร</button>
-      `;
-      netList.appendChild(div);
+  // แสดงข้อมูลสมาชิกในตาราง
+  users.forEach((user, i) => {
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td>${user.username}</td>
+      <td>${user.phone}</td>
+      <td>${user.net}</td>
+      <td>${user.status}</td>
+      <td><button data-index="${i}">ลบ</button></td>
+    `;
+    tr.querySelector('button').addEventListener('click', () => {
+      deleteUser(i);
     });
-  }
+    usersTableBody.appendChild(tr);
+  });
+}
 
-  let subscriptions = [];
+function deleteUser(index) {
+  let users = JSON.parse(localStorage.getItem('users') || '[]');
+  users.splice(index, 1);
+  localStorage.setItem('users', JSON.stringify(users));
+  renderUsers();
+}
 
-  function subscribe(i) {
-    const net = nets[i];
-    subscriptions.push(net);
-    localStorage.setItem('subscriptions_' + loggedInUser, JSON.stringify(subscriptions));
-    updateSummary();
-    alert(`สมัคร ${net.name} เรียบร้อย!`);
-  }
-
-  function updateSummary() {
-    if(subscriptions.length === 0) {
-      summaryEl.style.display = 'none';
-      return;
-    }
-    summaryText.innerHTML = subscriptions.map(s => `${s.name} - ${s.price} บาท`).join('<br>');
-    let total = subscriptions.reduce((sum, s) => sum + s.price, 0);
-    total += 5; // ค่าบริการ
-    totalPriceEl.textContent = total.toFixed(2);
-    summaryEl.style.display = 'block';
-  }
-
-  function logout() {
-    localStorage.removeItem('loggedInUser');
-    window.location.href = 'index.html';
-  }
-
-  // โหลดการสมัครก่อนหน้า
-  subscriptions = JSON.parse(localStorage.getItem('subscriptions_' + loggedInUser) || '[]');
-
-  renderNets();
-  updateSummary();
+renderUsers();
 </script>
+
 </body>
 </html>
