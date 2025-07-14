@@ -3,21 +3,21 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>หน้าโปรเน็ตของคุณ</title>
+  <title>หน้าโปรเน็ตของลูกค้า</title>
   <style>
     body {
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      font-family: 'Segoe UI', sans-serif;
       margin: 0;
-      background: #f1f5f9;
+      background: #eef2f7;
     }
 
     .container {
       max-width: 480px;
       margin: auto;
-      background: #fff;
+      background: #ffffff;
       min-height: 100vh;
       padding: 20px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.05);
     }
 
     .header {
@@ -33,14 +33,14 @@
 
     .user-info {
       font-size: 15px;
-      line-height: 1.4;
+      line-height: 1.5;
     }
 
     .logout-btn {
       background: #ff3b30;
       border: none;
       color: white;
-      padding: 6px 12px;
+      padding: 8px 14px;
       font-weight: bold;
       border-radius: 8px;
       cursor: pointer;
@@ -48,51 +48,55 @@
 
     h2 {
       font-size: 20px;
+      color: #333;
       margin-bottom: 10px;
     }
 
     .package {
-      background: #e6f0ff;
-      border-radius: 12px;
+      background: #f0f7ff;
+      border-left: 5px solid #007aff;
+      border-radius: 10px;
       padding: 15px;
       margin-bottom: 15px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
     }
 
-    .package .left {
-      font-size: 16px;
+    .package-title {
+      font-size: 17px;
       font-weight: 600;
       color: #007aff;
     }
 
-    .package .price {
-      font-size: 15px;
-      margin-top: 5px;
-      color: #555;
+    .package-detail {
+      font-size: 14px;
+      margin: 5px 0;
+      color: #333;
+    }
+
+    .package-price {
+      color: #2c3e50;
+      font-weight: bold;
     }
 
     .subscribe-btn {
-      background: #007aff;
+      background: #28a745;
       color: white;
-      border: none;
       padding: 8px 12px;
-      border-radius: 10px;
+      border: none;
+      border-radius: 8px;
       cursor: pointer;
-      font-size: 14px;
+      margin-top: 10px;
     }
 
     .subscribe-btn:hover {
-      background: #005bb5;
+      background: #218838;
     }
 
     #alertBox {
       margin-top: 20px;
-      text-align: center;
-      font-size: 15px;
+      font-size: 14px;
       color: green;
+      text-align: center;
     }
   </style>
 </head>
@@ -100,11 +104,11 @@
 
   <div class="container">
     <div class="header">
-      <div class="user-info" id="userInfo">กำลังโหลด...</div>
+      <div class="user-info" id="userInfo">กำลังโหลดข้อมูลลูกค้า...</div>
       <button class="logout-btn" onclick="logout()">ออกจากระบบ</button>
     </div>
 
-    <h2>เลือกโปรเน็ต</h2>
+    <h2>โปรเน็ตที่สามารถสมัครได้</h2>
     <div id="packages"></div>
     <div id="alertBox"></div>
   </div>
@@ -121,7 +125,12 @@
       alert("กรุณาเข้าสู่ระบบก่อนใช้งานหน้านี้");
       window.location.href = "login.html";
     } else {
-      userInfo.innerHTML = `คุณ: ${user.name || user.phone}<br>เบอร์: ${user.phone}<br>สถานะ: ${user.status || "ปกติ"}`;
+      const statusText = user.status === "active" ? "🟢 สมาชิกปกติ" : "🔴 ถูกระงับการใช้งาน";
+      userInfo.innerHTML = `
+        <strong>คุณ:</strong> ${user.name || user.phone}<br>
+        <strong>เบอร์:</strong> ${user.phone}<br>
+        <strong>สถานะ:</strong> ${statusText}
+      `;
     }
 
     function renderPackages() {
@@ -130,10 +139,9 @@
         const div = document.createElement("div");
         div.className = "package";
         div.innerHTML = `
-          <div class="left">
-            ${pkg.name}
-            <div class="price">${pkg.price} บาท</div>
-          </div>
+          <div class="package-title">${pkg.name}</div>
+          <div class="package-detail">ราคา: <span class="package-price">${pkg.price} บาท</span></div>
+          <div class="package-detail">${pkg.description || ''}</div>
           <button class="subscribe-btn" onclick="subscribe(${index})">สมัครโปร</button>
         `;
         packagesDiv.appendChild(div);
