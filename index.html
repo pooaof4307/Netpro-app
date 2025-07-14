@@ -1,152 +1,152 @@
-<!DOCTYPE html>
-<html lang="th">
+<!DOCTYPE html><html lang="th">
 <head>
   <meta charset="UTF-8">
-  <title>หน้าแรก - โปรเน็ตมือถือ</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>หน้าแรก</title>
   <style>
     body {
       margin: 0;
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", sans-serif;
-      background: #f9f9f9;
-      color: #1c1c1e;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background-color: #f9fafb;
+      color: #333;
     }
-
-    .topbar {
-      background: #ffffffcc;
-      backdrop-filter: blur(10px);
+    header {
+      background: #ffffff;
+      padding: 20px;
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding: 12px 16px;
-      border-bottom: 1px solid #e0e0e0;
+      border-bottom: 1px solid #ddd;
       position: sticky;
       top: 0;
-      z-index: 10;
+      z-index: 999;
     }
-
-    .topbar .actions button {
-      margin-left: 10px;
-      padding: 6px 14px;
-      border: none;
-      border-radius: 8px;
+    .logo {
+      font-size: 1.4rem;
+      font-weight: bold;
+      color: #007aff;
+    }
+    .nav-buttons button {
       background: #007aff;
-      color: white;
-      font-size: 14px;
+      color: #fff;
+      border: none;
+      border-radius: 10px;
+      padding: 10px 16px;
+      margin-left: 10px;
+      font-size: 1rem;
       cursor: pointer;
-      transition: background 0.2s;
     }
-
-    .topbar .actions button:hover {
-      background: #0051c6;
-    }
-
-    .status-bar {
-      font-size: 14px;
-      color: #444;
-    }
-
     .container {
       padding: 20px;
+      max-width: 1000px;
+      margin: auto;
     }
-
-    .card {
+    .filter-section {
+      margin-bottom: 20px;
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    .network-button {
+      padding: 10px 16px;
+      border-radius: 12px;
+      border: 1px solid #007aff;
+      background: #fff;
+      color: #007aff;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+    .network-button.active, .network-button:hover {
+      background: #007aff;
+      color: white;
+    }
+    .package-card {
       background: white;
       border-radius: 16px;
-      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
-      padding: 16px;
-      margin-bottom: 16px;
-      transition: transform 0.2s ease;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+      padding: 20px;
+      margin-bottom: 20px;
+      transition: transform 0.3s ease;
     }
-
-    .card:hover {
-      transform: scale(1.01);
+    .package-card:hover {
+      transform: translateY(-4px);
     }
-
-    .card h3 {
-      margin: 0 0 8px;
-      font-size: 18px;
+    .package-title {
+      font-size: 1.2rem;
+      font-weight: 600;
+      color: #007aff;
+      margin-bottom: 6px;
     }
-
-    .card .meta {
-      font-size: 14px;
-      color: #666;
-    }
-
-    .logout-btn {
-      background: #ff3b30;
-    }
-
-    .logout-btn:hover {
-      background: #c62828;
+    .package-info {
+      margin-top: 6px;
+      color: #555;
     }
   </style>
 </head>
 <body>
-  <div class="topbar">
-    <div class="status-bar" id="userStatus">
-      กำลังโหลดข้อมูล...
+  <header>
+    <div class="logo">โปรเน็ตมือถือ</div>
+    <div class="nav-buttons" id="navButtons">
+      <button onclick="location.href='login.html'">เข้าสู่ระบบ</button>
+      <button onclick="location.href='register.html'">สมัครสมาชิก</button>
+      <button onclick="location.href='admin.html'">เข้าสู่ระบบแอดมิน</button>
     </div>
-    <div class="actions" id="actionButtons">
-      <!-- ปุ่มจะแสดงผ่าน JS -->
-    </div>
-  </div>
+  </header>  <div class="container">
+    <div class="filter-section" id="networkFilters">
+      <button class="network-button active" data-network="all">ทั้งหมด</button>
+      <button class="network-button" data-network="ais">AIS</button>
+      <button class="network-button" data-network="dtac">DTAC</button>
+      <button class="network-button" data-network="true">TRUE</button>
+    </div><div id="packageList"></div>
 
-  <div class="container" id="packageList">
-    <!-- การ์ดโปรเน็ตจะถูกเพิ่มโดย JS -->
-  </div>
+  </div>  <script>
+    let packages = JSON.parse(localStorage.getItem('packages') || '[]');
+    const user = JSON.parse(localStorage.getItem('loggedInUser'));
 
-  <script>
-    function updateUserStatus() {
-      const user = JSON.parse(localStorage.getItem('currentUser'));
-      const statusEl = document.getElementById('userStatus');
-      const actionsEl = document.getElementById('actionButtons');
-
-      actionsEl.innerHTML = '';
-
-      if (user) {
-        statusEl.innerText = `👤 ${user.name} | 📱 ${user.phone}`;
-        const logoutBtn = document.createElement('button');
-        logoutBtn.innerText = 'ออกจากระบบ';
-        logoutBtn.className = 'logout-btn';
-        logoutBtn.onclick = () => {
-          localStorage.removeItem('currentUser');
-          location.reload();
-        };
-        actionsEl.appendChild(logoutBtn);
-      } else {
-        statusEl.innerText = 'ยังไม่ได้เข้าสู่ระบบ';
-        ['เข้าสู่ระบบ', 'สมัครสมาชิก', 'เข้าสู่ระบบแอดมิน'].forEach((text, i) => {
-          const btn = document.createElement('button');
-          btn.innerText = text;
-          if (text === 'เข้าสู่ระบบ') btn.onclick = () => location.href = 'login.html';
-          if (text === 'สมัครสมาชิก') btn.onclick = () => location.href = 'register.html';
-          if (text === 'เข้าสู่ระบบแอดมิน') btn.onclick = () => location.href = 'admin-login.html';
-          actionsEl.appendChild(btn);
-        });
-      }
+    const nav = document.getElementById('navButtons');
+    if (user) {
+      nav.innerHTML = `<span>👤 ${user.name} (${user.phone})</span>
+        <button onclick="logout()">ออกจากระบบ</button>`;
     }
 
-    function loadPackages() {
-      const listEl = document.getElementById('packageList');
-      const packages = JSON.parse(localStorage.getItem('packages') || '[]');
+    function logout() {
+      localStorage.removeItem('loggedInUser');
+      location.reload();
+    }
 
+    const listEl = document.getElementById('packageList');
+    const filters = document.querySelectorAll('.network-button');
+
+    filters.forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelector('.network-button.active').classList.remove('active');
+        btn.classList.add('active');
+        renderPackages(btn.dataset.network);
+      });
+    });
+
+    function renderPackages(filter = 'all') {
       listEl.innerHTML = '';
-      packages.forEach(pkg => {
-        const card = document.createElement('div');
-        card.className = 'card';
-        card.innerHTML = `
-          <h3>${pkg.name}</h3>
-          <div class="meta">📡 เครือข่าย: ${pkg.network || '-'} | 💰 ราคา: ${pkg.price || '-'} | 🕓 ${pkg.duration || 'ไม่ระบุ'}</div>
-          <div style="margin-top: 8px;">${pkg.description || ''}</div>
+      packages.filter(p => filter === 'all' || (p.network && p.network.toLowerCase() === filter)).forEach(pkg => {
+        listEl.innerHTML += `
+          <div class="package-card">
+            <div class="package-title">${pkg.name}</div>
+            <div class="package-info">เครือข่าย: ${pkg.network || '-'}</div>
+            <div class="package-info">ราคา: ${pkg.price} บาท</div>
+            <div class="package-info">รายละเอียด: ${pkg.description || '-'}</div>
+          </div>
         `;
-        listEl.appendChild(card);
       });
     }
 
-    updateUserStatus();
-    loadPackages();
-    setInterval(loadPackages, 3000);
-  </script>
-</body>
+    function autoRefresh() {
+      packages = JSON.parse(localStorage.getItem('packages') || '[]');
+      const active = document.querySelector('.network-button.active');
+      renderPackages(active ? active.dataset.network : 'all');
+    }
+
+    renderPackages();
+    setInterval(autoRefresh, 3000);
+  </script></body>
 </html>
