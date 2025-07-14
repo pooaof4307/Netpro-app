@@ -3,122 +3,179 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>โปรเน็ตมือถือ - เลือกสมัครง่าย</title>
+  <title>โปรเน็ตมือถือสุดหรู | เลือกโปรเน็ตที่ใช่คุณ</title>
   <style>
+    @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Roboto&display=swap');
+
+    /* Reset */
+    * {
+      margin: 0; padding: 0; box-sizing: border-box;
+    }
+
     body {
-      font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-      background: #f9f9f9;
-      margin: 0;
-      padding: 0;
-      color: #333;
-    }
-    header {
-      background: #0078d7;
-      color: white;
-      padding: 1rem 2rem;
+      font-family: 'Roboto', sans-serif;
+      background: #121212;
+      color: #f3e9d2;
+      min-height: 100vh;
       display: flex;
+      flex-direction: column;
       align-items: center;
+      padding: 2rem 1rem;
+    }
+
+    header {
+      width: 100%;
+      max-width: 1200px;
+      margin-bottom: 2rem;
+      display: flex;
       justify-content: space-between;
-      box-shadow: 0 2px 5px rgb(0 0 0 / 0.1);
+      align-items: center;
+      border-bottom: 1px solid #bfa76f;
+      padding-bottom: 1rem;
     }
+
     header h1 {
-      margin: 0;
-      font-size: 1.5rem;
+      font-family: 'Playfair Display', serif;
+      font-size: 2.5rem;
+      color: #d4af37; /* ทอง */
+      letter-spacing: 2px;
+      user-select: none;
     }
+
     main {
-      max-width: 900px;
-      margin: 2rem auto;
-      padding: 0 1rem;
+      width: 100%;
+      max-width: 1200px;
     }
+
     #searchBar {
       width: 100%;
-      padding: 0.5rem 1rem;
-      font-size: 1rem;
-      border: 2px solid #0078d7;
-      border-radius: 5px;
-      margin-bottom: 1.5rem;
-      box-sizing: border-box;
+      padding: 12px 20px;
+      font-size: 1.2rem;
+      border: 2px solid #d4af37;
+      border-radius: 30px;
+      background: transparent;
+      color: #f3e9d2;
+      margin-bottom: 2rem;
+      outline: none;
+      transition: 0.3s border-color ease;
+      font-weight: 600;
     }
+    #searchBar::placeholder {
+      color: #d4af37aa;
+      font-style: italic;
+    }
+    #searchBar:focus {
+      border-color: #f3e9d2;
+    }
+
     .package-list {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-      gap: 1.5rem;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 2rem;
     }
+
     .package-card {
-      background: white;
-      border-radius: 10px;
-      box-shadow: 0 3px 8px rgb(0 0 0 / 0.15);
-      padding: 1.25rem;
-      transition: transform 0.2s ease;
+      background: #1f1f1f;
+      border-radius: 16px;
+      padding: 1.8rem 2rem;
+      box-shadow: 0 4px 15px rgba(212, 175, 55, 0.5);
       display: flex;
       flex-direction: column;
       justify-content: space-between;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      cursor: pointer;
     }
     .package-card:hover {
-      transform: translateY(-5px);
-      box-shadow: 0 6px 15px rgb(0 0 0 / 0.2);
+      transform: translateY(-8px);
+      box-shadow: 0 10px 25px rgba(212, 175, 55, 0.8);
     }
+
     .network-name {
-      font-weight: 700;
-      font-size: 1.2rem;
+      font-family: 'Playfair Display', serif;
+      font-size: 1.8rem;
+      color: #d4af37;
       margin-bottom: 0.5rem;
-      color: #0078d7;
+      user-select: none;
     }
+
     .price {
-      font-size: 1.5rem;
       font-weight: 700;
-      color: #e03e3e;
-      margin-bottom: 0.5rem;
+      font-size: 2.3rem;
+      color: #f3e9d2;
+      margin-bottom: 0.8rem;
+      letter-spacing: 1px;
     }
+
     .details {
       font-size: 1rem;
-      margin-bottom: 1rem;
-      line-height: 1.3;
-      color: #555;
+      line-height: 1.5;
+      color: #cfc7ad;
+      margin-bottom: 1.4rem;
+      user-select: text;
+      min-height: 90px;
     }
+
     .btn-apply {
-      background: #0078d7;
-      color: white;
+      align-self: flex-start;
+      background: #d4af37;
+      color: #121212;
+      padding: 12px 28px;
+      border-radius: 30px;
+      font-weight: 700;
+      font-size: 1.1rem;
       text-decoration: none;
-      padding: 0.6rem 1rem;
-      border-radius: 6px;
-      text-align: center;
-      font-weight: 600;
-      transition: background-color 0.3s ease;
+      transition: background-color 0.25s ease;
       user-select: none;
     }
     .btn-apply:hover {
-      background: #005a9e;
+      background: #f0d473;
+      color: #121212;
     }
+
     footer {
-      text-align: center;
-      padding: 1rem 0;
-      color: #666;
+      margin-top: 4rem;
       font-size: 0.9rem;
-      border-top: 1px solid #ddd;
-      margin-top: 3rem;
+      color: #bfa76fcc;
+      user-select: none;
+      text-align: center;
+    }
+
+    @media (max-width: 480px) {
+      header h1 {
+        font-size: 1.8rem;
+      }
+      .package-card {
+        padding: 1.2rem 1.5rem;
+      }
+      .network-name {
+        font-size: 1.3rem;
+      }
+      .price {
+        font-size: 1.7rem;
+      }
+      .btn-apply {
+        padding: 10px 22px;
+        font-size: 1rem;
+      }
     }
   </style>
 </head>
 <body>
 
 <header>
-  <h1>โปรเน็ตมือถือ</h1>
-  <nav>
-    <!-- เพิ่มเมนูอื่น ๆ ได้ถ้าต้องการ -->
-  </nav>
+  <h1>โปรเน็ตมือถือพรีเมียม</h1>
 </header>
 
 <main>
-  <input type="text" id="searchBar" placeholder="ค้นหาเครือข่ายหรือราคา..." />
+  <input type="search" id="searchBar" placeholder="ค้นหาโปรเน็ต เช่น 5GB, AIS, 299 บาท..." />
 
-  <div class="package-list" id="packageList">
-    <!-- โปรเน็ตจะถูกโหลดและแสดงที่นี่ -->
-  </div>
+  <section class="package-list" id="packageList">
+    <!-- รายการโปรเน็ตจะแสดงที่นี่ -->
+  </section>
 </main>
 
 <footer>
-  &copy; 2025 โปรเน็ตมือถือ | ติดต่อสอบถามได้ที่เบอร์ 02-123-4567
+  &copy; 2025 โปรเน็ตมือถือพรีเมียม | ติดต่อ: 02-123-4567
 </footer>
 
 <script>
@@ -129,39 +186,35 @@
       const res = await fetch(scriptURL);
       if (!res.ok) throw new Error('ไม่สามารถโหลดข้อมูลได้');
       const data = await res.json();
-
       return data.records || [];
-    } catch (error) {
-      console.error(error);
-      alert('เกิดข้อผิดพลาดในการโหลดข้อมูลโปรเน็ต');
+    } catch (err) {
+      console.error(err);
+      alert('เกิดข้อผิดพลาดในการโหลดโปรเน็ต');
       return [];
     }
   }
 
   function createPackageCard(pkg) {
-    const card = document.createElement('div');
-    card.className = 'package-card';
-
-    card.innerHTML = `
-      <div class="network-name">${pkg.network}</div>
-      <div class="price">${pkg.price} บาท</div>
-      <div class="details">
-        ความเร็ว: ${pkg.speed}<br />
-        ระยะเวลา: ${pkg.duration}<br />
-        รายละเอียด: ${pkg.description || '-'}
-      </div>
-      <a href="${pkg.link}" target="_blank" class="btn-apply" rel="noopener noreferrer">สมัคร</a>
+    return `
+      <article class="package-card" tabindex="0" role="region" aria-label="โปรเน็ต ${pkg.network} ราคา ${pkg.price} บาท">
+        <div class="network-name">${pkg.network}</div>
+        <div class="price">${pkg.price} บาท</div>
+        <div class="details">
+          <strong>ความเร็ว:</strong> ${pkg.speed}<br>
+          <strong>ระยะเวลา:</strong> ${pkg.duration}<br>
+          <strong>รายละเอียด:</strong> ${pkg.description || '-'}
+        </div>
+        <a href="${pkg.link || '#'}" target="_blank" rel="noopener noreferrer" class="btn-apply">สมัครโปรนี้</a>
+      </article>
     `;
-
-    return card;
   }
 
   function filterPackages(packages, keyword) {
     if (!keyword) return packages;
     keyword = keyword.toLowerCase();
-    return packages.filter(pkg =>
+    return packages.filter(pkg => 
       pkg.network.toLowerCase().includes(keyword) ||
-      pkg.price.toLowerCase().includes(keyword) ||
+      pkg.price.toString().toLowerCase().includes(keyword) ||
       pkg.speed.toLowerCase().includes(keyword) ||
       pkg.duration.toLowerCase().includes(keyword) ||
       (pkg.description && pkg.description.toLowerCase().includes(keyword))
@@ -174,25 +227,22 @@
     const searchBar = document.getElementById('searchBar');
 
     function renderList(filterKeyword = '') {
-      packageList.innerHTML = '';
       const filtered = filterPackages(packages, filterKeyword);
       if (filtered.length === 0) {
-        packageList.innerHTML = '<p>ไม่พบโปรเน็ตที่ค้นหา</p>';
+        packageList.innerHTML = '<p style="color:#d4af37; font-style: italic; text-align:center;">ไม่พบโปรเน็ตที่ตรงกับคำค้นหา</p>';
         return;
       }
-      filtered.forEach(pkg => {
-        packageList.appendChild(createPackageCard(pkg));
-      });
+      packageList.innerHTML = filtered.map(createPackageCard).join('');
     }
 
     renderList();
 
-    searchBar.addEventListener('input', (e) => {
+    searchBar.addEventListener('input', e => {
       renderList(e.target.value);
     });
   }
 
-  init();
+  window.onload = init;
 </script>
 
 </body>
