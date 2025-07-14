@@ -1,19 +1,84 @@
 <!DOCTYPE html>
 <html lang="th">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>โปรเน็ต</title>
-  <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>เพิ่มโปรเน็ต</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 400px;
+      margin: 20px auto;
+      padding: 10px;
+    }
+    input, button {
+      width: 100%;
+      margin: 6px 0;
+      padding: 10px;
+      font-size: 16px;
+    }
+    button {
+      background-color: #007bff;
+      border: none;
+      color: white;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #0056b3;
+    }
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+    a.admin-link {
+      text-decoration: none;
+      color: #007bff;
+      font-weight: bold;
+    }
+  </style>
 </head>
 <body>
   <header>
-    <h1>รวมโปรเน็ตสุดคุ้ม</h1>
-    <a href="admin.html" class="admin-link">เพิ่มโปร</a>
+    <h1>เพิ่มโปรเน็ตใหม่</h1>
+    <a href="index.html" class="admin-link">ดูโปรทั้งหมด</a>
   </header>
   <main>
-    <div id="pro-list" class="card-container">กำลังโหลด...</div>
+    <form id="addForm">
+      <input type="text" id="network" name="network" placeholder="เครือข่าย (AIS)" required />
+      <input type="text" id="price" name="price" placeholder="ราคา (99 บาท)" required />
+      <input type="text" id="speed" name="speed" placeholder="ความเร็ว (1Mbps)" required />
+      <input type="text" id="duration" name="duration" placeholder="ระยะเวลา (7 วัน)" required />
+      <input type="text" id="description" name="description" placeholder="รายละเอียดเพิ่มเติม" required />
+      <input type="text" id="link" name="link" placeholder="ลิงก์สมัคร" required />
+      <button type="submit">บันทึกโปรเน็ต</button>
+    </form>
   </main>
-  <script src="script.js"></script>
+
+  <script>
+    document.getElementById('addForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+      const data = {
+        network: this.network.value,
+        price: this.price.value,
+        speed: this.speed.value,
+        duration: this.duration.value,
+        description: this.description.value,
+        link: this.link.value
+      };
+      fetch("https://script.google.com/macros/s/AKfycbyuSrt-wx_S3kmrFrFmgMDVU0nMz7WyFF1Is56t6r3YzpesSVRhk81VJVwHmaww4qpFBA/exec", {
+        method: "POST",
+        body: JSON.stringify(data),
+        headers: { "Content-Type": "application/json" }
+      })
+      .then(res => res.text())
+      .then(() => {
+        alert("เพิ่มโปรเน็ตเรียบร้อยแล้ว");
+        this.reset();
+      })
+      .catch(() => alert("เกิดข้อผิดพลาด"));
+    });
+  </script>
 </body>
 </html>
