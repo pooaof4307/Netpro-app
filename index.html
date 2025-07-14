@@ -3,83 +3,57 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>โปรเน็ตทั้งหมด</title>
+  <title>เว็บไซต์ปิดปรับปรุง</title>
   <style>
     body {
+      margin: 0;
       font-family: 'Segoe UI', sans-serif;
-      background: #f8f9fa;
-      padding: 20px;
-      color: #333;
-    }
-    h1 {
+      background: #f4f6f9;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
       text-align: center;
+      padding: 20px;
+    }
+
+    .container {
+      max-width: 600px;
+    }
+
+    .container img {
+      width: 100%;
+      max-width: 300px;
+      margin-bottom: 20px;
+    }
+
+    h1 {
+      font-size: 2rem;
       color: #2c3e50;
     }
-    #loading {
-      text-align: center;
-      padding: 1rem;
-      font-size: 1.2rem;
-      color: #007bff;
+
+    p {
+      color: #555;
+      font-size: 1rem;
+      margin-top: 10px;
     }
-    .package {
-      background: #fff;
-      padding: 1rem;
-      border-radius: 10px;
-      margin-bottom: 1rem;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-    }
-    .package h3 {
-      margin: 0 0 5px;
-      color: #007bff;
-    }
-    .package p {
-      margin: 2px 0;
+
+    .footer {
+      margin-top: 30px;
+      font-size: 0.9rem;
+      color: #aaa;
     }
   </style>
 </head>
 <body>
 
-  <h1>รายการโปรเน็ต</h1>
-  <div id="loading">⏳ กำลังโหลดข้อมูล...</div>
-  <div id="packageList"></div>
-
-  <script>
-    const scriptURL = 'https://script.google.com/macros/s/AKfycbxuFiHXVxbcDiw4Y0q0cLFPhFEG5etsgQ61gmGiDjOyurNAhE-Rl3AIu7kPVP_jsJnqWg/exec';
-    const list = document.getElementById('packageList');
-    const loading = document.getElementById('loading');
-
-    async function loadPackages() {
-      try {
-        const res = await fetch(scriptURL);
-        const data = await res.json();
-        const records = data.records || data;
-
-        loading.style.display = 'none'; // ซ่อนข้อความโหลด
-
-        if (!records.length) {
-          list.innerHTML = '<p>ไม่มีข้อมูลโปรเน็ตในระบบ</p>';
-          return;
-        }
-
-        records.forEach(pkg => {
-          const item = document.createElement('div');
-          item.className = 'package';
-          item.innerHTML = `
-            <h3>${pkg.network || 'ไม่ระบุเครือข่าย'} - ${pkg.price || '0'} บาท</h3>
-            <p>ความเร็ว: ${pkg.speed || '-'}</p>
-            <p>ระยะเวลา: ${pkg.duration || '-'}</p>
-            <p>รายละเอียด: ${pkg.description || '-'}</p>
-          `;
-          list.appendChild(item);
-        });
-      } catch (err) {
-        loading.textContent = '❌ โหลดข้อมูลไม่สำเร็จ';
-        console.error(err);
-      }
-    }
-
-    loadPackages();
-  </script>
+  <div class="container">
+    <!-- ✅ เปลี่ยนภาพ URL ได้ตามต้องการ -->
+    <img src="https://cdn-icons-png.flaticon.com/512/5958/5958794.png" alt="Under Maintenance">
+    <h1>เว็บไซต์กำลังปรับปรุงระบบ</h1>
+    <p>เรากำลังอัปเดตระบบให้ดียิ่งขึ้น กรุณากลับมาใหม่อีกครั้งในภายหลัง<br>ขออภัยในความไม่สะดวก</p>
+    <div class="footer">© 2025 โปรเน็ตของคุณ | All rights reserved</div>
+  </div>
 
 </body>
 </html>
