@@ -1,19 +1,127 @@
 <!DOCTYPE html>
 <html lang="th">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ล็อกอิน</title>
-  <link rel="stylesheet" href="css/style.css">
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>เข้าสู่ระบบสมาชิก</title>
+<style>
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; padding: 0;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+    color: #333;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  .container {
+    width: 360px;
+    background: #fff;
+    border-radius: 16px;
+    padding: 30px 25px;
+    box-shadow: 0 15px 30px rgba(0,0,0,0.1);
+  }
+  h1 {
+    text-align: center;
+    color: #007aff;
+    margin-bottom: 25px;
+    font-weight: 700;
+    font-size: 28px;
+  }
+  label {
+    display: block;
+    margin-bottom: 6px;
+    font-weight: 600;
+    color: #005bb5;
+  }
+  input[type="text"],
+  input[type="password"] {
+    width: 100%;
+    padding: 12px 15px;
+    margin-bottom: 20px;
+    border: 2px solid #007aff;
+    border-radius: 12px;
+    font-size: 16px;
+    transition: border-color 0.3s ease;
+  }
+  input[type="text"]:focus,
+  input[type="password"]:focus {
+    border-color: #34c759;
+    outline: none;
+  }
+  .btn {
+    width: 100%;
+    background: #007aff;
+    color: #fff;
+    border: none;
+    padding: 14px 0;
+    border-radius: 12px;
+    font-size: 18px;
+    font-weight: 700;
+    cursor: pointer;
+    box-shadow: 0 6px 12px rgba(0, 122, 255, 0.4);
+    transition: background 0.3s ease;
+  }
+  .btn:hover {
+    background: #005bb5;
+  }
+  #message {
+    margin-top: 15px;
+    font-weight: 600;
+    font-size: 16px;
+    text-align: center;
+    color: red;
+  }
+</style>
 </head>
 <body>
-  <div class="container">
-    <h2>เข้าสู่ระบบหลังบ้าน</h2>
-    <input type="text" id="username" placeholder="ชื่อผู้ใช้">
-    <input type="password" id="password" placeholder="รหัสผ่าน">
-    <button onclick="login()">เข้าสู่ระบบ</button>
-    <p id="error" style="color:red;"></p>
-  </div>
-  <script src="login.js"></script>
+
+<div class="container">
+  <h1>เข้าสู่ระบบสมาชิก</h1>
+  <form id="loginForm" autocomplete="off">
+    <label for="phone">เบอร์โทรศัพท์</label>
+    <input type="text" id="phone" name="phone" placeholder="เช่น 0812345678" required pattern="[0-9]{9,10}" title="กรุณากรอกเบอร์โทรศัพท์ให้ถูกต้อง" />
+    
+    <label for="password">รหัสผ่าน</label>
+    <input type="password" id="password" name="password" placeholder="รหัสผ่าน" required minlength="4" />
+    
+    <button type="submit" class="btn">เข้าสู่ระบบ</button>
+  </form>
+  <div id="message"></div>
+</div>
+
+<script>
+  const loginForm = document.getElementById('loginForm');
+  const messageEl = document.getElementById('message');
+
+  loginForm.addEventListener('submit', e => {
+    e.preventDefault();
+    const phone = loginForm.phone.value.trim();
+    const password = loginForm.password.value;
+
+    let users = JSON.parse(localStorage.getItem('users') || '[]');
+    const user = users.find(u => u.phone === phone && u.password === password);
+
+    if(user) {
+      if(user.status !== 'Active') {
+        messageEl.textContent = 'บัญชีของคุณถูกระงับ ไม่สามารถเข้าสู่ระบบได้';
+        return;
+      }
+      // บันทึกสถานะผู้ใช้ที่ล็อกอิน
+      localStorage.setItem('currentUser', JSON.stringify(user));
+      messageEl.style.color = 'green';
+      messageEl.textContent = 'เข้าสู่ระบบสำเร็จ กำลังพาไป...';
+      setTimeout(() => {
+        window.location.href = 'customer.html';
+      }, 1200);
+    } else {
+      messageEl.style.color = 'red';
+      messageEl.textContent = 'เบอร์โทรศัพท์ หรือ รหัสผ่านไม่ถูกต้อง';
+    }
+  });
+</script>
+
 </body>
 </html>
