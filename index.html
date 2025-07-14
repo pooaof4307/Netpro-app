@@ -86,7 +86,7 @@
 </div>
 
 <script>
-  const currentUser = JSON.parse(localStorage.getItem("currentUser"));
+  // โหลดข้อมูลโปรเน็ตจาก LocalStorage
   const plans = JSON.parse(localStorage.getItem("netPlans") || "[]");
   const plansContainer = document.getElementById("plans");
 
@@ -106,14 +106,15 @@
     });
   }
 
+  // เช็กก่อนสมัครโปรว่าเป็นสมาชิกแล้วหรือยัง
   function subscribe(planName) {
     const currentUser = JSON.parse(localStorage.getItem("currentUser"));
     if (!currentUser) {
-      alert("กรุณาสมัครสมาชิกก่อนใช้งาน");
+      alert("กรุณาสมัครสมาชิกก่อนสมัครโปรเน็ต");
       window.location.href = "register.html";
     } else {
-      alert(`สมัครโปร: ${planName} สำเร็จแล้ว`);
-      // คุณสามารถเพิ่มระบบบันทึกประวัติไว้ที่ localStorage ได้
+      alert(`คุณสมัครโปร ${planName} เรียบร้อยแล้ว`);
+      // เพิ่มระบบบันทึกหรือการชำระเงินที่นี่ได้ในอนาคต
     }
   }
 </script>
