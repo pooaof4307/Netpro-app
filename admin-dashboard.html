@@ -1,3 +1,141 @@
+
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>แดชบอร์ดแอดมิน</title>
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    /* Modal Styles */
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 999;
+      left: 0; top: 0;
+      width: 100%; height: 100%;
+      overflow: auto;
+      background-color: rgba(0,0,0,0.5);
+    }
+    .modal-content {
+      background: white;
+      margin: 5% auto;
+      padding: 20px;
+      border-radius: 16px;
+      width: 90%;
+      max-width: 600px;
+    }
+    .close {
+      float: right;
+      font-size: 24px;
+      cursor: pointer;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 10px;
+    }
+    th, td {
+      padding: 8px;
+      border: 1px solid #ddd;
+    }
+    .admin-actions {
+      margin-top: 10px;
+      display: flex;
+      gap: 10px;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1>แดชบอร์ดแอดมิน</h1>
+    <div class="admin-actions">
+      <button onclick="openMemberModal()">จัดการสมาชิก</button>
+      <!-- เพิ่มปุ่มอื่น ๆ เช่น ออกจากระบบ -->
+    </div>
+  </header>
+
+  <main>
+    <!-- ส่วนของการจัดการโปรเน็ตจะอยู่ตรงนี้ตามเดิม -->
+    <p>โปรเน็ตทั้งหมด...</p>
+    <!-- ... -->
+  </main>
+
+  <!-- 🧾 Modal สำหรับสมาชิก -->
+  <div id="memberModal" class="modal">
+    <div class="modal-content">
+      <span class="close" onclick="closeMemberModal()">&times;</span>
+      <h2>ข้อมูลสมาชิก</h2>
+      <table id="memberTable">
+        <thead>
+          <tr>
+            <th>เบอร์</th>
+            <th>ชื่อเล่น</th>
+            <th>รหัสผ่าน</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </div>
+
+  <script>
+    function openMemberModal() {
+      document.getElementById("memberModal").style.display = "block";
+      fetchMembers();
+    }
+
+    function closeMemberModal() {
+      document.getElementById("memberModal").style.display = "none";
+    }
+
+    async function fetchMembers() {
+      const url = "https://script.google.com/macros/s/AKfycbxByM_dY1tUksZ5uZlUsMrMypbZ7ienWpg2boFl32UzvcjDE38l5BChJKJEAtZaDAQ/exec";
+      const tableBody = document.querySelector("#memberTable tbody");
+      tableBody.innerHTML = "<tr><td colspan='3'>กำลังโหลด...</td></tr>";
+
+      try {
+        const res = await fetch(url);
+        const data = await res.json();
+        tableBody.innerHTML = "";
+
+        if (data && data.length > 0) {
+          data.forEach(m => {
+            const row = document.createElement("tr");
+            row.innerHTML = `
+              <td>${m.phone}</td>
+              <td>${m.nickname}</td>
+              <td>${m.password}</td>
+            `;
+            tableBody.appendChild(row);
+          });
+        } else {
+          tableBody.innerHTML = "<tr><td colspan='3'>ไม่พบข้อมูล</td></tr>";
+        }
+      } catch (err) {
+        tableBody.innerHTML = "<tr><td colspan='3'>เกิดข้อผิดพลาดในการโหลดข้อมูล</td></tr>";
+      }
+    }
+
+    // ปิด modal เมื่อคลิกข้างนอก
+    window.onclick = function(event) {
+      const modal = document.getElementById("memberModal");
+      if (event.target === modal) {
+        closeMemberModal();
+      }
+    }
+  </script>
+
+</body>
+</html>
+
+
+---
+
+📌 
+
+
 <!DOCTYPE html>
 <html lang="th">
 <head>
