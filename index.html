@@ -2,17 +2,165 @@
 <html lang="th">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>สมัครโปรเน็ตมือถือ</title>
-  <link rel="stylesheet" href="css/style.css" />
+  <style>
+    /* โทนสีเรียบง่ายแบบ iOS */
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background-color: #f2f2f7;
+      margin: 0;
+      padding: 0 20px;
+      color: #1c1c1e;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+
+    header {
+      text-align: center;
+      padding: 40px 0 20px;
+      font-weight: 600;
+      font-size: 1.8rem;
+      color: #007aff;
+    }
+
+    main {
+      flex: 1;
+      max-width: 480px;
+      margin: 0 auto;
+      width: 100%;
+    }
+
+    .card {
+      background: white;
+      border-radius: 16px;
+      padding: 24px;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+      margin-bottom: 20px;
+      transition: box-shadow 0.3s ease;
+    }
+    .card:hover {
+      box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+    }
+
+    h2 {
+      margin-top: 0;
+      font-weight: 600;
+      font-size: 1.4rem;
+      color: #1c1c1e;
+      margin-bottom: 12px;
+    }
+
+    .net-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 14px 0;
+      border-bottom: 1px solid #e5e5ea;
+      font-size: 1rem;
+    }
+
+    .net-item:last-child {
+      border-bottom: none;
+    }
+
+    .price {
+      font-weight: 700;
+      color: #007aff;
+    }
+
+    button.subscribe-btn {
+      background-color: #007aff;
+      color: white;
+      border: none;
+      border-radius: 12px;
+      padding: 12px 18px;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+      box-shadow: 0 4px 12px rgba(0, 122, 255, 0.4);
+    }
+    button.subscribe-btn:hover {
+      background-color: #005bb5;
+    }
+
+    footer {
+      text-align: center;
+      padding: 20px 0;
+      color: #8e8e93;
+      font-size: 0.9rem;
+    }
+
+    @media (max-width: 480px) {
+      header {
+        font-size: 1.5rem;
+        padding: 30px 0 15px;
+      }
+      .card {
+        padding: 18px;
+      }
+      button.subscribe-btn {
+        width: 100%;
+      }
+    }
+  </style>
 </head>
 <body>
-  <div class="container">
-    <h1>สมัครโปรเน็ต</h1>
-    <div id="plans"></div>
-    <div class="total">ยอดรวม: <span id="totalPrice">0</span> บาท</div>
-    <a href="login.html"><button class="admin-btn">เข้าสู่หลังบ้าน</button></a>
-  </div>
-  <script src="js/main.js"></script>
+  <header>สมัครโปรเน็ตมือถือ</header>
+  <main>
+    <div class="card" id="net-list">
+      <h2>โปรเน็ตยอดนิยม</h2>
+      <!-- ตัวอย่างโปรเน็ต -->
+      <div class="net-item">
+        <span>โปร 1 GB 7 วัน</span>
+        <span class="price">99 บาท</span>
+        <button class="subscribe-btn" onclick="subscribe('โปร 1 GB 7 วัน', 99)">สมัคร</button>
+      </div>
+      <div class="net-item">
+        <span>โปร 5 GB 30 วัน</span>
+        <span class="price">299 บาท</span>
+        <button class="subscribe-btn" onclick="subscribe('โปร 5 GB 30 วัน', 299)">สมัคร</button>
+      </div>
+      <div class="net-item">
+        <span>โปร 10 GB 30 วัน</span>
+        <span class="price">499 บาท</span>
+        <button class="subscribe-btn" onclick="subscribe('โปร 10 GB 30 วัน', 499)">สมัคร</button>
+      </div>
+    </div>
+
+    <div class="card" id="summary" style="display:none;">
+      <h2>สรุปการสมัคร</h2>
+      <p id="summary-text"></p>
+      <p>ค่าบริการ 5 บาท</p>
+      <p><strong>ยอดรวม: <span id="total-price"></span> บาท</strong></p>
+    </div>
+  </main>
+
+  <footer>© 2025 สมัครโปรเน็ตมือถือ</footer>
+
+  <script>
+    const summaryEl = document.getElementById('summary');
+    const summaryText = document.getElementById('summary-text');
+    const totalPriceEl = document.getElementById('total-price');
+
+    function subscribe(name, price) {
+      // เก็บข้อมูลใน localStorage (เพิ่มทีละโปร)
+      let subscriptions = JSON.parse(localStorage.getItem('subscriptions') || '[]');
+      subscriptions.push({name, price});
+      localStorage.setItem('subscriptions', JSON.stringify(subscriptions));
+
+      // คำนวณยอดรวม
+      let total = subscriptions.reduce((sum, item) => sum + item.price, 0);
+      total += 5; // ค่าบริการ 5 บาท
+
+      // แสดงผลสรุป
+      summaryText.innerHTML = subscriptions.map(s => `${s.name} - ${s.price} บาท`).join('<br>');
+      totalPriceEl.textContent = total.toFixed(2);
+      summaryEl.style.display = 'block';
+
+      alert(`สมัคร ${name} เรียบร้อย!`);
+    }
+  </script>
 </body>
 </html>
