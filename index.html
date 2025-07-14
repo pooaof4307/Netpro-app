@@ -1,132 +1,152 @@
-<!DOCTYPE html><html lang="th">
+<!DOCTYPE html>
+<html lang="th">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>หน้าแรก</title>
+  <title>หน้าแรก - โปรเน็ตมือถือ</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <style>
     body {
-      font-family: 'Segoe UI', sans-serif;
-      background: #f8f9fa;
       margin: 0;
-      padding: 0;
-      color: #333;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", sans-serif;
+      background: #f9f9f9;
+      color: #1c1c1e;
     }
+
     .topbar {
+      background: #ffffffcc;
+      backdrop-filter: blur(10px);
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding: 10px 20px;
-      background: #ffffff;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+      padding: 12px 16px;
+      border-bottom: 1px solid #e0e0e0;
       position: sticky;
       top: 0;
       z-index: 10;
     }
-    .topbar .buttons button {
+
+    .topbar .actions button {
       margin-left: 10px;
-      padding: 8px 16px;
+      padding: 6px 14px;
       border: none;
       border-radius: 8px;
-      background: #007bff;
+      background: #007aff;
       color: white;
+      font-size: 14px;
       cursor: pointer;
+      transition: background 0.2s;
     }
-    .topbar .buttons button.logout {
-      background: #6c757d;
+
+    .topbar .actions button:hover {
+      background: #0051c6;
     }
+
+    .status-bar {
+      font-size: 14px;
+      color: #444;
+    }
+
     .container {
-      max-width: 1000px;
-      margin: 20px auto;
-      padding: 10px;
+      padding: 20px;
     }
-    h2 {
-      margin-bottom: 10px;
-      color: #007bff;
+
+    .card {
+      background: white;
+      border-radius: 16px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+      padding: 16px;
+      margin-bottom: 16px;
+      transition: transform 0.2s ease;
     }
-    .net-card {
-      background: #fff;
-      border-radius: 12px;
-      padding: 15px;
-      margin-bottom: 15px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+
+    .card:hover {
+      transform: scale(1.01);
     }
-    .net-card h4 {
-      margin: 0 0 8px 0;
-      color: #333;
+
+    .card h3 {
+      margin: 0 0 8px;
+      font-size: 18px;
     }
-    .net-card .info {
-      display: flex;
-      justify-content: space-between;
-      font-size: 0.95em;
+
+    .card .meta {
+      font-size: 14px;
       color: #666;
     }
-    .account-status {
-      font-size: 0.95em;
-      color: #28a745;
+
+    .logout-btn {
+      background: #ff3b30;
+    }
+
+    .logout-btn:hover {
+      background: #c62828;
     }
   </style>
 </head>
 <body>
   <div class="topbar">
-    <div id="accountStatus"></div>
-    <div class="buttons" id="topButtons">
-      <button onclick="goToLogin()">เข้าสู่ระบบ</button>
-      <button onclick="goToRegister()">สมัครสมาชิก</button>
-      <button onclick="goToAdmin()">เข้าสู่ระบบแอดมิน</button>
+    <div class="status-bar" id="userStatus">
+      กำลังโหลดข้อมูล...
     </div>
-  </div>  <div class="container">
-    <h2>โปรเน็ตที่มีตอนนี้</h2>
-    <div id="netList"></div>
-  </div><script>
-  let packages = JSON.parse(localStorage.getItem('packages') || '[]');
-  let currentUser = JSON.parse(localStorage.getItem('currentUser') || 'null');
+    <div class="actions" id="actionButtons">
+      <!-- ปุ่มจะแสดงผ่าน JS -->
+    </div>
+  </div>
 
-  function renderTopbar() {
-    const statusDiv = document.getElementById('accountStatus');
-    const buttonDiv = document.getElementById('topButtons');
-    if (currentUser) {
-      statusDiv.innerHTML = `<div class='account-status'>👤 ${currentUser.name} (${currentUser.phone})</div>`;
-      buttonDiv.innerHTML = `<button class="logout" onclick="logout()">ออกจากระบบ</button>`;
+  <div class="container" id="packageList">
+    <!-- การ์ดโปรเน็ตจะถูกเพิ่มโดย JS -->
+  </div>
+
+  <script>
+    function updateUserStatus() {
+      const user = JSON.parse(localStorage.getItem('currentUser'));
+      const statusEl = document.getElementById('userStatus');
+      const actionsEl = document.getElementById('actionButtons');
+
+      actionsEl.innerHTML = '';
+
+      if (user) {
+        statusEl.innerText = `👤 ${user.name} | 📱 ${user.phone}`;
+        const logoutBtn = document.createElement('button');
+        logoutBtn.innerText = 'ออกจากระบบ';
+        logoutBtn.className = 'logout-btn';
+        logoutBtn.onclick = () => {
+          localStorage.removeItem('currentUser');
+          location.reload();
+        };
+        actionsEl.appendChild(logoutBtn);
+      } else {
+        statusEl.innerText = 'ยังไม่ได้เข้าสู่ระบบ';
+        ['เข้าสู่ระบบ', 'สมัครสมาชิก', 'เข้าสู่ระบบแอดมิน'].forEach((text, i) => {
+          const btn = document.createElement('button');
+          btn.innerText = text;
+          if (text === 'เข้าสู่ระบบ') btn.onclick = () => location.href = 'login.html';
+          if (text === 'สมัครสมาชิก') btn.onclick = () => location.href = 'register.html';
+          if (text === 'เข้าสู่ระบบแอดมิน') btn.onclick = () => location.href = 'admin-login.html';
+          actionsEl.appendChild(btn);
+        });
+      }
     }
-  }
 
-  function renderNetPackages() {
-    const netList = document.getElementById('netList');
-    let html = '';
-    packages.forEach(pkg => {
-      html += `
-        <div class="net-card">
-          <h4>${pkg.name}</h4>
-          <div class="info">
-            <span>💰 ราคา: ${pkg.price}</span>
-            <span>📶 เครือข่าย: ${pkg.description}</span>
-          </div>
-        </div>
-      `;
-    });
-    netList.innerHTML = html;
-  }
+    function loadPackages() {
+      const listEl = document.getElementById('packageList');
+      const packages = JSON.parse(localStorage.getItem('packages') || '[]');
 
-  function logout() {
-    localStorage.removeItem('currentUser');
-    location.reload();
-  }
+      listEl.innerHTML = '';
+      packages.forEach(pkg => {
+        const card = document.createElement('div');
+        card.className = 'card';
+        card.innerHTML = `
+          <h3>${pkg.name}</h3>
+          <div class="meta">📡 เครือข่าย: ${pkg.network || '-'} | 💰 ราคา: ${pkg.price || '-'} | 🕓 ${pkg.duration || 'ไม่ระบุ'}</div>
+          <div style="margin-top: 8px;">${pkg.description || ''}</div>
+        `;
+        listEl.appendChild(card);
+      });
+    }
 
-  function goToLogin() {
-    window.location.href = 'login.html';
-  }
-  function goToRegister() {
-    window.location.href = 'register.html';
-  }
-  function goToAdmin() {
-    window.location.href = 'admin.html';
-  }
-
-  renderTopbar();
-  renderNetPackages();
-  setInterval(() => {
-    packages = JSON.parse(localStorage.getItem('packages') || '[]');
-    renderNetPackages();
-  }, 3000);
-</script></body>
+    updateUserStatus();
+    loadPackages();
+    setInterval(loadPackages, 3000);
+  </script>
+</body>
 </html>
