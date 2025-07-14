@@ -1,178 +1,199 @@
-
 <!DOCTYPE html>
 <html lang="th">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>โปรเน็ตทั้งหมด</title>
+  <title>โปรเน็ตมือถือ - เลือกสมัครง่าย</title>
   <style>
-    /* Reset และฟอนต์ */
-    * {
-      box-sizing: border-box;
-    }
     body {
-      font-family: 'Prompt', sans-serif, Arial, sans-serif;
-      margin: 0; padding: 0;
-      background: #f0f4f8;
+      font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+      background: #f9f9f9;
+      margin: 0;
+      padding: 0;
       color: #333;
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      padding: 20px;
     }
     header {
-      width: 100%;
-      max-width: 600px;
-      text-align: center;
-      margin-bottom: 20px;
+      background: #0078d7;
+      color: white;
+      padding: 1rem 2rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      box-shadow: 0 2px 5px rgb(0 0 0 / 0.1);
     }
     header h1 {
-      color: #1e90ff;
-      margin-bottom: 5px;
-      font-weight: 700;
+      margin: 0;
+      font-size: 1.5rem;
     }
-    header p {
-      color: #666;
-      font-size: 0.9rem;
+    main {
+      max-width: 900px;
+      margin: 2rem auto;
+      padding: 0 1rem;
     }
-
-    /* รายการโปรเน็ต */
-    .list-container {
+    #searchBar {
       width: 100%;
-      max-width: 600px;
+      padding: 0.5rem 1rem;
+      font-size: 1rem;
+      border: 2px solid #0078d7;
+      border-radius: 5px;
+      margin-bottom: 1.5rem;
+      box-sizing: border-box;
+    }
+    .package-list {
       display: grid;
-      grid-template-columns: 1fr;
-      gap: 15px;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1.5rem;
     }
-
-    @media(min-width: 600px) {
-      .list-container {
-        grid-template-columns: 1fr 1fr;
-      }
-    }
-
-    .card {
+    .package-card {
       background: white;
-      border-radius: 12px;
-      box-shadow: 0 4px 15px rgba(30, 144, 255, 0.2);
-      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 3px 8px rgb(0 0 0 / 0.15);
+      padding: 1.25rem;
+      transition: transform 0.2s ease;
       display: flex;
       flex-direction: column;
       justify-content: space-between;
-      transition: transform 0.2s ease;
     }
-    .card:hover {
+    .package-card:hover {
       transform: translateY(-5px);
-      box-shadow: 0 8px 25px rgba(30, 144, 255, 0.35);
+      box-shadow: 0 6px 15px rgb(0 0 0 / 0.2);
     }
-
-    .network {
+    .network-name {
       font-weight: 700;
-      color: #1e90ff;
-      font-size: 1.3rem;
-      margin-bottom: 10px;
+      font-size: 1.2rem;
+      margin-bottom: 0.5rem;
+      color: #0078d7;
     }
     .price {
-      font-size: 1.1rem;
-      color: #27ae60;
-      margin-bottom: 10px;
-      font-weight: 600;
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: #e03e3e;
+      margin-bottom: 0.5rem;
     }
     .details {
-      font-size: 0.95rem;
+      font-size: 1rem;
+      margin-bottom: 1rem;
+      line-height: 1.3;
       color: #555;
-      margin-bottom: 15px;
-      line-height: 1.4;
     }
-    .info {
-      font-size: 0.9rem;
-      color: #777;
-      margin-bottom: 6px;
-    }
-    .link-btn {
-      display: inline-block;
-      text-align: center;
-      background-color: #1e90ff;
+    .btn-apply {
+      background: #0078d7;
       color: white;
-      padding: 10px 15px;
-      border-radius: 8px;
       text-decoration: none;
+      padding: 0.6rem 1rem;
+      border-radius: 6px;
+      text-align: center;
       font-weight: 600;
       transition: background-color 0.3s ease;
+      user-select: none;
     }
-    .link-btn:hover {
-      background-color: #0d6efd;
+    .btn-apply:hover {
+      background: #005a9e;
     }
-
     footer {
-      margin-top: 30px;
-      font-size: 0.8rem;
-      color: #aaa;
+      text-align: center;
+      padding: 1rem 0;
+      color: #666;
+      font-size: 0.9rem;
+      border-top: 1px solid #ddd;
+      margin-top: 3rem;
     }
   </style>
 </head>
 <body>
-  <header>
-    <h1>โปรเน็ตมือถือทั้งหมด</h1>
-    <p>ข้อมูลอัปเดตเรียลไทม์จากระบบหลังบ้าน</p>
-  </header>
 
-  <main class="list-container" id="listContainer">
-    <!-- รายการโปรเน็ตจะขึ้นตรงนี้ -->
-  </main>
+<header>
+  <h1>โปรเน็ตมือถือ</h1>
+  <nav>
+    <!-- เพิ่มเมนูอื่น ๆ ได้ถ้าต้องการ -->
+  </nav>
+</header>
 
-  <footer>© 2025 โปรเน็ตของคุณ</footer>
+<main>
+  <input type="text" id="searchBar" placeholder="ค้นหาเครือข่ายหรือราคา..." />
 
-  <script>
-    const URL = "https://script.google.com/macros/s/AKfycbyV7B2AfgmmULrTdOPbI6oRbJtF3FRM6_4vvHOrJBvrutWKKH0yaa0gEWRyz95cd4gy8Q/exec";
+  <div class="package-list" id="packageList">
+    <!-- โปรเน็ตจะถูกโหลดและแสดงที่นี่ -->
+  </div>
+</main>
 
-    async function fetchData() {
-      try {
-        const res = await fetch(URL);
-        if(!res.ok) throw new Error("ไม่สามารถโหลดข้อมูลได้");
-        const data = await res.json();
-        return data;
-      } catch (error) {
-        alert(error.message);
-        return [];
-      }
+<footer>
+  &copy; 2025 โปรเน็ตมือถือ | ติดต่อสอบถามได้ที่เบอร์ 02-123-4567
+</footer>
+
+<script>
+  const scriptURL = 'https://script.google.com/macros/s/AKfycbyV7B2AfgmmULrTdOPbI6oRbJtF3FRM6_4vvHOrJBvrutWKKH0yaa0gEWRyz95cd4gy8Q/exec';
+
+  async function fetchPackages() {
+    try {
+      const res = await fetch(scriptURL);
+      if (!res.ok) throw new Error('ไม่สามารถโหลดข้อมูลได้');
+      const data = await res.json();
+
+      return data.records || [];
+    } catch (error) {
+      console.error(error);
+      alert('เกิดข้อผิดพลาดในการโหลดข้อมูลโปรเน็ต');
+      return [];
     }
+  }
 
-    function renderList(data) {
-      const container = document.getElementById('listContainer');
-      container.innerHTML = '';
+  function createPackageCard(pkg) {
+    const card = document.createElement('div');
+    card.className = 'package-card';
 
-      if(data.length === 0) {
-        container.innerHTML = '<p style="text-align:center; color:#999;">ไม่มีโปรเน็ตให้แสดง</p>';
+    card.innerHTML = `
+      <div class="network-name">${pkg.network}</div>
+      <div class="price">${pkg.price} บาท</div>
+      <div class="details">
+        ความเร็ว: ${pkg.speed}<br />
+        ระยะเวลา: ${pkg.duration}<br />
+        รายละเอียด: ${pkg.description || '-'}
+      </div>
+      <a href="${pkg.link}" target="_blank" class="btn-apply" rel="noopener noreferrer">สมัคร</a>
+    `;
+
+    return card;
+  }
+
+  function filterPackages(packages, keyword) {
+    if (!keyword) return packages;
+    keyword = keyword.toLowerCase();
+    return packages.filter(pkg =>
+      pkg.network.toLowerCase().includes(keyword) ||
+      pkg.price.toLowerCase().includes(keyword) ||
+      pkg.speed.toLowerCase().includes(keyword) ||
+      pkg.duration.toLowerCase().includes(keyword) ||
+      (pkg.description && pkg.description.toLowerCase().includes(keyword))
+    );
+  }
+
+  async function init() {
+    const packages = await fetchPackages();
+    const packageList = document.getElementById('packageList');
+    const searchBar = document.getElementById('searchBar');
+
+    function renderList(filterKeyword = '') {
+      packageList.innerHTML = '';
+      const filtered = filterPackages(packages, filterKeyword);
+      if (filtered.length === 0) {
+        packageList.innerHTML = '<p>ไม่พบโปรเน็ตที่ค้นหา</p>';
         return;
       }
-
-      data.forEach(item => {
-        const card = document.createElement('div');
-        card.classList.add('card');
-        card.innerHTML = `
-          <div class="network">${item.network}</div>
-          <div class="price">${item.price}</div>
-          <div class="details">${item.description}</div>
-          <div class="info"><strong>ความเร็ว:</strong> ${item.speed}</div>
-          <div class="info"><strong>ระยะเวลา:</strong> ${item.duration}</div>
-          <a href="${item.link}" target="_blank" class="link-btn" rel="noopener noreferrer">สมัครเลย</a>
-        `;
-        container.appendChild(card);
+      filtered.forEach(pkg => {
+        packageList.appendChild(createPackageCard(pkg));
       });
     }
 
-    async function init() {
-      const data = await fetchData();
-      renderList(data);
-    }
+    renderList();
 
-    window.onload = init;
-  </script>
+    searchBar.addEventListener('input', (e) => {
+      renderList(e.target.value);
+    });
+  }
+
+  init();
+</script>
+
 </body>
 </html>
-
-
----
-
