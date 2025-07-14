@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>เลือกโปรเน็ต</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: #f8f9fa;
+      margin: 0;
+      padding: 0;
+    }
+    header {
+      background-color: #007aff;
+      color: white;
+      padding: 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .user-info {
+      font-size: 14px;
+    }
+    .logout-btn {
+      background-color: #ffffff33;
+      border: none;
+      color: white;
+      padding: 6px 12px;
+      border-radius: 10px;
+      cursor: pointer;
+      font-size: 14px;
+    }
+    .container {
+      padding: 16px;
+    }
+    h2 {
+      text-align: center;
+      margin-bottom: 12px;
+      color: #333;
+    }
+    .plan {
+      background: white;
+      border-radius: 12px;
+      padding: 16px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+      margin-bottom: 16px;
+    }
+    .plan-title {
+      font-size: 18px;
+      font-weight: bold;
+      color: #222;
+    }
+    .plan-desc {
+      color: #666;
+      margin: 8px 0;
+    }
+    .plan-price {
+      color: #007aff;
+      font-weight: bold;
+      margin-top: 4px;
+    }
+    .subscribe-btn {
+      background: #28a745;
+      color: white;
+      border: none;
+      padding: 10px 16px;
+      border-radius: 10px;
+      cursor: pointer;
+      margin-top: 10px;
+      width: 100%;
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="user-info" id="userInfo"></div>
+  <button class="logout-btn" onclick="logout()">ออกจากระบบ</button>
+</header>
+
+<div class="container">
+  <h2>เลือกโปรเน็ตที่คุณต้องการ</h2>
+  <div id="plans"></div>
+</div>
+
+<script>
+  const currentUser = JSON.parse(localStorage.getItem("currentUser"));
+  const userInfoEl = document.getElementById("userInfo");
+
+  if (!currentUser) {
+    alert("กรุณาเข้าสู่ระบบก่อน");
+    window.location.href = "register.html";
+  } else {
+    userInfoEl.textContent = `👤 ${currentUser.nickname} (${currentUser.phone})`;
+  }
+
+  function logout() {
+    localStorage.removeItem("currentUser");
+    window.location.href = "index.html";
+  }
+
+  const plansContainer = document.getElementById("plans");
+  const plans = JSON.parse(localStorage.getItem("netPlans") || "[]");
+
+  if (plans.length === 0) {
+    plansContainer.innerHTML = "<p>ยังไม่มีโปรเน็ตในระบบ</p>";
+  } else {
+    plans.forEach(plan => {
+      const div = document.createElement("div");
+      div.className = "plan";
+      div.innerHTML = `
+        <div class="plan-title">${plan.name}</div>
+        <div class="plan-desc">${plan.description}</div>
+        <div class="plan-price">ราคา ${plan.price} บาท</div>
+        <button class="subscribe-btn" onclick="subscribePlan('${plan.name}')">สมัครโปรนี้</button>
+      `;
+      plansContainer.appendChild(div);
+    });
+  }
+
+  function subscribePlan(planName) {
+    alert(`คุณสมัครโปร: ${planName} เรียบร้อยแล้ว!`);
+    // คุณสามารถเพิ่มฟังก์ชันบันทึกประวัติการสมัครใน localStorage ได้ต่อ
+  }
+</script>
+
+</body>
+</html>
