@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>หลังบ้าน</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <div class="container">
+    <h2>จัดการโปรเน็ต</h2>
+    <button onclick="logout()">ออกจากระบบ</button>
+    <h3>เพิ่มโปรเน็ต</h3>
+    <input type="text" id="name" placeholder="ชื่อโปร">
+    <input type="number" id="price" placeholder="ราคา (บาท)">
+    <button onclick="addPlan()">เพิ่ม</button>
+
+    <h3>รายการโปรเน็ต</h3>
+    <ul id="planList"></ul>
+  </div>
+  <script src="js/admin.js"></script>
+</body>
+</html>
