@@ -1,28 +1,292 @@
 <!DOCTYPE html>
 <html lang="th">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>หลังบ้านโปรเน็ต</title>
-  <link rel="stylesheet" href="css/style.css" />
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Admin Panel - จัดการโปรเน็ต & สมาชิก</title>
+<style>
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    background: #f2f2f7;
+    max-width: 480px;
+    margin: 0 auto;
+    padding: 20px;
+    color: #1c1c1e;
+  }
+  h1, h2 {
+    color: #007aff;
+    text-align: center;
+  }
+  .login-box, .admin-panel {
+    background: white;
+    border-radius: 16px;
+    padding: 20px;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+    margin-bottom: 20px;
+  }
+  input[type="text"], input[type="number"], input[type="password"] {
+    width: 100%;
+    padding: 12px;
+    margin: 8px 0 16px 0;
+    border: 1px solid #ccc;
+    border-radius: 12px;
+    font-size: 1rem;
+    box-sizing: border-box;
+  }
+  button {
+    width: 100%;
+    background: #007aff;
+    border: none;
+    padding: 12px;
+    border-radius: 12px;
+    color: white;
+    font-size: 1rem;
+    cursor: pointer;
+    margin-bottom: 12px;
+  }
+  button:hover {
+    background: #005bb5;
+  }
+  .error {
+    color: #ff3b30;
+    margin-bottom: 12px;
+    text-align: center;
+  }
+  .list-section {
+    margin-top: 20px;
+  }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 8px;
+  }
+  th, td {
+    border-bottom: 1px solid #ddd;
+    padding: 8px;
+    text-align: left;
+  }
+  th {
+    background: #007aff;
+    color: white;
+  }
+  .btn-delete {
+    background: #ff3b30;
+    padding: 6px 10px;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    border: none;
+    color: white;
+    cursor: pointer;
+  }
+  .btn-delete:hover {
+    background: #cc2a24;
+  }
+  .logout-btn {
+    background: #444;
+    margin-top: 10px;
+  }
+</style>
 </head>
 <body>
-  <div id="login-section">
-    <h2>เข้าสู่ระบบผู้ดูแล</h2>
-    <input type="text" id="username" placeholder="ชื่อผู้ใช้" />
-    <input type="password" id="password" placeholder="รหัสผ่าน" />
-    <button onclick="login()">เข้าสู่ระบบ</button>
+
+<div class="login-box" id="login-box">
+  <h1>Admin Login</h1>
+  <div id="login-error" class="error"></div>
+  <input type="password" id="admin-password" placeholder="รหัสผ่าน Admin" />
+  <button id="login-btn">เข้าสู่ระบบ</button>
+</div>
+
+<div class="admin-panel" id="admin-panel" style="display:none;">
+  <h1>จัดการโปรเน็ต</h1>
+
+  <label>ชื่อโปรเน็ต:</label>
+  <input type="text" id="net-name" placeholder="เช่น เน็ตไม่อั้น 10GB" />
+  <label>ราคา (บาท):</label>
+  <input type="number" id="net-price" placeholder="เช่น 199" min="0" />
+  <button id="add-net-btn">เพิ่ม/แก้ไข โปรเน็ต</button>
+
+  <div class="list-section">
+    <h2>โปรเน็ตที่มี</h2>
+    <table id="nets-table">
+      <thead>
+        <tr>
+          <th>ชื่อโปรเน็ต</th>
+          <th>ราคา (บาท)</th>
+          <th>ลบ</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
   </div>
 
-  <div id="admin-panel" style="display:none;">
-    <h2>จัดการโปรเน็ต</h2>
-    <input type="text" id="netName" placeholder="ชื่อโปรเน็ต" />
-    <input type="number" id="netPrice" placeholder="ราคา" />
-    <button onclick="addNet()">เพิ่มโปร</button>
-    <ul id="netList"></ul>
+  <div class="list-section">
+    <h2>สมาชิกที่สมัคร</h2>
+    <table id="users-table">
+      <thead>
+        <tr>
+          <th>ชื่อผู้ใช้</th>
+          <th>ลบ</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
   </div>
 
-  <script src="js/auth.js"></script>
-  <script src="js/admin.js"></script>
+  <button class="logout-btn" id="logout-btn">ออกจากระบบ</button>
+</div>
+
+<script>
+  const ADMIN_PASSWORD = "admin1234"; // เปลี่ยนรหัสผ่าน admin ได้ที่นี่
+
+  const loginBox = document.getElementById('login-box');
+  const adminPanel = document.getElementById('admin-panel');
+  const loginBtn = document.getElementById('login-btn');
+  const logoutBtn = document.getElementById('logout-btn');
+  const adminPasswordInput = document.getElementById('admin-password');
+  const loginError = document.getElementById('login-error');
+
+  const netNameInput = document.getElementById('net-name');
+  const netPriceInput = document.getElementById('net-price');
+  const addNetBtn = document.getElementById('add-net-btn');
+  const netsTableBody = document.querySelector('#nets-table tbody');
+
+  const usersTableBody = document.querySelector('#users-table tbody');
+
+  let editingNetIndex = -1; // -1 = add new
+
+  // เช็คสถานะล็อกอิน admin
+  function checkLogin() {
+    const loggedIn = sessionStorage.getItem('adminLoggedIn');
+    if (loggedIn === "true") {
+      loginBox.style.display = "none";
+      adminPanel.style.display = "block";
+      renderNets();
+      renderUsers();
+    } else {
+      loginBox.style.display = "block";
+      adminPanel.style.display = "none";
+    }
+  }
+
+  // ฟังก์ชันแสดงโปรเน็ต
+  function renderNets() {
+    let nets = JSON.parse(localStorage.getItem('netpro-list') || '[]');
+    netsTableBody.innerHTML = '';
+    nets.forEach((net, i) => {
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+        <td>${net.name}</td>
+        <td>${net.price}</td>
+        <td><button class="btn-delete" data-index="${i}">ลบ</button></td>
+      `;
+      tr.querySelector('button').addEventListener('click', () => {
+        deleteNet(i);
+      });
+      tr.addEventListener('click', (e) => {
+        if(e.target.tagName.toLowerCase() !== 'button') {
+          editNet(i);
+        }
+      });
+      netsTableBody.appendChild(tr);
+    });
+  }
+
+  // ฟังก์ชันแสดงสมาชิก
+  function renderUsers() {
+    let users = JSON.parse(localStorage.getItem('users') || '[]');
+    usersTableBody.innerHTML = '';
+    users.forEach((user, i) => {
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+        <td>${user.username}</td>
+        <td><button class="btn-delete" data-index="${i}">ลบ</button></td>
+      `;
+      tr.querySelector('button').addEventListener('click', () => {
+        deleteUser(i);
+      });
+      usersTableBody.appendChild(tr);
+    });
+  }
+
+  // ลบโปรเน็ต
+  function deleteNet(index) {
+    if(!confirm('ต้องการลบโปรเน็ตนี้จริงหรือไม่?')) return;
+    let nets = JSON.parse(localStorage.getItem('netpro-list') || '[]');
+    nets.splice(index, 1);
+    localStorage.setItem('netpro-list', JSON.stringify(nets));
+    renderNets();
+  }
+
+  // ลบสมาชิก
+  function deleteUser(index) {
+    if(!confirm('ต้องการลบสมาชิกนี้จริงหรือไม่?')) return;
+    let users = JSON.parse(localStorage.getItem('users') || '[]');
+    users.splice(index, 1);
+    localStorage.setItem('users', JSON.stringify(users));
+    renderUsers();
+  }
+
+  // แก้ไขโปรเน็ต
+  function editNet(index) {
+    let nets = JSON.parse(localStorage.getItem('netpro-list') || '[]');
+    let net = nets[index];
+    netNameInput.value = net.name;
+    netPriceInput.value = net.price;
+    editingNetIndex = index;
+    addNetBtn.textContent = 'บันทึกการแก้ไขโปรเน็ต';
+  }
+
+  // เพิ่มหรือบันทึกโปรเน็ต
+  addNetBtn.addEventListener('click', () => {
+    const name = netNameInput.value.trim();
+    const price = parseInt(netPriceInput.value.trim());
+    if(!name) {
+      alert('กรุณากรอกชื่อโปรเน็ต');
+      return;
+    }
+    if(isNaN(price) || price < 0) {
+      alert('กรุณากรอกราคาที่ถูกต้อง');
+      return;
+    }
+    let nets = JSON.parse(localStorage.getItem('netpro-list') || '[]');
+    if(editingNetIndex >= 0) {
+      // แก้ไข
+      nets[editingNetIndex] = {name, price};
+      editingNetIndex = -1;
+      addNetBtn.textContent = 'เพิ่ม/แก้ไข โปรเน็ต';
+    } else {
+      // เพิ่มใหม่
+      nets.push({name, price});
+    }
+    localStorage.setItem('netpro-list', JSON.stringify(nets));
+    netNameInput.value = '';
+    netPriceInput.value = '';
+    renderNets();
+  });
+
+  // ล็อกอิน admin
+  loginBtn.addEventListener('click', () => {
+    const pwd = adminPasswordInput.value;
+    if(pwd === ADMIN_PASSWORD) {
+      sessionStorage.setItem('adminLoggedIn', 'true');
+      adminPasswordInput.value = '';
+      loginError.textContent = '';
+      checkLogin();
+    } else {
+      loginError.textContent = 'รหัสผ่านไม่ถูกต้อง';
+    }
+  });
+
+  // ออกจากระบบ admin
+  logoutBtn.addEventListener('click', () => {
+    sessionStorage.removeItem('adminLoggedIn');
+    checkLogin();
+  });
+
+  // ตรวจสอบล็อกอินตอนโหลดหน้า
+  checkLogin();
+
+</script>
+
 </body>
 </html>
