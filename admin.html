@@ -5,7 +5,7 @@
   <title>ระบบหลังบ้าน</title>
   <style>
     body {
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
       background: #f2f2f7;
       margin: 0;
       padding: 0;
@@ -17,63 +17,55 @@
       padding: 20px;
     }
     h2 {
-      color: #000;
-      margin-bottom: 20px;
+      color: #1c1c1e;
     }
     .section {
-      background: #ffffff;
+      margin-bottom: 40px;
+      background: #fff;
       padding: 20px;
-      border-radius: 16px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-      margin-bottom: 30px;
+      border-radius: 20px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.05);
     }
     table {
       width: 100%;
       border-collapse: collapse;
-      margin-top: 15px;
+      margin-top: 10px;
     }
     th, td {
-      border-bottom: 1px solid #e0e0e0;
-      padding: 10px;
+      border-bottom: 1px solid #ccc;
+      padding: 12px;
       text-align: left;
     }
     th {
       background: #007aff;
       color: white;
-      border-radius: 8px 8px 0 0;
+      border-radius: 12px 12px 0 0;
     }
     button {
       padding: 8px 16px;
       border: none;
       border-radius: 12px;
-      font-size: 15px;
       cursor: pointer;
-      transition: background 0.3s;
-      margin: 4px 6px 0 0;
+      margin: 5px 5px 0 0;
+      font-size: 14px;
     }
     .btn-delete { background: #ff3b30; color: white; }
     .btn-edit { background: #ff9500; color: white; }
-    .btn-status { background: #5ac8fa; color: white; }
     .btn-notify { background: #34c759; color: white; }
     .btn-logout, .btn-change-pass { background: #d1d1d6; color: #1c1c1e; }
     .input-inline {
       width: 100%;
       padding: 10px;
-      margin-top: 6px;
+      margin-top: 8px;
       border-radius: 10px;
       border: 1px solid #ccc;
-      background: #f9f9f9;
     }
+    .checkbox { transform: scale(1.2); }
     .admin-controls {
       display: flex;
       justify-content: space-between;
-      align-items: center;
       margin-bottom: 20px;
-    }
-    .network-icon {
-      height: 20px;
-      vertical-align: middle;
-      margin-right: 6px;
+      align-items: center;
     }
   </style>
 </head>
@@ -91,13 +83,12 @@
     <input type="text" id="netName" placeholder="ชื่อโปรเน็ต" class="input-inline">
     <input type="text" id="netPrice" placeholder="ราคา" class="input-inline">
     <input type="text" id="netDuration" placeholder="ระยะเวลา" class="input-inline">
-    <input type="text" id="netNetwork" placeholder="ชื่อเครือข่าย (เช่น AIS, DTAC, TRUE)" class="input-inline">
-    <input type="text" id="netIconUrl" placeholder="URL ไอคอนเครือข่าย" class="input-inline">
+    <input type="text" id="netNetwork" placeholder="เครือข่าย (เช่น AIS, DTAC)" class="input-inline">
     <button onclick="addPackage()">เพิ่มโปรเน็ต</button>
   </div>
   <table>
     <thead>
-      <tr><th>ชื่อ</th><th>เครือข่าย</th><th>ราคา</th><th>ระยะเวลา</th><th>การจัดการ</th></tr>
+      <tr><th>ชื่อ</th><th>ราคา</th><th>ระยะเวลา</th><th>เครือข่าย</th><th>การจัดการ</th></tr>
     </thead>
     <tbody id="packageTable"></tbody>
   </table>
@@ -107,7 +98,7 @@
   <h3>จัดการสมาชิก</h3>
   <table>
     <thead>
-      <tr><th>ชื่อ</th><th>เบอร์</th><th>รหัสผ่าน</th><th>สถานะ</th><th>เลือก</th><th>การจัดการ</th></tr>
+      <tr><th>ชื่อ</th><th>เบอร์</th><th>รหัสผ่าน</th><th>เลือก</th><th>การจัดการ</th></tr>
     </thead>
     <tbody id="userTable"></tbody>
   </table>
@@ -117,12 +108,10 @@
   </div><script>
   const packageTable = document.getElementById('packageTable');
   const userTable = document.getElementById('userTable');
-
   const netName = document.getElementById('netName');
   const netPrice = document.getElementById('netPrice');
   const netDuration = document.getElementById('netDuration');
   const netNetwork = document.getElementById('netNetwork');
-  const netIconUrl = document.getElementById('netIconUrl');
 
   let packages = JSON.parse(localStorage.getItem('packages') || '[]');
   let users = JSON.parse(localStorage.getItem('users') || '[]');
@@ -132,10 +121,7 @@
     packages.forEach((pkg, i) => {
       packageTable.innerHTML += `
         <tr>
-          <td>${pkg.name}</td>
-          <td><img src="${pkg.icon}" class="network-icon"> ${pkg.network}</td>
-          <td>${pkg.price}</td>
-          <td>${pkg.duration}</td>
+          <td>${pkg.name}</td><td>${pkg.price}</td><td>${pkg.duration || '-'}</td><td>${pkg.network || '-'}</td>
           <td>
             <button class="btn-edit" onclick="editPackage(${i})">แก้ไข</button>
             <button class="btn-delete" onclick="deletePackage(${i})">ลบ</button>
@@ -150,10 +136,8 @@
       userTable.innerHTML += `
         <tr>
           <td>${u.name || '-'}</td><td>${u.phone}</td><td>${u.password}</td>
-          <td>${u.status || 'active'}</td>
           <td><input type="checkbox" class="checkbox" data-index="${i}"></td>
           <td>
-            <button class="btn-status" onclick="toggleStatus(${i})">เปลี่ยนสถานะ</button>
             <button class="btn-delete" onclick="deleteUser(${i})">ลบ</button>
           </td>
         </tr>`;
@@ -161,16 +145,10 @@
   }
 
   function addPackage() {
-    if (netName.value && netPrice.value && netNetwork.value && netIconUrl.value) {
-      packages.push({
-        name: netName.value,
-        price: netPrice.value,
-        duration: netDuration.value,
-        network: netNetwork.value,
-        icon: netIconUrl.value
-      });
+    if (netName.value && netPrice.value) {
+      packages.push({ name: netName.value, price: netPrice.value, duration: netDuration.value, network: netNetwork.value });
       localStorage.setItem('packages', JSON.stringify(packages));
-      netName.value = netPrice.value = netDuration.value = netNetwork.value = netIconUrl.value = '';
+      netName.value = netPrice.value = netDuration.value = netNetwork.value = '';
       renderPackages();
     }
   }
@@ -189,7 +167,6 @@
     netPrice.value = pkg.price;
     netDuration.value = pkg.duration;
     netNetwork.value = pkg.network;
-    netIconUrl.value = pkg.icon;
     deletePackage(index);
   }
 
@@ -199,12 +176,6 @@
       localStorage.setItem('users', JSON.stringify(users));
       renderUsers();
     }
-  }
-
-  function toggleStatus(index) {
-    users[index].status = users[index].status === 'active' ? 'inactive' : 'active';
-    localStorage.setItem('users', JSON.stringify(users));
-    renderUsers();
   }
 
   function sendNotification() {
