@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <title>เข้าสู่ระบบแอดมิน</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="login-container">
+    <h2>เข้าสู่ระบบแอดมิน</h2>
+    <input type="password" id="password" placeholder="รหัสผ่าน">
+    <button onclick="checkLogin()">เข้าสู่ระบบ</button>
+  </div>
+
+  <script>
+    const ADMIN_PASSWORD = "1234"; // เปลี่ยนรหัสผ่านที่นี่
+
+    function checkLogin() {
+      const input = document.getElementById("password").value;
+      if (input === ADMIN_PASSWORD) {
+        window.location.href = "admin-dashboard.html";
+      } else {
+        alert("รหัสผ่านไม่ถูกต้อง");
+      }
+    }
+  </script>
+</body>
+</html>
