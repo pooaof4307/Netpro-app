@@ -1,210 +1,102 @@
-const API_URL = 'https://script.google.com/macros/s/AKfycbyV7B2AfgmmULrTdOPbI6oRbJtF3FRM6_4vvHOrJBvrutWKKH0yaa0gEWRyz95cd4gy8Q/exec';
+<!-- admin-login.html --><!DOCTYPE html><html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>เข้าสู่ระบบแอดมิน</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="login-container">
+    <h2>เข้าสู่ระบบแอดมิน</h2>
+    <form id="loginForm">
+      <input type="password" id="adminPassword" placeholder="รหัสผ่านแอดมิน" required>
+      <button type="submit">เข้าสู่ระบบ</button>
+    </form>
+  </div>
+  <script>
+    document.getElementById('loginForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+      const pass = document.getElementById('adminPassword').value;
+      if (pass === 'admin1234') {
+        window.location.href = 'admin-dashboard.html';
+      } else {
+        alert('รหัสผ่านไม่ถูกต้อง');
+      }
+    });
+  </script>
+</body>
+</html><!-- admin-dashboard.html --><!DOCTYPE html><html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>จัดการโปรเน็ต & สมาชิก</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header>
+    <h1>ระบบหลังบ้าน</h1>
+    <button onclick="logout()">ออกจากระบบ</button>
+  </header>
+  <main>
+    <section class="form-section">
+      <h2>เพิ่มโปรเน็ต</h2>
+      <form id="addForm">
+        <input type="text" id="network" placeholder="เครือข่าย" required>
+        <input type="text" id="price" placeholder="ราคา" required>
+        <input type="text" id="speed" placeholder="ความเร็ว" required>
+        <input type="text" id="duration" placeholder="ระยะเวลา" required>
+        <input type="text" id="description" placeholder="รายละเอียด" required>
+        <input type="text" id="link" placeholder="ลิงก์สมัคร" required>
+        <button type="submit">เพิ่มโปร</button>
+      </form>
+    </section><section>
+  <h2>รายการโปรเน็ต</h2>
+  <div id="netList">กำลังโหลด...</div>
+</section>
 
-document.addEventListener('DOMContentLoaded', () => {
-  loadPackages();
-  loadMembers();
+<section>
+  <h2>จัดการสมาชิก</h2>
+  <div id="userList">กำลังโหลด...</div>
+</section>
 
-  // เพิ่มโปรเน็ต
-  document.getElementById('addForm').addEventListener('submit', async (e) => {
-    e.preventDefault();
-    const data = {
-      type: 'add_package',
-      network: e.target.network.value.trim(),
-      price: e.target.price.value.trim(),
-      speed: e.target.speed.value.trim(),
-      duration: e.target.duration.value.trim(),
-      description: e.target.description.value.trim(),
-      link: e.target.link.value.trim(),
-    };
+  </main>
+  <script src="script.js"></script>
+</body>
+</html>/* style.css */ body { font-family: 'Sarabun', sans-serif; background: #f5f7fb; margin: 0; padding: 0; } header { background: #4a90e2; padding: 1em; color: white; text-align: center; } button { background: #4a90e2; color: white; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer; transition: 0.3s; } button:hover { background: #357ab8; } input { padding: 10px; width: 100%; margin-bottom: 10px; border: 1px solid #ccc; border-radius: 8px; } .login-container, .form-section { max-width: 400px; margin: 30px auto; padding: 20px; background: white; box-shadow: 0 0 10px rgba(0,0,0,0.1); border-radius: 10px; }
 
-    if(Object.values(data).some(v => v === '')) {
-      alert('กรุณากรอกข้อมูลให้ครบทุกช่อง');
-      return;
-    }
+/* script.js */ const API_URL = "https://script.google.com/macros/s/AKfycbyV7B2AfgmmULrTdOPbI6oRbJtF3FRM6_4vvHOrJBvrutWKKH0yaa0gEWRyz95cd4gy8Q/exec";
 
-    const res = await postData(data);
-    if(res.success) {
-      alert('เพิ่มโปรเน็ตเรียบร้อย');
-      e.target.reset();
-      loadPackages();
-    } else alert('เพิ่มโปรเน็ตไม่สำเร็จ');
-  });
+function logout() { window.location.href = 'admin-login.html'; }
+
+// เพิ่มโปรเน็ต const form = document.getElementById('addForm'); if (form) { form.addEventListener('submit', function(e) { e.preventDefault(); const data = { action: 'addNet', network: form.network.value, price: form.price.value, speed: form.speed.value, duration: form.duration.value, description: form.description.value, link: form.link.value }; fetch(API_URL, { method: 'POST', body: JSON.stringify(data), headers: { 'Content-Type': 'application/json' } }) .then(r => r.text()) .then(res => { alert('เพิ่มโปรเน็ตเรียบร้อย'); form.reset(); loadData(); }); }); }
+
+// โหลดข้อมูลโปรเน็ตและสมาชิก function loadData() { fetch(API_URL + '?action=readAll') .then(res => res.json()) .then(data => { const netList = document.getElementById('netList'); const userList = document.getElementById('userList');
+
+if (netList) {
+    netList.innerHTML = data.pros.map((p, i) => `
+      <div class="card">
+        <b>${p.network}</b> - ${p.price} - ${p.speed} - ${p.duration}<br>
+        ${p.description}<br>
+        <a href="${p.link}" target="_blank">ลิงก์สมัคร</a><br>
+        <button onclick="deleteNet(${i})">ลบ</button>
+      </div>`).join('');
+  }
+
+  if (userList) {
+    userList.innerHTML = data.users.map((u, i) => `
+      <div class="card">
+        <b>${u.nickname}</b> (${u.phone})<br>
+        รหัสผ่าน: ${u.password}<br>
+        <button onclick="deleteUser(${i})">ลบ</button>
+      </div>`).join('');
+  }
 });
 
-// ฟังก์ชันโหลดโปรเน็ต
-async function loadPackages() {
-  const container = document.getElementById('netList');
-  container.innerHTML = 'กำลังโหลด...';
-  try {
-    const res = await fetch(`${API_URL}?type=packages`);
-    const data = await res.json();
-
-    if(!data || data.length === 0) {
-      container.innerHTML = '<p>ไม่มีโปรเน็ตในระบบ</p>';
-      return;
-    }
-
-    container.innerHTML = '';
-    data.forEach(pkg => {
-      const div = document.createElement('div');
-      div.classList.add('card');
-      div.innerHTML = `
-        <strong>${pkg.network}</strong> - ราคา: ${pkg.price} บาท<br>
-        ความเร็ว: ${pkg.speed}, ระยะเวลา: ${pkg.duration}<br>
-        รายละเอียด: ${pkg.description}<br>
-        <a href="${pkg.link}" target="_blank">สมัครโปรนี้</a><br>
-        <button onclick="editPackage('${pkg.id}')">แก้ไข</button>
-        <button onclick="deletePackage('${pkg.id}')">ลบ</button>
-      `;
-      container.appendChild(div);
-    });
-  } catch (error) {
-    container.innerHTML = '<p>เกิดข้อผิดพลาดในการโหลดข้อมูล</p>';
-    console.error(error);
-  }
 }
 
-// ฟังก์ชันลบโปรเน็ต
-async function deletePackage(id) {
-  if(!confirm('ต้องการลบโปรเน็ตนี้ใช่หรือไม่?')) return;
-  const res = await postData({ type: 'delete_package', id });
-  if(res.success) {
-    alert('ลบโปรเน็ตเรียบร้อย');
-    loadPackages();
-  } else alert('ลบโปรเน็ตไม่สำเร็จ');
-}
+function deleteNet(index) { if (confirm('ยืนยันลบโปรเน็ต?')) { fetch(API_URL, { method: 'POST', body: JSON.stringify({ action: 'deleteNet', index }), headers: { 'Content-Type': 'application/json' } }).then(() => loadData()); } }
 
-// ฟังก์ชันแก้ไขโปรเน็ต (แสดง prompt สำหรับแก้ไขง่ายๆ)
-async function editPackage(id) {
-  // ดึงข้อมูลโปรเน็ตตัวนี้
-  const res = await fetch(`${API_URL}?type=packages`);
-  const data = await res.json();
-  const pkg = data.find(p => p.id === id);
-  if(!pkg) {
-    alert('ไม่พบข้อมูลโปรเน็ต');
-    return;
-  }
+function deleteUser(index) { if (confirm('ยืนยันลบสมาชิก?')) { fetch(API_URL, { method: 'POST', body: JSON.stringify({ action: 'deleteUser', index }), headers: { 'Content-Type': 'application/json' } }).then(() => loadData()); } }
 
-  const network = prompt('แก้ไขเครือข่าย', pkg.network);
-  if(network === null) return;
-  const price = prompt('แก้ไขราคา', pkg.price);
-  if(price === null) return;
-  const speed = prompt('แก้ไขความเร็ว', pkg.speed);
-  if(speed === null) return;
-  const duration = prompt('แก้ไขระยะเวลา', pkg.duration);
-  if(duration === null) return;
-  const description = prompt('แก้ไขรายละเอียด', pkg.description);
-  if(description === null) return;
-  const link = prompt('แก้ไขลิงก์สมัคร', pkg.link);
-  if(link === null) return;
+window.onload = loadData;
 
-  const updateData = {
-    type: 'edit_package',
-    id,
-    network,
-    price,
-    speed,
-    duration,
-    description,
-    link
-  };
-
-  const result = await postData(updateData);
-  if(result.success) {
-    alert('แก้ไขโปรเน็ตเรียบร้อย');
-    loadPackages();
-  } else alert('แก้ไขโปรเน็ตไม่สำเร็จ');
-}
-
-// ฟังก์ชันโหลดสมาชิก
-async function loadMembers() {
-  const container = document.getElementById('userList');
-  container.innerHTML = 'กำลังโหลด...';
-  try {
-    const res = await fetch(`${API_URL}?type=members`);
-    const data = await res.json();
-    if(!data || data.length === 0) {
-      container.innerHTML = '<p>ไม่มีสมาชิกในระบบ</p>';
-      return;
-    }
-    container.innerHTML = '';
-    data.forEach(user => {
-      const div = document.createElement('div');
-      div.classList.add('card');
-      div.innerHTML = `
-        <strong>${user.nickname}</strong> (เบอร์: ${user.phone})<br>
-        รหัสผ่าน: ${user.password}<br>
-        <button onclick="editMember('${user.id}')">แก้ไข</button>
-        <button onclick="deleteMember('${user.id}')">ลบ</button>
-      `;
-      container.appendChild(div);
-    });
-  } catch (error) {
-    container.innerHTML = '<p>เกิดข้อผิดพลาดในการโหลดข้อมูลสมาชิก</p>';
-    console.error(error);
-  }
-}
-
-// ฟังก์ชันลบสมาชิก
-async function deleteMember(id) {
-  if(!confirm('ต้องการลบสมาชิกนี้ใช่หรือไม่?')) return;
-  const res = await postData({ type: 'delete_member', id });
-  if(res.success) {
-    alert('ลบสมาชิกเรียบร้อย');
-    loadMembers();
-  } else alert('ลบสมาชิกไม่สำเร็จ');
-}
-
-// ฟังก์ชันแก้ไขสมาชิก (prompt)
-async function editMember(id) {
-  const res = await fetch(`${API_URL}?type=members`);
-  const data = await res.json();
-  const user = data.find(u => u.id === id);
-  if(!user) {
-    alert('ไม่พบข้อมูลสมาชิก');
-    return;
-  }
-
-  const phone = prompt('แก้ไขเบอร์โทรศัพท์', user.phone);
-  if(phone === null) return;
-  const nickname = prompt('แก้ไขชื่อเล่น', user.nickname);
-  if(nickname === null) return;
-  const password = prompt('แก้ไขรหัสผ่าน', user.password);
-  if(password === null) return;
-
-  const updateData = {
-    type: 'edit_member',
-    id,
-    phone,
-    nickname,
-    password
-  };
-
-  const result = await postData(updateData);
-  if(result.success) {
-    alert('แก้ไขสมาชิกเรียบร้อย');
-    loadMembers();
-  } else alert('แก้ไขสมาชิกไม่สำเร็จ');
-}
-
-// ฟังก์ชัน POST ข้อมูลไป Google Apps Script
-async function postData(data) {
-  try {
-    const res = await fetch(API_URL, {
-      method: 'POST',
-      body: JSON.stringify(data),
-      headers: { 'Content-Type': 'application/json' },
-    });
-    return await res.json();
-  } catch (error) {
-    console.error('POST error', error);
-    return { success: false };
-  }
-}
-
-// ออกจากระบบ
-function logout() {
-  if(confirm('ต้องการออกจากระบบใช่หรือไม่?')) {
-    window.location.href = 'admin-login.html';
-  }
-}
