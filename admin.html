@@ -1,343 +1,72 @@
-<!DOCTYPE html>
-<html lang="th">
-<head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>ระบบหลังบ้าน Admin</title>
-<style>
-  body {
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-    background: #f0f4f8;
-    margin: 0; padding: 20px;
-  }
-  h2 {
-    color: #007aff;
-    text-align: center;
-  }
-  .container {
-    max-width: 600px;
-    margin: 0 auto;
-    background: #fff;
-    border-radius: 16px;
-    padding: 25px;
-    box-shadow: 0 10px 20px rgba(0,0,0,0.1);
-  }
-  label {
-    font-weight: 600;
-  }
-  input, select, button {
-    font-size: 16px;
-    padding: 8px 12px;
-    margin: 8px 0 16px 0;
-    width: 100%;
-    box-sizing: border-box;
-    border-radius: 8px;
-    border: 1px solid #ccc;
-    transition: border-color 0.3s ease;
-  }
-  input:focus, select:focus {
-    border-color: #007aff;
-    outline: none;
-  }
-  button {
-    cursor: pointer;
-    background-color: #007aff;
-    color: white;
-    border: none;
-    font-weight: 700;
-    border-radius: 12px;
-    box-shadow: 0 6px 12px rgba(0,122,255,0.3);
-  }
-  button:hover {
-    background-color: #005bb5;
-  }
-  /* ตารางแสดงสมาชิกและโปร */
-  table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-bottom: 25px;
-  }
-  th, td {
-    border: 1px solid #ddd;
-    padding: 10px 12px;
-    text-align: center;
-  }
-  th {
-    background: #007aff;
-    color: white;
-  }
-  /* ปุ่มแก้ไข ลบ */
-  .btn-edit, .btn-delete {
-    padding: 6px 12px;
-    margin: 0 3px;
-    border-radius: 8px;
-    border: none;
-    font-weight: 600;
-  }
-  .btn-edit {
-    background: #34c759;
-    color: white;
-  }
-  .btn-edit:hover {
-    background: #28a745;
-  }
-  .btn-delete {
-    background: #ff3b30;
-    color: white;
-  }
-  .btn-delete:hover {
-    background: #cc2a25;
-  }
-
-  /* ปุ่มแจ้งเตือน */
-  #notifyBtn {
-    background: #ff9500;
-    margin-bottom: 20px;
-  }
-  #notifyBtn:hover {
-    background: #cc7a00;
-  }
-
-  /* กล่องแจ้งเตือน popup */
-  #notificationPopup {
-    position: fixed;
-    top: 50%; left: 50%;
-    transform: translate(-50%, -50%);
-    background: white;
-    border-radius: 16px;
-    padding: 20px 30px;
-    box-shadow: 0 15px 30px rgba(0,0,0,0.25);
-    display: none;
-    max-width: 90%;
-    z-index: 9999;
-  }
-  #notificationPopup p {
-    font-size: 18px;
-    margin-bottom: 20px;
-  }
-  #closeNotification {
-    background: #007aff;
-    color: white;
-    border: none;
-    padding: 10px 20px;
-    border-radius: 12px;
-    cursor: pointer;
-    font-weight: 700;
-  }
-  #closeNotification:hover {
-    background: #005bb5;
-  }
-</style>
-</head>
-<body>
-
-<div class="container">
-  <h2>ระบบหลังบ้าน Admin</h2>
-
-  <!-- ปุ่มแจ้งเตือน -->
-  <button id="notifyBtn">ส่งแจ้งเตือนลูกค้า</button>
-
-  <!-- ตารางสมาชิก -->
-  <h3>จัดการสมาชิก</h3>
-  <table id="membersTable">
+<!-- ตัวอย่างส่วนจัดการสมาชิกในระบบหลังบ้าน -->
+<div>
+  <h2>จัดการสมาชิก</h2>
+  <table id="membersTable" border="1" cellspacing="0" cellpadding="8" style="width:100%; border-collapse: collapse;">
     <thead>
       <tr>
         <th>เบอร์โทร</th>
-        <th>สถานะ</th>
-        <th>เปลี่ยนสถานะ</th>
-        <th>บันทึก</th>
+        <th>ชื่อเล่น</th>
+        <th>รหัสผ่าน</th>
+        <th>สถานะบัญชี</th>
+        <th>แก้ไขสถานะ</th>
+        <th>ลบสมาชิก</th>
       </tr>
     </thead>
-    <tbody></tbody>
+    <tbody id="membersTbody"></tbody>
   </table>
-
-  <!-- ฟอร์มเพิ่ม/แก้ไข โปรเน็ต -->
-  <h3>จัดการโปรเน็ต</h3>
-  <form id="packageForm">
-    <input type="hidden" id="packageIndex" value="">
-    <label>ชื่อโปรเน็ต</label>
-    <input type="text" id="packageName" placeholder="ชื่อโปรเน็ต" required>
-    <label>ราคา (บาท)</label>
-    <input type="number" id="packagePrice" placeholder="ราคา" min="0" required>
-    <button type="submit" id="savePackageBtn">เพิ่มโปรเน็ต</button>
-  </form>
-
-  <!-- ตารางโปรเน็ต -->
-  <table id="packagesTable">
-    <thead>
-      <tr>
-        <th>ชื่อโปรเน็ต</th>
-        <th>ราคา (บาท)</th>
-        <th>จัดการ</th>
-      </tr>
-    </thead>
-    <tbody></tbody>
-  </table>
-</div>
-
-<!-- popup แจ้งเตือน -->
-<div id="notificationPopup">
-  <p id="notificationMessage"></p>
-  <button id="closeNotification">ปิด</button>
 </div>
 
 <script>
-  // โหลดสมาชิกจาก localStorage หรือสร้างใหม่
-  let members = JSON.parse(localStorage.getItem('users') || '[]');
-  // โหลดโปรเน็ตจาก localStorage หรือสร้างใหม่
-  let packages = JSON.parse(localStorage.getItem('packages') || '[]');
+  function loadMembers() {
+    const users = JSON.parse(localStorage.getItem('users') || '[]');
+    const tbody = document.getElementById('membersTbody');
+    tbody.innerHTML = '';
 
-  const membersTableBody = document.querySelector('#membersTable tbody');
-  const packagesTableBody = document.querySelector('#packagesTable tbody');
-  const packageForm = document.getElementById('packageForm');
-  const packageNameInput = document.getElementById('packageName');
-  const packagePriceInput = document.getElementById('packagePrice');
-  const packageIndexInput = document.getElementById('packageIndex');
-  const savePackageBtn = document.getElementById('savePackageBtn');
-  const notificationPopup = document.getElementById('notificationPopup');
-  const notificationMessage = document.getElementById('notificationMessage');
-  const closeNotificationBtn = document.getElementById('closeNotification');
-  const notifyBtn = document.getElementById('notifyBtn');
-
-  // แสดงสมาชิก
-  function renderMembers() {
-    membersTableBody.innerHTML = '';
-    members.forEach((m, idx) => {
+    users.forEach((user, index) => {
       const tr = document.createElement('tr');
 
-      const phoneTd = document.createElement('td');
-      phoneTd.textContent = m.phone;
-      tr.appendChild(phoneTd);
-
-      const statusTd = document.createElement('td');
-      statusTd.textContent = m.status;
-      tr.appendChild(statusTd);
-
-      const selectTd = document.createElement('td');
-      const select = document.createElement('select');
-      select.innerHTML = `
-        <option value="Active" ${m.status === 'Active' ? 'selected' : ''}>ปกติ</option>
-        <option value="Banned" ${m.status === 'Banned' ? 'selected' : ''}>แบน</option>
+      tr.innerHTML = `
+        <td>${user.phone}</td>
+        <td>${user.name || '-'}</td>
+        <td>${user.password || '-'}</td>
+        <td>${user.status || 'ปกติ'}</td>
+        <td>
+          <select onchange="changeStatus(${index}, this.value)">
+            <option value="ปกติ" ${user.status === 'ปกติ' ? 'selected' : ''}>ปกติ</option>
+            <option value="แบรนด์" ${user.status === 'แบรนด์' ? 'selected' : ''}>แบรนด์</option>
+          </select>
+          <button onclick="saveStatus(${index})">บันทึก</button>
+        </td>
+        <td>
+          <button onclick="deleteMember(${index})" style="color: red;">ลบ</button>
+        </td>
       `;
-      selectTd.appendChild(select);
-      tr.appendChild(selectTd);
 
-      const saveTd = document.createElement('td');
-      const saveBtn = document.createElement('button');
-      saveBtn.textContent = 'บันทึก';
-      saveBtn.style.backgroundColor = '#007aff';
-      saveBtn.style.color = '#fff';
-      saveBtn.style.border = 'none';
-      saveBtn.style.borderRadius = '8px';
-      saveBtn.style.padding = '6px 12px';
-      saveBtn.style.cursor = 'pointer';
-
-      saveBtn.onclick = () => {
-        members[idx].status = select.value;
-        localStorage.setItem('users', JSON.stringify(members));
-        renderMembers();
-        alert('บันทึกสถานะสมาชิกเรียบร้อยแล้ว');
-      };
-      saveTd.appendChild(saveBtn);
-      tr.appendChild(saveTd);
-
-      membersTableBody.appendChild(tr);
+      tbody.appendChild(tr);
     });
   }
 
-  // แสดงโปรเน็ต
-  function renderPackages() {
-    packagesTableBody.innerHTML = '';
-    packages.forEach((p, idx) => {
-      const tr = document.createElement('tr');
-
-      const nameTd = document.createElement('td');
-      nameTd.textContent = p.name;
-      tr.appendChild(nameTd);
-
-      const priceTd = document.createElement('td');
-      priceTd.textContent = p.price;
-      tr.appendChild(priceTd);
-
-      const actionTd = document.createElement('td');
-
-      // ปุ่มแก้ไข
-      const editBtn = document.createElement('button');
-      editBtn.textContent = 'แก้ไข';
-      editBtn.className = 'btn-edit';
-      editBtn.onclick = () => {
-        packageNameInput.value = p.name;
-        packagePriceInput.value = p.price;
-        packageIndexInput.value = idx;
-        savePackageBtn.textContent = 'บันทึกแก้ไข';
-      };
-      actionTd.appendChild(editBtn);
-
-      // ปุ่มลบ
-      const deleteBtn = document.createElement('button');
-      deleteBtn.textContent = 'ลบ';
-      deleteBtn.className = 'btn-delete';
-      deleteBtn.onclick = () => {
-        if (confirm('ยืนยันการลบโปรเน็ตนี้?')) {
-          packages.splice(idx, 1);
-          localStorage.setItem('packages', JSON.stringify(packages));
-          renderPackages();
-          alert('ลบโปรเน็ตเรียบร้อยแล้ว');
-        }
-      };
-      actionTd.appendChild(deleteBtn);
-
-      tr.appendChild(actionTd);
-      packagesTableBody.appendChild(tr);
-    });
+  function changeStatus(index, newStatus) {
+    const users = JSON.parse(localStorage.getItem('users') || '[]');
+    users[index].status = newStatus;
+    localStorage.setItem('users', JSON.stringify(users));
   }
 
-  // เพิ่มหรือแก้ไขโปรเน็ต
-  packageForm.addEventListener('submit', e => {
-    e.preventDefault();
-    const name = packageNameInput.value.trim();
-    const price = parseFloat(packagePriceInput.value);
-    if (!name || isNaN(price) || price < 0) {
-      alert('กรุณากรอกข้อมูลโปรเน็ตให้ถูกต้อง');
-      return;
-    }
-    const idx = packageIndexInput.value;
-    if (idx === '') {
-      // เพิ่มใหม่
-      packages.push({name, price});
-      alert('เพิ่มโปรเน็ตเรียบร้อยแล้ว');
-    } else {
-      // แก้ไข
-      packages[idx] = {name, price};
-      alert('แก้ไขโปรเน็ตเรียบร้อยแล้ว');
-    }
-    localStorage.setItem('packages', JSON.stringify(packages));
-    packageForm.reset();
-    packageIndexInput.value = '';
-    savePackageBtn.textContent = 'เพิ่มโปรเน็ต';
-    renderPackages();
-  });
+  function saveStatus(index) {
+    alert('บันทึกสถานะเรียบร้อยแล้ว');
+    loadMembers();
+  }
 
-  // ปุ่มแจ้งเตือน
-  notifyBtn.onclick = () => {
-    const message = prompt('พิมพ์ข้อความแจ้งเตือนลูกค้า:');
-    if (message && message.trim() !== '') {
-      // เก็บข้อความแจ้งเตือนใน localStorage เพื่อให้ฝั่งลูกค้าเรียกดู
-      localStorage.setItem('notifyMessage', message.trim());
-      alert('ส่งแจ้งเตือนเรียบร้อยแล้ว');
+  function deleteMember(index) {
+    if (confirm('ต้องการลบสมาชิกนี้หรือไม่?')) {
+      const users = JSON.parse(localStorage.getItem('users') || '[]');
+      users.splice(index, 1);
+      localStorage.setItem('users', JSON.stringify(users));
+      loadMembers();
+      alert('ลบสมาชิกเรียบร้อยแล้ว');
     }
-  };
+  }
 
-  // ปิด popup แจ้งเตือน
-  closeNotificationBtn.onclick = () => {
-    notificationPopup.style.display = 'none';
-    localStorage.removeItem('notifyMessage'); // เคลียร์ข้อความหลังปิด
-  };
-
-  // โหลดและแสดงสมาชิกและโปรเน็ต
-  renderMembers();
-  renderPackages();
+  // โหลดสมาชิกตอนหน้าเปิด
+  loadMembers();
 </script>
-
-</body>
-</html>
