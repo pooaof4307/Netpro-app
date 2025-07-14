@@ -1,94 +1,397 @@
+
 <!DOCTYPE html>
 <html lang="th">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>ระบบหลังบ้านโปรเน็ต</title>
-  <link rel="stylesheet" href="admin.css" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>ระบบหลังบ้าน Admin โปรเน็ต</title>
+  <style>
+    /* CSS สวยทันสมัย */
+    body {
+      font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+      background: #f4f7f8;
+      margin: 0; padding: 0;
+      color: #333;
+    }
+    header {
+      background: #4a90e2;
+      color: white;
+      padding: 1rem;
+      text-align: center;
+      font-size: 1.5rem;
+      font-weight: 700;
+    }
+    main {
+      max-width: 900px;
+      margin: 2rem auto;
+      background: white;
+      padding: 1.5rem;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+    section {
+      margin-bottom: 2rem;
+    }
+    h2 {
+      border-bottom: 2px solid #4a90e2;
+      padding-bottom: 0.3rem;
+      margin-bottom: 1rem;
+      color: #4a90e2;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 1rem;
+    }
+    th, td {
+      border: 1px solid #ddd;
+      padding: 0.5rem;
+      text-align: center;
+    }
+    th {
+      background: #f0f6fc;
+      font-weight: 600;
+    }
+    input, button, select {
+      padding: 0.4rem 0.8rem;
+      font-size: 1rem;
+      border-radius: 4px;
+      border: 1px solid #ccc;
+      margin-right: 0.5rem;
+    }
+    input[type="text"], input[type="password"] {
+      width: 200px;
+    }
+    button {
+      background: #4a90e2;
+      color: white;
+      border: none;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
+    button:hover {
+      background: #357ABD;
+    }
+    .hidden {
+      display: none;
+    }
+    .error {
+      color: #d9534f;
+      margin-bottom: 1rem;
+    }
+    .flex-row {
+      display: flex;
+      align-items: center;
+      margin-bottom: 1rem;
+    }
+    .flex-row > * {
+      margin-right: 0.5rem;
+    }
+    .btn-small {
+      padding: 0.2rem 0.5rem;
+      font-size: 0.85rem;
+      margin: 0 0.2rem;
+    }
+  </style>
 </head>
 <body>
-  <header>
-    <h1>จัดการโปรเน็ต</h1>
-  </header>
+  <header>ระบบหลังบ้าน Admin โปรเน็ต</header>
 
-  <section class="form-section">
-    <form id="addForm">
-      <input type="text" name="network" placeholder="เครือข่าย (AIS)" required>
-      <input type="text" name="price" placeholder="ราคา (99 บาท)" required>
-      <input type="text" name="speed" placeholder="ความเร็ว (1Mbps)" required>
-      <input type="text" name="duration" placeholder="ระยะเวลา (7 วัน)" required>
-      <input type="text" name="description" placeholder="รายละเอียดเพิ่มเติม" required>
-      <input type="text" name="link" placeholder="ลิงก์สมัคร" required>
-      <button type="submit">เพิ่มโปรเน็ต</button>
-    </form>
-  </section>
+  <main>
+    <!-- หน้า Login -->
+    <section id="loginSection">
+      <h2>เข้าสู่ระบบแอดมิน</h2>
+      <div class="error" id="loginError"></div>
+      <div class="flex-row">
+        <input type="password" id="adminPassword" placeholder="รหัสผ่านแอดมิน" />
+        <button id="btnLogin">เข้าสู่ระบบ</button>
+      </div>
+    </section>
 
-  <section class="list-section">
-    <h2>รายการโปรเน็ต</h2>
-    <table id="dataTable">
-      <thead>
-        <tr>
-          <th>เครือข่าย</th><th>ราคา</th><th>ความเร็ว</th><th>ระยะเวลา</th><th>รายละเอียด</th><th>ลิงก์</th><th>ลบ</th>
-        </tr>
-      </thead>
-      <tbody></tbody>
-    </table>
-  </section>
+    <!-- หน้า Admin Main -->
+    <section id="adminSection" class="hidden">
+      <button id="btnLogout" style="float:right; background:#d9534f;">ออกจากระบบ</button>
+
+      <!-- โปรเน็ต -->
+      <section>
+        <h2>จัดการโปรเน็ต</h2>
+        <form id="formAddEdit" style="margin-bottom: 1rem;">
+          <input type="hidden" id="editId" />
+          <input type="text" id="network" placeholder="เครือข่าย (AIS)" required />
+          <input type="text" id="price" placeholder="ราคา (99 บาท)" required />
+          <input type="text" id="speed" placeholder="ความเร็ว (1Mbps)" required />
+          <input type="text" id="duration" placeholder="ระยะเวลา (7 วัน)" required />
+          <input type="text" id="link" placeholder="ลิงก์สมัคร" required />
+          <button type="submit" id="btnSave">เพิ่มโปรเน็ต</button>
+          <button type="button" id="btnCancelEdit" class="hidden">ยกเลิกแก้ไข</button>
+        </form>
+
+        <table id="tablePromnet">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>เครือข่าย</th>
+              <th>ราคา</th>
+              <th>ความเร็ว</th>
+              <th>ระยะเวลา</th>
+              <th>ลิงก์สมัคร</th>
+              <th>จัดการ</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </section>
+
+      <!-- สมาชิก -->
+      <section>
+        <h2>จัดการสมาชิก</h2>
+        <table id="tableMembers">
+          <thead>
+            <tr>
+              <th>เบอร์โทร</th>
+              <th>ชื่อเล่น</th>
+              <th>รหัสผ่าน</th>
+              <th>จัดการ</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </section>
+    </section>
+  </main>
 
   <script>
-    const URL = "https://script.google.com/macros/s/AKfycbyV7B2AfgmmULrTdOPbI6oRbJtF3FRM6_4vvHOrJBvrutWKKH0yaa0gEWRyz95cd4gy8Q/exec";
+    // Config
+    const ADMIN_PASSWORD = 'admin123'; // เปลี่ยนรหัสผ่านตามต้องการ
+    const API_URL = 'https://script.google.com/macros/s/AKfycbyV7B2AfgmmULrTdOPbI6oRbJtF3FRM6_4vvHOrJBvrutWKKH0yaa0gEWRyz95cd4gy8Q/exec';
 
-    function loadData() {
-      fetch(URL)
-        .then(res => res.json())
-        .then(data => {
-          const tbody = document.querySelector("#dataTable tbody");
-          tbody.innerHTML = "";
-          data.forEach((row, index) => {
-            const tr = document.createElement("tr");
-            tr.innerHTML = `
-              <td>${row.network}</td>
-              <td>${row.price}</td>
-              <td>${row.speed}</td>
-              <td>${row.duration}</td>
-              <td>${row.description}</td>
-              <td><a href="${row.link}" target="_blank">สมัคร</a></td>
-              <td><button onclick="deleteRow(${index + 2})">ลบ</button></td>
-            `;
-            tbody.appendChild(tr);
-          });
-        });
+    // Elements
+    const loginSection = document.getElementById('loginSection');
+    const adminSection = document.getElementById('adminSection');
+    const loginError = document.getElementById('loginError');
+    const adminPasswordInput = document.getElementById('adminPassword');
+    const btnLogin = document.getElementById('btnLogin');
+    const btnLogout = document.getElementById('btnLogout');
+
+    const formAddEdit = document.getElementById('formAddEdit');
+    const editIdInput = document.getElementById('editId');
+    const networkInput = document.getElementById('network');
+    const priceInput = document.getElementById('price');
+    const speedInput = document.getElementById('speed');
+    const durationInput = document.getElementById('duration');
+    const linkInput = document.getElementById('link');
+    const btnSave = document.getElementById('btnSave');
+    const btnCancelEdit = document.getElementById('btnCancelEdit');
+
+    const tablePromnetBody = document.querySelector('#tablePromnet tbody');
+    const tableMembersBody = document.querySelector('#tableMembers tbody');
+
+    // State
+    let promnets = [];
+    let members = [];
+
+    // ฟังก์ชันเปลี่ยนหน้า Login / Admin
+    function showAdminSection(show) {
+      loginSection.classList.toggle('hidden', show);
+      adminSection.classList.toggle('hidden', !show);
+      if(show) loadData();
     }
 
-    function deleteRow(rowIndex) {
-      if (!confirm("คุณแน่ใจหรือไม่ว่าต้องการลบโปรเน็ตนี้?")) return;
-      fetch(URL, {
-        method: "POST",
-        body: JSON.stringify({ delete: true, row: rowIndex }),
-        headers: { "Content-Type": "application/json" }
-      })
-      .then(() => loadData())
-      .catch(() => alert("ลบไม่สำเร็จ"));
+    // เช็คสถานะล็อกอิน
+    function checkLogin() {
+      const loggedIn = sessionStorage.getItem('adminLoggedIn');
+      if(loggedIn === 'true') {
+        showAdminSection(true);
+      } else {
+        showAdminSection(false);
+      }
     }
 
-    document.getElementById("addForm").addEventListener("submit", function(e) {
-      e.preventDefault();
-      const formData = new FormData(this);
-      const data = Object.fromEntries(formData.entries());
-      fetch(URL, {
-        method: "POST",
-        body: JSON.stringify(data),
-        headers: { "Content-Type": "application/json" }
-      })
-      .then(() => {
-        alert("เพิ่มโปรเน็ตแล้ว");
-        this.reset();
-        loadData();
-      })
-      .catch(() => alert("เพิ่มโปรเน็ตไม่สำเร็จ"));
+    // Login
+    btnLogin.addEventListener('click', () => {
+      const pass = adminPasswordInput.value.trim();
+      if(pass === ADMIN_PASSWORD) {
+        sessionStorage.setItem('adminLoggedIn', 'true');
+        adminPasswordInput.value = '';
+        loginError.textContent = '';
+        showAdminSection(true);
+      } else {
+        loginError.textContent = 'รหัสผ่านไม่ถูกต้อง';
+      }
     });
 
-    loadData();
-  </script>
-</body>
-</html>
+    // Logout
+    btnLogout.addEventListener('click', () => {
+      sessionStorage.removeItem('adminLoggedIn');
+      showAdminSection(false);
+    });
+
+    // โหลดข้อมูลจาก Google Apps Script
+    async function loadData() {
+      try {
+        // ดึงข้อมูลโปรเน็ต
+        const resProm = await fetch(API_URL + '?action=getPromnets');
+        const dataProm = await resProm.json();
+        promnets = dataProm.promnets || [];
+        renderPromnets();
+
+        // ดึงข้อมูลสมาชิก
+        const resMem = await fetch(API_URL + '?action=getMembers');
+        const dataMem = await resMem.json();
+        members = dataMem.members || [];
+        renderMembers();
+      } catch (err) {
+        alert('โหลดข้อมูลล้มเหลว');
+        console.error(err);
+      }
+    }
+
+    // แสดงโปรเน็ตในตาราง
+function renderPromnets() {
+  tablePromnetBody.innerHTML = '';
+  promnets.forEach(item => {
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td>${item.id}</td>
+      <td>${item.network}</td>
+      <td>${item.price}</td>
+      <td>${item.speed}</td>
+      <td>${item.duration}</td>
+      <td><a href="${item.link}" target="_blank">ลิงก์สมัคร</a></td>
+      <td>
+        <button class="btn-small" onclick="editPromnet(${item.id})">แก้ไข</button>
+        <button class="btn-small" onclick="deletePromnet(${item.id})" style="background:#d9534f;">ลบ</button>
+      </td>
+    `;
+    tablePromnetBody.appendChild(tr);
+  });
+}
+
+// แก้ไขโปรเน็ต (คลิกปุ่มแก้ไข)
+function editPromnet(id) {
+  const p = promnets.find(x => x.id === id);
+  if(!p) return alert('ไม่พบข้อมูล');
+  editIdInput.value = p.id;
+  networkInput.value = p.network;
+  priceInput.value = p.price;
+  speedInput.value = p.speed;
+  durationInput.value = p.duration;
+  linkInput.value = p.link;
+  btnSave.textContent = 'บันทึกการแก้ไข';
+  btnCancelEdit.classList.remove('hidden');
+}
+
+// ยกเลิกแก้ไข
+btnCancelEdit.addEventListener('click', () => {
+  formAddEdit.reset();
+  editIdInput.value = '';
+  btnSave.textContent = 'เพิ่มโปรเน็ต';
+  btnCancelEdit.classList.add('hidden');
+});
+
+// ลบโปรเน็ต
+async function deletePromnet(id) {
+  if(!confirm('ยืนยันการลบโปรเน็ตนี้?')) return;
+  try {
+    const res = await fetch(API_URL + '?action=deletePromnet&id=' + id);
+    const result = await res.json();
+    if(result.success) {
+      alert('ลบสำเร็จ');
+      loadData();
+    } else {
+      alert('ลบล้มเหลว');
+    }
+  } catch(e) {
+    alert('เกิดข้อผิดพลาด');
+  }
+}
+
+// ส่งข้อมูลเพิ่ม/แก้ไข โปรเน็ต
+formAddEdit.addEventListener('submit', async e => {
+  e.preventDefault();
+  const id = editIdInput.value.trim();
+  const data = {
+    network: networkInput.value.trim(),
+    price: priceInput.value.trim(),
+    speed: speedInput.value.trim(),
+    duration: durationInput.value.trim(),
+    link: linkInput.value.trim(),
+  };
+  if(!data.network || !data.price || !data.speed || !data.duration || !data.link) {
+    alert('กรุณากรอกข้อมูลให้ครบ');
+    return;
+  }
+
+  try {
+    let url = API_URL;
+    if(id) {
+      // แก้ไข
+      url += '?action=editPromnet&id=' + id +
+        `&network=${encodeURIComponent(data.network)}` +
+        `&price=${encodeURIComponent(data.price)}` +
+        `&speed=${encodeURIComponent(data.speed)}` +
+        `&duration=${encodeURIComponent(data.duration)}` +
+        `&link=${encodeURIComponent(data.link)}`;
+    } else {
+      // เพิ่ม
+      url += '?action=addPromnet' +
+        `&network=${encodeURIComponent(data.network)}` +
+        `&price=${encodeURIComponent(data.price)}` +
+        `&speed=${encodeURIComponent(data.speed)}` +
+        `&duration=${encodeURIComponent(data.duration)}` +
+        `&link=${encodeURIComponent(data.link)}`;
+    }
+
+    const res = await fetch(url);
+    const result = await res.json();
+    if(result.success) {
+      alert(id ? 'แก้ไขโปรเน็ตสำเร็จ' : 'เพิ่มโปรเน็ตสำเร็จ');
+      formAddEdit.reset();
+      editIdInput.value = '';
+      btnSave.textContent = 'เพิ่มโปรเน็ต';
+      btnCancelEdit.classList.add('hidden');
+      loadData();
+    } else {
+      alert('บันทึกล้มเหลว');
+    }
+  } catch(e) {
+    alert('เกิดข้อผิดพลาด');
+  }
+});
+
+// แสดงสมาชิก
+function renderMembers() {
+  tableMembersBody.innerHTML = '';
+  members.forEach(m => {
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td>${m.phone}</td>
+      <td>${m.nickname}</td>
+      <td>${m.password}</td>
+      <td>
+        <button class="btn-small" onclick="deleteMember('${m.phone}')" style="background:#d9534f;">ลบ</button>
+      </td>
+    `;
+    tableMembersBody.appendChild(tr);
+  });
+}
+
+// ลบสมาชิก
+async function deleteMember(phone) {
+  if(!confirm('ยืนยันการลบสมาชิกนี้?')) return;
+  try {
+    const res = await fetch(API_URL + '?action=deleteMember&phone=' + encodeURIComponent(phone));
+    const result = await res.json();
+    if(result.success) {
+      alert('ลบสมาชิกสำเร็จ');
+      loadData();
+    } else {
+      alert('ลบสมาชิกล้มเหลว');
+    }
+  } catch(e) {
+    alert('เกิดข้อผิดพลาด');
+  }
+}
+
+// เรียกเช็คสถานะล็อกอินตอนโหลดหน้า
+checkLogin();
