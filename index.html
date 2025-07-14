@@ -1,84 +1,204 @@
+ได้เลย! นี่คือโค้ดหน้าแรกที่ดึงข้อมูลโปรเน็ตจาก Google Sheets (ผ่าน Google Apps Script URL ที่คุณมี) มาแสดงเป็นรายการ พร้อม UI และ CSS ที่สวยโดดเด่นแบบทันสมัยและใช้งานง่ายบนมือถือ
+
+
+---
+
+📁 ไฟล์: index.html
+
 <!DOCTYPE html>
 <html lang="th">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>เพิ่มโปรเน็ต</title>
+  <title>โปรเน็ตทั้งหมด</title>
   <style>
+    /* Reset และฟอนต์ */
+    * {
+      box-sizing: border-box;
+    }
     body {
-      font-family: Arial, sans-serif;
-      max-width: 400px;
-      margin: 20px auto;
-      padding: 10px;
-    }
-    input, button {
-      width: 100%;
-      margin: 6px 0;
-      padding: 10px;
-      font-size: 16px;
-    }
-    button {
-      background-color: #007bff;
-      border: none;
-      color: white;
-      cursor: pointer;
-    }
-    button:hover {
-      background-color: #0056b3;
+      font-family: 'Prompt', sans-serif, Arial, sans-serif;
+      margin: 0; padding: 0;
+      background: #f0f4f8;
+      color: #333;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 20px;
     }
     header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
+      width: 100%;
+      max-width: 600px;
+      text-align: center;
       margin-bottom: 20px;
     }
-    a.admin-link {
+    header h1 {
+      color: #1e90ff;
+      margin-bottom: 5px;
+      font-weight: 700;
+    }
+    header p {
+      color: #666;
+      font-size: 0.9rem;
+    }
+
+    /* รายการโปรเน็ต */
+    .list-container {
+      width: 100%;
+      max-width: 600px;
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 15px;
+    }
+
+    @media(min-width: 600px) {
+      .list-container {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+
+    .card {
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 4px 15px rgba(30, 144, 255, 0.2);
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      transition: transform 0.2s ease;
+    }
+    .card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 8px 25px rgba(30, 144, 255, 0.35);
+    }
+
+    .network {
+      font-weight: 700;
+      color: #1e90ff;
+      font-size: 1.3rem;
+      margin-bottom: 10px;
+    }
+    .price {
+      font-size: 1.1rem;
+      color: #27ae60;
+      margin-bottom: 10px;
+      font-weight: 600;
+    }
+    .details {
+      font-size: 0.95rem;
+      color: #555;
+      margin-bottom: 15px;
+      line-height: 1.4;
+    }
+    .info {
+      font-size: 0.9rem;
+      color: #777;
+      margin-bottom: 6px;
+    }
+    .link-btn {
+      display: inline-block;
+      text-align: center;
+      background-color: #1e90ff;
+      color: white;
+      padding: 10px 15px;
+      border-radius: 8px;
       text-decoration: none;
-      color: #007bff;
-      font-weight: bold;
+      font-weight: 600;
+      transition: background-color 0.3s ease;
+    }
+    .link-btn:hover {
+      background-color: #0d6efd;
+    }
+
+    footer {
+      margin-top: 30px;
+      font-size: 0.8rem;
+      color: #aaa;
     }
   </style>
 </head>
 <body>
   <header>
-    <h1>เพิ่มโปรเน็ตใหม่</h1>
-    <a href="index.html" class="admin-link">ดูโปรทั้งหมด</a>
+    <h1>โปรเน็ตมือถือทั้งหมด</h1>
+    <p>ข้อมูลอัปเดตเรียลไทม์จากระบบหลังบ้าน</p>
   </header>
-  <main>
-    <form id="addForm">
-      <input type="text" id="network" name="network" placeholder="เครือข่าย (AIS)" required />
-      <input type="text" id="price" name="price" placeholder="ราคา (99 บาท)" required />
-      <input type="text" id="speed" name="speed" placeholder="ความเร็ว (1Mbps)" required />
-      <input type="text" id="duration" name="duration" placeholder="ระยะเวลา (7 วัน)" required />
-      <input type="text" id="description" name="description" placeholder="รายละเอียดเพิ่มเติม" required />
-      <input type="text" id="link" name="link" placeholder="ลิงก์สมัคร" required />
-      <button type="submit">บันทึกโปรเน็ต</button>
-    </form>
+
+  <main class="list-container" id="listContainer">
+    <!-- รายการโปรเน็ตจะขึ้นตรงนี้ -->
   </main>
 
+  <footer>© 2025 โปรเน็ตของคุณ</footer>
+
   <script>
-    document.getElementById('addForm').addEventListener('submit', function(e) {
-      e.preventDefault();
-      const data = {
-        network: this.network.value,
-        price: this.price.value,
-        speed: this.speed.value,
-        duration: this.duration.value,
-        description: this.description.value,
-        link: this.link.value
-      };
-      fetch("https://script.google.com/macros/s/AKfycbwV6CTBuZDmobR74BZHUJ_OFFLTO9-914I4lwASkL0LnjDsTWXzBc9trjNwZ5HxQQ8EDg/exec", {
-        method: "POST",
-        body: JSON.stringify(data),
-        headers: { "Content-Type": "application/json" }
-      })
-      .then(res => res.text())
-      .then(() => {
-        alert("เพิ่มโปรเน็ตเรียบร้อยแล้ว");
-        this.reset();
-      })
-      .catch(() => alert("เกิดข้อผิดพลาด"));
-    });
+    const URL = "https://script.google.com/macros/s/AKfycbwV6CTBuZDmobR74BZHUJ_OFFLTO9-914I4lwASkL0LnjDsTWXzBc9trjNwZ5HxQQ8EDg/exec";
+
+    async function fetchData() {
+      try {
+        const res = await fetch(URL);
+        if(!res.ok) throw new Error("ไม่สามารถโหลดข้อมูลได้");
+        const data = await res.json();
+        return data;
+      } catch (error) {
+        alert(error.message);
+        return [];
+      }
+    }
+
+    function renderList(data) {
+      const container = document.getElementById('listContainer');
+      container.innerHTML = '';
+
+      if(data.length === 0) {
+        container.innerHTML = '<p style="text-align:center; color:#999;">ไม่มีโปรเน็ตให้แสดง</p>';
+        return;
+      }
+
+      data.forEach(item => {
+        const card = document.createElement('div');
+        card.classList.add('card');
+        card.innerHTML = `
+          <div class="network">${item.network}</div>
+          <div class="price">${item.price}</div>
+          <div class="details">${item.description}</div>
+          <div class="info"><strong>ความเร็ว:</strong> ${item.speed}</div>
+          <div class="info"><strong>ระยะเวลา:</strong> ${item.duration}</div>
+          <a href="${item.link}" target="_blank" class="link-btn" rel="noopener noreferrer">สมัครเลย</a>
+        `;
+        container.appendChild(card);
+      });
+    }
+
+    async function init() {
+      const data = await fetchData();
+      renderList(data);
+    }
+
+    window.onload = init;
   </script>
 </body>
 </html>
+
+
+---
+
+วิธีใช้
+
+1. เปลี่ยนตัวแปร URL เป็น Google Apps Script URL ที่คุณใช้สำหรับดึงข้อมูล (ซึ่งคุณส่งมาให้แล้วถูกต้อง)
+
+
+2. อัปโหลดไฟล์นี้ขึ้นเว็บ (GitHub Pages หรือโฮสต์ที่ต้องการ)
+
+
+3. เปิดดูหน้าเว็บ จะเห็นโปรเน็ตในรูปแบบการ์ดสวย ๆ
+
+
+4. รองรับทั้งมือถือและเดสก์ท็อปแบบ responsive
+
+
+
+
+---
+
+ถ้าต้องการปรับแก้เพิ่มเติม เช่น เพิ่มฟิลด์ หรือต้องการให้ UI โดดเด่นขึ้นอีก แจ้งได้เลยครับ!
+
