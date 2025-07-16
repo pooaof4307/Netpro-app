@@ -1,201 +1,136 @@
-<!DOCTYPE html>
-<html lang="th">
+<!DOCTYPE html><html lang="th">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta charset="UTF-8">
   <title>โพสต์ขายไอดีเกม</title>
   <style>
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    body { font-family: Arial, sans-serif; background: #f5f5f5; margin: 0; padding: 20px; }
+    .post-box { max-width: 600px; margin: auto; background: #fff; padding: 20px; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+    .post-box h2 { margin-bottom: 15px; }
+    .form-group { margin-bottom: 15px; }
+    .form-group label { display: block; margin-bottom: 5px; font-weight: bold; }
+    .form-group input[type="text"],
+    .form-group textarea,
+    .form-group input[type="color"] {
+      width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 5px;
     }
-
-    body {
-      background-color: #f0f2f5;
-      padding: 30px;
-      color: #1c1e21;
+    .form-group input[type="file"] {
+      margin-top: 5px;
     }
-
-    .container {
-      max-width: 600px;
-      margin: 0 auto;
+    .image-preview {
+      display: flex; flex-wrap: wrap; gap: 10px; margin-top: 10px;
     }
-
-    .post-box {
-      background-color: #fff;
-      border-radius: 12px;
-      padding: 20px;
-      margin-bottom: 20px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    .image-preview img {
+      width: 80px; height: 80px; object-fit: cover; border-radius: 5px; border: 1px solid #ddd;
     }
-
-    .post-box textarea {
-      width: 100%;
-      border: none;
-      resize: none;
-      padding: 15px;
-      font-size: 16px;
-      border-radius: 10px;
-      background: #f0f2f5;
-      margin-bottom: 15px;
+    .share-buttons button {
+      margin-right: 10px; padding: 8px 12px; background: #007bff; color: white; border: none; border-radius: 5px; cursor: pointer;
     }
-
-    .post-box button {
-      padding: 10px 20px;
-      background-color: #1877f2;
-      color: #fff;
-      border: none;
-      border-radius: 8px;
-      font-weight: bold;
-      cursor: pointer;
-    }
-
-    .post {
-      background-color: #fff;
-      border-radius: 12px;
-      padding: 15px 20px;
-      margin-bottom: 20px;
-      box-shadow: 0 3px 10px rgba(0,0,0,0.08);
-    }
-
-    .post .username {
-      font-weight: bold;
-      margin-bottom: 8px;
-    }
-
-    .post .text {
-      margin-bottom: 10px;
-      font-size: 15px;
-    }
-
-    .actions {
-      display: flex;
-      align-items: center;
-      gap: 15px;
-      margin-bottom: 10px;
-    }
-
-    .actions button {
-      background: none;
-      border: none;
-      color: #555;
-      cursor: pointer;
-      font-size: 14px;
-    }
-
-    .actions button:hover {
-      color: #1877f2;
-    }
-
-    .comments {
-      margin-top: 10px;
-      padding-left: 10px;
-    }
-
-    .comments .comment {
-      padding: 6px 0;
-      border-bottom: 1px solid #eee;
-      font-size: 14px;
-    }
-
-    .comments input {
-      width: 100%;
-      padding: 8px 10px;
-      border: 1px solid #ddd;
-      border-radius: 8px;
-      margin-top: 8px;
-    }
-
-    .comments input:focus {
-      border-color: #1877f2;
-      outline: none;
+    .post-content-preview {
+      padding: 15px; border-radius: 10px; margin-top: 15px;
     }
   </style>
 </head>
 <body>
-  <div class="container">
-    <!-- ฟอร์มโพสต์ -->
-    <div class="post-box">
-      <textarea id="postText" rows="4" placeholder="เขียนรายละเอียดไอดีเกมที่คุณต้องการขาย..."></textarea>
-      <button onclick="createPost()">โพสต์ขาย</button>
-    </div>
+  <div class="post-box">
+    <h2>สร้างโพสต์ขายไอดีเกม</h2>
+    <div><strong>ผู้ใช้:</strong> <span id="usernameDisplay">Guest</span></div><div class="form-group">
+  <label for="postText">ข้อความ</label>
+  <textarea id="postText" rows="4" placeholder="เขียนรายละเอียด..."></textarea>
+</div>
 
-    <!-- โซนแสดงโพสต์ -->
-    <div id="postsContainer"></div>
-  </div>
+<div class="form-group">
+  <label>เลือกสีพื้นหลังโพสต์</label>
+  <input type="color" id="bgColor" value="#ffffff">
+</div>
 
-  <script>
-    const POST_API = "https://script.google.com/macros/s/AKfycbzVNdWu1JCendoxOEfv6glDim_KSEuGG5Z7YRgtoh4w6jDUstoKHTdMA76eVV4yY2UJ_Q/exec";
+<div class="form-group">
+  <label>เลือกสีตัวอักษร</label>
+  <input type="color" id="textColor" value="#000000">
+</div>
 
-    function createPost() {
-      const text = document.getElementById('postText').value.trim();
-      if (!text) return;
+<div class="form-group">
+  <label>แนบรูปภาพ (ไม่เกิน 10)</label>
+  <input type="file" id="images" accept="image/*" multiple>
+  <div class="image-preview" id="imagePreview"></div>
+</div>
 
-      const username = "Gamer123"; // TODO: เปลี่ยนเป็นชื่อผู้ใช้จริงจากระบบ login
+<div class="form-group">
+  <label>ตำแหน่งที่ตั้ง</label>
+  <input type="text" id="location" placeholder="ระบุตำแหน่ง หรือให้ระบบหาตำแหน่ง">
+  <button onclick="getLocation()">ดึงตำแหน่งอัตโนมัติ</button>
+</div>
 
-      const payload = {
-        username: username,
-        postText: text
-      };
+<button onclick="submitPost()">โพสต์</button>
 
-      fetch(POST_API, {
-        method: "POST",
-        body: JSON.stringify(payload),
-        headers: {
-          "Content-Type": "application/json"
+<div class="form-group share-buttons">
+  <label>แชร์โพสต์:</label>
+  <button onclick="shareFacebook()">Facebook</button>
+  <button onclick="shareLine()">LINE</button>
+  <button onclick="shareTwitter()">Twitter</button>
+</div>
+
+<div id="preview" class="post-content-preview"></div>
+
+  </div>  <script>
+    const imageInput = document.getElementById('images');
+    const previewContainer = document.getElementById('imagePreview');
+    const previewBox = document.getElementById('preview');
+
+    let username = localStorage.getItem("username") || "Guest";
+    document.getElementById("usernameDisplay").textContent = username;
+
+    imageInput.addEventListener('change', () => {
+      previewContainer.innerHTML = "";
+      const files = Array.from(imageInput.files).slice(0, 10);
+      files.forEach(file => {
+        const reader = new FileReader();
+        reader.onload = e => {
+          const img = document.createElement('img');
+          img.src = e.target.result;
+          previewContainer.appendChild(img);
         }
-      })
-      .then(res => res.json())
-      .then(data => {
-        if (data.status === "success") {
-          document.getElementById('postText').value = "";
-          createPostUI(username, text);
-        } else {
-          alert("เกิดข้อผิดพลาดในการบันทึกโพสต์");
-        }
-      })
-      .catch(err => {
-        console.error("เกิดข้อผิดพลาด:", err);
-        alert("ไม่สามารถเชื่อมต่อ API ได้");
+        reader.readAsDataURL(file);
       });
-    }
+    });
 
-    function createPostUI(username, text) {
-      const postEl = document.createElement('div');
-      postEl.className = 'post';
-      postEl.innerHTML = `
-        <div class="username">ผู้ใช้: ${username}</div>
-        <div class="text">${text}</div>
-        <div class="actions">
-          <button onclick="likePost(this)">👍 ถูกใจ <span>0</span></button>
-        </div>
-        <div class="comments">
-          <div class="comment-list"></div>
-          <input type="text" placeholder="แสดงความคิดเห็น..." onkeydown="addComment(event, this)">
-        </div>
-      `;
-      document.getElementById('postsContainer').prepend(postEl);
-    }
-
-    function likePost(btn) {
-      const span = btn.querySelector('span');
-      let count = parseInt(span.innerText);
-      count++;
-      span.innerText = count;
-    }
-
-    function addComment(event, input) {
-      if (event.key === 'Enter' && input.value.trim()) {
-        const commentList = input.previousElementSibling;
-        const comment = document.createElement('div');
-        comment.className = 'comment';
-        comment.innerText = input.value.trim();
-        commentList.appendChild(comment);
-        input.value = '';
+    function getLocation() {
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(position => {
+          document.getElementById("location").value = `${position.coords.latitude}, ${position.coords.longitude}`;
+        });
+      } else {
+        alert("เบราว์เซอร์ของคุณไม่รองรับการระบุตำแหน่ง");
       }
     }
-  </script>
-</body>
+
+    function submitPost() {
+      const text = document.getElementById("postText").value;
+      const bgColor = document.getElementById("bgColor").value;
+      const textColor = document.getElementById("textColor").value;
+      const location = document.getElementById("location").value;
+
+      previewBox.innerHTML = `<div style="background:${bgColor}; color:${textColor}; padding:10px; border-radius:8px">
+        <strong>${username}</strong><br/>
+        ${text.replace(/\n/g, '<br>')}<br/>
+        <small>📍 ${location}</small>
+      </div>`;
+
+      // TODO: เชื่อม API ส่งข้อมูลไป Google Sheets และรูปภาพ
+      alert("ระบบโพสต์เสร็จสิ้น (ตัวอย่าง)");
+    }
+
+    function shareFacebook() {
+      const shareUrl = encodeURIComponent(window.location.href);
+      window.open(`https://www.facebook.com/sharer/sharer.php?u=${shareUrl}`, '_blank');
+    }
+    function shareLine() {
+      const shareUrl = encodeURIComponent(window.location.href);
+      window.open(`https://social-plugins.line.me/lineit/share?url=${shareUrl}`, '_blank');
+    }
+    function shareTwitter() {
+      const shareUrl = encodeURIComponent(window.location.href);
+      const text = encodeURIComponent("ดูโพสต์ของฉันบนเว็บ!");
+      window.open(`https://twitter.com/intent/tweet?url=${shareUrl}&text=${text}`, '_blank');
+    }
+  </script></body>
 </html>
