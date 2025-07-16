@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>กระดานพูดคุย</title>
+<title>หน้าโพสขายไอดีเกม</title>
 <style>
   body {
     background-color: #f0f2f5;
@@ -203,14 +203,26 @@
 <div id="postsContainer"></div>
 
 <script>
-  const currentUserName = "GameUser123"; // เปลี่ยนตามระบบจริง
+  const currentUserName = "GameUser123"; // เปลี่ยนเป็นชื่อผู้ใช้จริงในระบบ
 
+  const postForm = document.getElementById('postForm');
+  const postText = document.getElementById('postText');
+  const postColor = document.getElementById('postColor');
   const postImagesInput = document.getElementById('postImages');
   const imagePreview = document.getElementById('imagePreview');
+  const postsContainer = document.getElementById('postsContainer');
+
   let imageFiles = [];
 
   postImagesInput.addEventListener('change', () => {
     imageFiles = Array.from(postImagesInput.files).slice(0, 10);
+    if (postImagesInput.files.length > 10) {
+      alert('เลือกได้สูงสุด 10 รูปเท่านั้น');
+      postImagesInput.value = '';
+      imagePreview.innerHTML = '';
+      imageFiles = [];
+      return;
+    }
     imagePreview.innerHTML = '';
     imageFiles.forEach(file => {
       const reader = new FileReader();
@@ -221,20 +233,53 @@
       };
       reader.readAsDataURL(file);
     });
-    if(postImagesInput.files.length > 10){
-      alert('เลือกได้สูงสุด 10 รูปเท่านั้น');
-      postImagesInput.value = '';
-      imagePreview.innerHTML = '';
-      imageFiles = [];
-    }
   });
 
-  function createCommentElement(user, text){
-    const commentDiv = document.createElement('div');
-    commentDiv.className = 'comment';
-    commentDiv.innerHTML = `<strong>${user}:</strong> ${text}`;
-    return commentDiv;
+  // แปลงไฟล์ภาพเป็น base64 เพื่อเก็บในโพสต์
+  function convertFilesToBase64(files) {
+    const promises = files.map(file => new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = e => resolve(e.target.result);
+      reader.onerror = e => reject(e);
+      reader.readAsDataURL(file);
+    }));
+    return Promise.all(promises);
   }
+
+  postForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+
+    const text = postText.value.trim();
+    if (!text) {
+      alert('กรุณาเขียนข้อความก่อนโพสต์');
+      return;
+    }
+    const color = postColor.value;
+
+    // แปลงภาพเป็น base64
+    let imagesBase64 = [];
+    if (imageFiles.length > 0) {
+      imagesBase64 = await convertFilesToBase64(imageFiles);
+    }
+
+    // สร้างโพสต์และแสดง
+    const postData = {
+      userName: currentUserName,
+      text,
+      color,
+      images: imagesBase64,
+      comments: []
+    };
+
+    renderPost(postData);
+
+    // รีเซ็ตฟอร์ม
+    postText.value = '';
+    postColor.value = '#050505';
+    postImagesInput.value = '';
+    imagePreview.innerHTML = '';
+    imageFiles = [];
+  });
 
   function renderPost({userName, text, color, images}) {
     const postDiv = document.createElement('div');
@@ -253,7 +298,7 @@
     postDiv.appendChild(contentP);
 
     // รูปภาพถ้ามี
-    if(images && images.length){
+    if (images && images.length) {
       const imagesDiv = document.createElement('div');
       imagesDiv.className = 'post-images';
       images.forEach(imgSrc => {
@@ -290,7 +335,7 @@
     let dislikeCount = 0;
 
     likeBtn.onclick = () => {
-      if(liked){
+      if (liked) {
         liked = false;
         likeCount--;
         likeBtn.classList.remove('liked');
@@ -298,8 +343,7 @@
         liked = true;
         likeCount++;
         likeBtn.classList.add('liked');
-        // ถ้ากดไม่ถูกใจไว้ ให้ยกเลิก
-        if(disliked){
+        if (disliked) {
           disliked = false;
           dislikeCount--;
           dislikeBtn.classList.remove('disliked');
@@ -309,7 +353,7 @@
     };
 
     dislikeBtn.onclick = () => {
-      if(disliked){
+      if (disliked) {
         disliked = false;
         dislikeCount--;
         dislikeBtn.classList.remove('disliked');
@@ -317,8 +361,7 @@
         disliked = true;
         dislikeCount++;
         dislikeBtn.classList.add('disliked');
-        // ถ้ากดถูกใจไว้ ให้ยกเลิก
-        if(liked){
+        if (liked) {
           liked = false;
           likeCount--;
           likeBtn.classList.remove('liked');
@@ -327,7 +370,7 @@
       updateCounts();
     };
 
-    function updateCounts(){
+    function updateCounts() {
       likeCountSpan.textContent = likeCount;
       dislikeCountSpan.textContent = dislikeCount;
     }
@@ -345,5 +388,38 @@
 
     const commentsList = document.createElement('div');
     commentsList.className = 'comments-list';
-
     commentsSection.appendChild(commentsList);
+
+    const commentInputContainer = document.createElement('div');
+    commentInputContainer.className = 'comment-input-container';
+
+    const commentInput = document.createElement('input');
+    commentInput.type = 'text';
+    commentInput.placeholder = 'เขียนคอมเมนต์...';
+
+    const commentBtn = document.createElement('button');
+    commentBtn.textContent = 'ส่ง';
+
+    commentBtn.onclick = () => {
+      const commentText = commentInput.value.trim();
+      if (!commentText) return;
+
+      const commentEl = document.createElement('div');
+      commentEl.className = 'comment';
+      commentEl.innerHTML = `<strong>${currentUserName}:</strong> ${commentText}`;
+      commentsList.appendChild(commentEl);
+      commentInput.value = '';
+    };
+
+    commentInputContainer.appendChild(commentInput);
+    commentInputContainer.appendChild(commentBtn);
+    commentsSection.appendChild(commentInputContainer);
+
+    postDiv.appendChild(commentsSection);
+
+    postsContainer.prepend(postDiv);
+  }
+</script>
+
+</body>
+</html>
