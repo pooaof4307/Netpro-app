@@ -1,1 +1,111 @@
-<!DOCTYPE html><html><head><title>FreelanceWork</title></head><body><h1>Coming Soon</h1></body></html>
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>FreelanceWork - หาฟรีแลนซ์คุณภาพ</title>
+  <style>
+    body {
+      margin: 0; 
+      font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #f0f8ff; /* ฟ้าสว่าง */
+      color: #003366; /* น้ำเงินเข้ม */
+    }
+    header {
+      background: linear-gradient(90deg, #1e90ff, #00bfff);
+      padding: 15px 20px;
+      color: white;
+      text-align: center;
+      font-weight: bold;
+      font-size: 1.5rem;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+    .container {
+      max-width: 600px;
+      margin: 20px auto;
+      padding: 0 10px;
+    }
+    .freelancer-card {
+      background-color: white;
+      border-radius: 8px;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.1);
+      margin-bottom: 15px;
+      padding: 15px;
+      transition: box-shadow 0.2s ease-in-out;
+    }
+    .freelancer-card:hover {
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+      cursor: pointer;
+    }
+    .freelancer-name {
+      font-size: 1.2rem;
+      font-weight: 600;
+      color: #00509e;
+    }
+    .freelancer-skill {
+      margin-top: 5px;
+      font-size: 0.9rem;
+      color: #007acc;
+    }
+    .freelancer-contact {
+      margin-top: 10px;
+      font-size: 0.8rem;
+      color: #555;
+    }
+    footer {
+      text-align: center;
+      margin: 30px 0;
+      font-size: 0.8rem;
+      color: #888;
+    }
+    @media (max-width: 640px) {
+      .container {
+        margin: 10px;
+        padding: 0 8px;
+      }
+      header {
+        font-size: 1.3rem;
+        padding: 12px 15px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<header>FreelanceWork - หาฟรีแลนซ์คุณภาพ</header>
+
+<div class="container">
+  <!-- ตัวอย่างฟรีแลนซ์ -->
+  <div class="freelancer-card" onclick="viewProfile('1')">
+    <div class="freelancer-name">สมชาย ดีไซน์</div>
+    <div class="freelancer-skill">งานออกแบบโฆษณา, โลโก้, กราฟิก</div>
+    <div class="freelancer-contact">ติดต่อ: line: somchai123 หรือ email: somchai@example.com</div>
+  </div>
+
+  <div class="freelancer-card" onclick="viewProfile('2')">
+    <div class="freelancer-name">สุดารัตน์ โปรแกรมเมอร์</div>
+    <div class="freelancer-skill">พัฒนาเว็บไซต์, แอปพลิเคชันมือถือ</div>
+    <div class="freelancer-contact">ติดต่อ: โทร 099-123-4567</div>
+  </div>
+
+  <div class="freelancer-card" onclick="viewProfile('3')">
+    <div class="freelancer-name">ณัฐชา นักแปลภาษา</div>
+    <div class="freelancer-skill">แปลภาษาอังกฤษ, จีน, ญี่ปุ่น</div>
+    <div class="freelancer-contact">ติดต่อ: email: nattcha.trans@gmail.com</div>
+  </div>
+</div>
+
+<footer>© 2025 FreelanceWork. All rights reserved.</footer>
+
+<script>
+  function viewProfile(id) {
+    alert('เปิดโปรไฟล์ฟรีแลนซ์ ID: ' + id + ' (ระบบยังไม่เปิดใช้งาน)');
+    // ในระบบจริง จะพาไปหน้า freelancer.html?id=ID
+  }
+</script>
+
+</body>
+</html>
