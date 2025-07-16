@@ -1,138 +1,112 @@
 <!DOCTYPE html>
 <html lang="th">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>สมัครสมาชิกขายไอดีเกม</title>
+  <meta charset="UTF-8">
+  <title>สมัครสมาชิก</title>
   <style>
-    /* Reset เบื้องต้น */
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    }
-
     body {
-      background: linear-gradient(135deg, #1e3c72, #2a5298);
-      min-height: 100vh;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      padding: 20px;
-      color: #fff;
+      font-family: Arial, sans-serif;
+      background: #f0f2f5;
+      padding: 40px;
     }
 
-    .signup-container {
-      background: rgba(0, 0, 0, 0.6);
-      padding: 40px 30px;
-      border-radius: 12px;
-      width: 100%;
+    .container {
+      background: white;
       max-width: 400px;
-      box-shadow: 0 8px 20px rgba(0,0,0,0.4);
+      margin: auto;
+      padding: 30px;
+      border-radius: 15px;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.1);
     }
 
-    .signup-container h2 {
+    h2 {
       text-align: center;
-      margin-bottom: 30px;
-      font-weight: 700;
-      letter-spacing: 1.2px;
-      color: #f0a500;
+      margin-bottom: 25px;
     }
 
-    .form-group {
-      margin-bottom: 20px;
-    }
-
-    label {
-      display: block;
-      margin-bottom: 6px;
-      font-weight: 600;
-      font-size: 14px;
-      color: #ffd369;
-    }
-
-    input[type="text"],
-    input[type="email"],
-    input[type="password"] {
+    input[type="text"], input[type="email"], input[type="password"] {
       width: 100%;
-      padding: 12px 15px;
-      border-radius: 8px;
-      border: none;
-      font-size: 16px;
-      outline: none;
-      transition: 0.3s ease;
-    }
-
-    input[type="text"]:focus,
-    input[type="email"]:focus,
-    input[type="password"]:focus {
-      background-color: #f0a500;
-      color: #000;
-      font-weight: 600;
+      padding: 12px;
+      margin-bottom: 15px;
+      border-radius: 10px;
+      border: 1px solid #ccc;
+      font-size: 15px;
     }
 
     button {
       width: 100%;
-      background-color: #f0a500;
+      padding: 12px;
+      background: #1877f2;
       border: none;
-      padding: 15px 0;
-      font-size: 18px;
-      font-weight: 700;
-      border-radius: 8px;
+      color: white;
+      font-size: 16px;
+      font-weight: bold;
+      border-radius: 10px;
       cursor: pointer;
-      color: #1a1a1a;
-      box-shadow: 0 5px 15px rgba(240,165,0,0.6);
-      transition: background-color 0.3s ease;
     }
 
-    button:hover {
-      background-color: #d18e00;
-      box-shadow: 0 7px 20px rgba(209,142,0,0.8);
-    }
-
-    .info-text {
-      font-size: 13px;
-      color: #ccc;
-      margin-top: 10px;
+    .message {
+      margin-top: 15px;
       text-align: center;
-    }
-
-    /* Responsive */
-    @media(max-width: 420px){
-      .signup-container {
-        padding: 30px 20px;
-      }
+      font-size: 14px;
+      color: green;
     }
   </style>
 </head>
 <body>
-  <div class="signup-container">
-    <h2>สมัครสมาชิกเพื่อขายไอดีเกม</h2>
-    <form id="signupForm">
-      <div class="form-group">
-        <label for="username">ชื่อผู้ใช้</label>
-        <input type="text" id="username" name="username" placeholder="ตั้งชื่อผู้ใช้ของคุณ" required />
-      </div>
-
-      <div class="form-group">
-        <label for="email">อีเมล</label>
-        <input type="email" id="email" name="email" placeholder="example@mail.com" required />
-      </div>
-
-      <div class="form-group">
-        <label for="password">รหัสผ่าน</label>
-        <input type="password" id="password" name="password" placeholder="กรอกรหัสผ่าน" required />
-      </div>
-
-      <div class="form-group">
-        <label for="gameId">ไอดีเกม (เช่น ชื่อเกม หรือ ID)</label>
-        <input type="text" id="gameId" name="gameId" placeholder="เช่น PUBG1234 หรือ LOL-ID" required />
-      </div>
-
-      <button type="submit">สมัครสมาชิก</button>
-    </form>
-    <p class="info-text">สมัครสมาชิกแล้วสามารถเริ่มโพสต์ขายไอดีเกมได้ทันที!</p>
+  <div class="container">
+    <h2>สมัครสมาชิก</h2>
+    <input type="text" id="username" placeholder="ชื่อผู้ใช้" required />
+    <input type="email" id="email" placeholder="อีเมล" required />
+    <input type="password" id="password" placeholder="รหัสผ่าน" required />
+    <button onclick="register()">สมัครสมาชิก</button>
+    <div class="message" id="message"></div>
   </div>
+
+  <script>
+    const REGISTER_API = "https://script.google.com/macros/s/AKfycbym-g1ENvZbr5n11nKUo27ZX1R7tk1l9PZrC01WJx3VBF594n93iw_I_brCu6RW2Bahtw/exec";
+
+    function register() {
+      const username = document.getElementById("username").value.trim();
+      const email = document.getElementById("email").value.trim();
+      const password = document.getElementById("password").value.trim();
+      const messageEl = document.getElementById("message");
+
+      if (!username || !email || !password) {
+        messageEl.style.color = "red";
+        messageEl.textContent = "กรุณากรอกข้อมูลให้ครบถ้วน";
+        return;
+      }
+
+      const payload = {
+        username: username,
+        email: email,
+        password: password
+      };
+
+      fetch(REGISTER_API, {
+        method: "POST",
+        body: JSON.stringify(payload),
+        headers: {
+          "Content-Type": "application/json"
+        }
+      })
+      .then(res => res.json())
+      .then(data => {
+        if (data.status === "success") {
+          messageEl.style.color = "green";
+          messageEl.innerHTML = `✅ สมัครสมาชิกสำเร็จ!<br>UID ของคุณคือ: <b>${data.uid}</b><br>คุณได้รับโบนัส <b>${data.gcoin} Gcoin</b>`;
+        } else {
+          messageEl.style.color = "red";
+          messageEl.textContent = "เกิดข้อผิดพลาดในการสมัคร";
+        }
+      })
+      .catch(error => {
+        console.error(error);
+        messageEl.style.color = "red";
+        messageEl.textContent = "ไม่สามารถเชื่อมต่อ API ได้";
+      });
+    }
+  </script>
 </body>
 </html>
