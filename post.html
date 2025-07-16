@@ -127,16 +127,46 @@
   </div>
 
   <script>
-    const postsContainer = document.getElementById('postsContainer');
+    const POST_API = "https://script.google.com/macros/s/AKfycbzVNdWu1JCendoxOEfv6glDim_KSEuGG5Z7YRgtoh4w6jDUstoKHTdMA76eVV4yY2UJ_Q/exec";
 
     function createPost() {
       const text = document.getElementById('postText').value.trim();
       if (!text) return;
 
+      const username = "Gamer123"; // TODO: เปลี่ยนเป็นชื่อผู้ใช้จริงจากระบบ login
+
+      const payload = {
+        username: username,
+        postText: text
+      };
+
+      fetch(POST_API, {
+        method: "POST",
+        body: JSON.stringify(payload),
+        headers: {
+          "Content-Type": "application/json"
+        }
+      })
+      .then(res => res.json())
+      .then(data => {
+        if (data.status === "success") {
+          document.getElementById('postText').value = "";
+          createPostUI(username, text);
+        } else {
+          alert("เกิดข้อผิดพลาดในการบันทึกโพสต์");
+        }
+      })
+      .catch(err => {
+        console.error("เกิดข้อผิดพลาด:", err);
+        alert("ไม่สามารถเชื่อมต่อ API ได้");
+      });
+    }
+
+    function createPostUI(username, text) {
       const postEl = document.createElement('div');
       postEl.className = 'post';
       postEl.innerHTML = `
-        <div class="username">ผู้ใช้: Gamer123</div>
+        <div class="username">ผู้ใช้: ${username}</div>
         <div class="text">${text}</div>
         <div class="actions">
           <button onclick="likePost(this)">👍 ถูกใจ <span>0</span></button>
@@ -146,9 +176,7 @@
           <input type="text" placeholder="แสดงความคิดเห็น..." onkeydown="addComment(event, this)">
         </div>
       `;
-
-      postsContainer.prepend(postEl);
-      document.getElementById('postText').value = '';
+      document.getElementById('postsContainer').prepend(postEl);
     }
 
     function likePost(btn) {
