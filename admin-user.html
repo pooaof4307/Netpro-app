@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>จัดการสมาชิก - Admin</title>
+<style>
+  body { font-family: Arial, sans-serif; padding: 20px; background: #f9f9f9; }
+  h2 { color: #34495e; }
+  table { width: 100%; border-collapse: collapse; margin-top: 15px; }
+  th, td { border: 1px solid #ddd; padding: 10px; text-align: left; }
+  th { background-color: #1abc9c; color: white; }
+  button { background-color: #2980b9; color: white; border: none; padding: 6px 12px; cursor: pointer; border-radius: 5px; }
+  button:hover { background-color: #1f618d; }
+  .top-menu { margin-bottom: 20px; }
+  .top-menu button { background-color: #34495e; }
+  .top-menu button:hover { background-color: #2c3e50; }
+</style>
+</head>
+<body>
+
+<div class="top-menu">
+  <button onclick="goBack()">← กลับเมนูหลัก</button>
+</div>
+
+<h2>จัดการสมาชิก</h2>
+<table id="userTable">
+  <thead>
+    <tr>
+      <th>UID</th>
+      <th>ชื่อผู้ใช้</th>
+      <th>อีเมล</th>
+      <th>Gcoin</th>
+      <th>สถานะ</th>
+      <th>จัดการ</th>
+    </tr>
+  </thead>
+  <tbody>
+    <!-- ข้อมูลสมาชิกจะถูกโหลดที่นี่ -->
+  </tbody>
+</table>
+
+<script>
+  const scriptURL = 'https://script.google.com/macros/s/AKfycbym-g1ENvZbr5n11nKUo27ZX1R7tk1l9PZrC01WJx3VBF594n93iw_I_brCu6RW2Bahtw/exec';
+
+  function goBack() {
+    window.location.href = 'admin-menu.html';
+  }
+
+  function loadUsers() {
+    fetch(scriptURL + '?action=getUsers')
+    .then(response => response.json())
+    .then(data => {
+      const tbody = document.querySelector('#userTable tbody');
+      tbody.innerHTML = '';
+      if (!data.users || data.users.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="6">ไม่มีสมาชิกในระบบ</td></tr>';
+        return;
+      }
+      data.users.forEach(user => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td>${user.uid}</td>
+          <td>${user.username}</td>
+          <td>${user.email}</td>
+          <td>${user.gcoin}</td>
+          <td>${user.status || 'ปกติ'}</td>
+          <td>
+            <button onclick="addGcoin('${user.uid}')">เติม Gcoin</button>
+            <button onclick="banUser('${user.uid}')">แบน</button>
+          </td>`;
+        tbody.appendChild(tr);
+      });
+    })
+    .catch(err => {
+      alert('เกิดข้อผิดพลาดในการโหลดข้อมูลสมาชิก');
+      console.error(err);
+    });
+  }
+
+  function addGcoin(uid) {
+    const amount = prompt('กรอกจำนวน Gcoin ที่ต้องการเติม:');
+    if (!amount || isNaN(amount)) {
+      alert('กรุณากรอกตัวเลขที่ถูกต้อง');
+      return;
+    }
+    fetch(scriptURL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ action: 'addGcoin', uid: uid, amount: Number(amount) })
+    })
+    .then(res => res.json())
+    .then(data => {
+      alert(data.message);
+      if(data.status === 'success') loadUsers();
+    });
+  }
+
+  function banUser(uid) {
+    if (!confirm('คุณแน่ใจว่าจะทำการแบนผู้ใช้นี้?')) return;
+    fetch(scriptURL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ action: 'banUser', uid: uid })
+    })
+    .then(res => res.json())
+    .then(data => {
+      alert(data.message);
+      if(data.status === 'success') loadUsers();
+    });
+  }
+
+  window.onload = loadUsers;
+</script>
+
+</body>
+</html>
