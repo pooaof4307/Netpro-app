@@ -1,22 +1,51 @@
 
-const plans = JSON.parse(localStorage.getItem("plans") || "[]");
-const plansDiv = document.getElementById("plans");
-const totalPriceEl = document.getElementById("totalPrice");
-let total = 0;
+const sheetURL = 'https://script.google.com/macros/s/AKfycbxxxxxxxxxxxxxxxx/exec';
+let allProducts = [];
 
-plans.forEach((plan, index) => {
-  const div = document.createElement("div");
-  div.className = "plan-card";
-  div.innerHTML = `
-    <strong>${plan.name}</strong><br>
-    ราคา: ${plan.price} บาท<br>
-    <button onclick="subscribe(${index})">สมัคร</button>
-  `;
-  plansDiv.appendChild(div);
+function renderProducts(products) {
+  const container = document.getElementById('product-list');
+  container.innerHTML = '';
+  products.forEach(item => {
+    container.innerHTML += `
+      <div class="product-card">
+        <img src="${item.image}" alt="${item.name}" />
+        <div class="product-info">
+          <h3>${item.name}</h3>
+          <p>${item.price} บาท</p>
+          <a href="${item.link}" target="_blank">ดูสินค้า</a>
+        </div>
+      </div>`;
+  });
+}
+
+fetch(sheetURL)
+  .then(res => res.json())
+  .then(data => {
+    allProducts = data.products;
+    renderProducts(allProducts);
+
+    const categorySet = new Set(allProducts.map(p => p.category));
+    const filter = document.getElementById('categoryFilter');
+    categorySet.forEach(cat => {
+      const option = document.createElement('option');
+      option.value = cat;
+      option.textContent = cat;
+      filter.appendChild(option);
+    });
+  });
+
+document.getElementById('search').addEventListener('input', e => {
+  const term = e.target.value.toLowerCase();
+  const filtered = allProducts.filter(p => p.name.toLowerCase().includes(term));
+  renderProducts(filtered);
 });
 
-function subscribe(index) {
-  const fee = 5;
-  total += plans[index].price + fee;
-  totalPriceEl.textContent = total;
-}
+document.getElementById('categoryFilter').addEventListener('change', e => {
+  const selected = e.target.value;
+  renderProducts(selected ? allProducts.filter(p => p.category === selected) : allProducts);
+});
+
+// วิเคราะห์จำนวนผู้ใช้งาน
+fetch('https://api.countapi.xyz/hit/affiliate-shop/counter')
+  .then(res => res.json())
+  .then(data => console.log("จำนวนผู้เข้าชม:", data.value));

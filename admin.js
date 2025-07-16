@@ -1,23 +1,16 @@
-function addNet() {
-  const name = document.getElementById("netName").value;
-  const price = parseFloat(document.getElementById("netPrice").value);
-  if (!name || isNaN(price)) return;
 
-  const netList = JSON.parse(localStorage.getItem("nets") || "[]");
-  netList.push({ name, price });
-  localStorage.setItem("nets", JSON.stringify(netList));
-  renderNetList();
-}
+document.getElementById('productForm').addEventListener('submit', function(e) {
+  e.preventDefault();
+  alert('ส่งข้อมูลเรียบร้อย (ตัวอย่าง ไม่เชื่อม API จริง)');
+});
 
-function renderNetList() {
-  const netList = JSON.parse(localStorage.getItem("nets") || "[]");
-  const listEl = document.getElementById("netList");
-  listEl.innerHTML = "";
-  netList.forEach((net, index) => {
-    const li = document.createElement("li");
-    li.textContent = `${net.name} - ${net.price.toFixed(2)} บาท`;
-    listEl.appendChild(li);
-  });
-}
-
-window.onload = renderNetList;
+// ตัวอย่าง render รายการสินค้า (จริงควรโหลดจาก Sheets)
+document.getElementById('admin-product-list').innerHTML = `
+  <div class="product-card">
+    <img src="https://via.placeholder.com/300x200" />
+    <div class="product-info">
+      <h3>ตัวอย่างสินค้า</h3>
+      <p>100 บาท</p>
+      <a href="#">ดูสินค้า</a>
+    </div>
+  </div>`;

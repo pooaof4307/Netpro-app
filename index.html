@@ -1,59 +1,22 @@
+
 <!DOCTYPE html>
 <html lang="th">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>เว็บไซต์ปิดปรับปรุง</title>
-  <style>
-    body {
-      margin: 0;
-      font-family: 'Segoe UI', sans-serif;
-      background: #f4f6f9;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      height: 100vh;
-      text-align: center;
-      padding: 20px;
-    }
-
-    .container {
-      max-width: 600px;
-    }
-
-    .container img {
-      width: 100%;
-      max-width: 300px;
-      margin-bottom: 20px;
-    }
-
-    h1 {
-      font-size: 2rem;
-      color: #2c3e50;
-    }
-
-    p {
-      color: #555;
-      font-size: 1rem;
-      margin-top: 10px;
-    }
-
-    .footer {
-      margin-top: 30px;
-      font-size: 0.9rem;
-      color: #aaa;
-    }
-  </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Affiliate Feed</title>
+  <link rel="stylesheet" href="assets/css/style.css" />
 </head>
 <body>
-
-  <div class="container">
-    <!-- ✅ เปลี่ยนภาพ URL ได้ตามต้องการ -->
-    <img src="https://cdn-icons-png.flaticon.com/512/5958/5958794.png" alt="Under Maintenance">
-    <h1>เว็บไซต์กำลังปรับปรุงระบบ</h1>
-    <p>เรากำลังอัปเดตระบบให้ดียิ่งขึ้น กรุณากลับมาใหม่อีกครั้งในภายหลัง<br>ขออภัยในความไม่สะดวก</p>
-    <div class="footer">© 2025 โปรเน็ตของคุณ | All rights reserved</div>
-  </div>
-
+  <header>
+    <h1>สินค้าแนะนำ</h1>
+    <input type="text" id="search" placeholder="ค้นหาสินค้า..." />
+    <select id="categoryFilter">
+      <option value="">-- เลือกหมวดหมู่ --</option>
+    </select>
+  </header>
+  <main id="product-list" class="grid-container"></main>
+  <footer><p>&copy; 2025 Affiliate Tools</p></footer>
+  <script src="assets/js/main.js"></script>
 </body>
 </html>
