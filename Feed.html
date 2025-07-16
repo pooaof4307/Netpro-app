@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8" />
+  <title>ตลาดไอดีเกม</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <h1>🕹️ ตลาดซื้อขายไอดีเกม</h1>
+
+  <div id="feed-container">
+    <!-- รายการโพสต์ไอดีจะโหลดมาจาก Google Sheet ผ่าน GridHub -->
+  </div>
+
+  <script>
+    // ดึงข้อมูลจาก GridHub API
+    fetch("https://gridhub.dev/api/YOUR_PROJECT_URL_HERE")
+      .then(res => res.json())
+      .then(data => {
+        const container = document.getElementById("feed-container");
+        data.forEach(post => {
+          const card = document.createElement("div");
+          card.className = "post-card";
+          card.innerHTML = `
+            <h3>${post.ชื่อเกม}</h3>
+            <p>ราคา: ${post.ราคา} บาท</p>
+            <p>${post.รายละเอียด}</p>
+            <img src="${post.รูปภาพURL}" alt="รูปเกม" width="200"/>
+          `;
+          container.appendChild(card);
+        });
+      });
+  </script>
+</body>
+</html>
