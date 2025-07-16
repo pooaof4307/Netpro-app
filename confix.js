@@ -31,3 +31,4 @@ async function postData(payload) {
     return { success: false, message: "ส่งข้อมูลไม่สำเร็จ" };
   }
 }
+const API_URL = "https://script.google.com/macros/s/xxx/exec";  // แก้เป็น URL Web App ของคุณที่ได้จาก Google Apps Script
