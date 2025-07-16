@@ -1,11 +1,141 @@
 <!DOCTYPE html>
 <html lang="th">
 <head>
-  <meta charset="UTF-8">
-  <title>จัดการโพสต์</title>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Admin - จัดการโพส</title>
+<style>
+  body {
+    font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #f0f2f5;
+    margin: 20px;
+  }
+  h2 {
+    color: #1877f2;
+  }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    background: #fff;
+    box-shadow: 0 0 8px rgb(0 0 0 / 0.1);
+  }
+  th, td {
+    padding: 12px 15px;
+    border-bottom: 1px solid #ddd;
+    text-align: left;
+  }
+  th {
+    background-color: #e9ebf0;
+  }
+  tr:hover {
+    background-color: #f5f6f7;
+  }
+  button {
+    padding: 6px 12px;
+    background-color: #e53e3e;
+    border: none;
+    color: white;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+  button:hover {
+    background-color: #c53030;
+  }
+  .loading {
+    text-align: center;
+    margin: 20px 0;
+  }
+</style>
 </head>
 <body>
-  <h2>จัดการโพสต์</h2>
-  <p>ฟังก์ชันนี้จะแสดงและจัดการโพสต์จากสมาชิกทั้งหมด</p>
+
+<h2>ระบบหลังบ้าน - จัดการโพส</h2>
+
+<div id="loading" class="loading">กำลังโหลดข้อมูลโพส...</div>
+
+<table id="postsTable" style="display:none;">
+  <thead>
+    <tr>
+      <th>โพส ID</th>
+      <th>ผู้ใช้</th>
+      <th>ข้อความ</th>
+      <th>วันที่</th>
+      <th>จัดการ</th>
+    </tr>
+  </thead>
+  <tbody id="postsBody">
+    <!-- รายการโพสจะถูกเพิ่มที่นี่ -->
+  </tbody>
+</table>
+
+<script src="config.js"></script>
+<script>
+async function fetchPosts() {
+  const loadingEl = document.getElementById('loading');
+  const tableEl = document.getElementById('postsTable');
+  const tbody = document.getElementById('postsBody');
+  
+  loadingEl.style.display = "block";
+  tableEl.style.display = "none";
+  tbody.innerHTML = "";
+
+  try {
+    const response = await fetch(API_BASE_URL, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ action: "getPosts" })
+    });
+    const data = await response.json();
+
+    if(data.status === "success" && data.posts && data.posts.length > 0) {
+      data.posts.forEach(post => {
+        const tr = document.createElement("tr");
+
+        tr.innerHTML = `
+          <td>${post.id}</td>
+          <td>${post.username}</td>
+          <td>${post.text.length > 50 ? post.text.substring(0,50) + "..." : post.text}</td>
+          <td>${new Date(post.date).toLocaleString()}</td>
+          <td><button onclick="deletePost('${post.id}')">ลบ</button></td>
+        `;
+        tbody.appendChild(tr);
+      });
+
+      loadingEl.style.display = "none";
+      tableEl.style.display = "table";
+    } else {
+      loadingEl.textContent = "ไม่พบโพสในระบบ";
+    }
+  } catch(err) {
+    loadingEl.textContent = "เกิดข้อผิดพลาดในการโหลดข้อมูล: " + err.message;
+  }
+}
+
+async function deletePost(postId) {
+  if(!confirm("ต้องการลบโพสนี้ใช่หรือไม่?")) return;
+
+  try {
+    const res = await fetch(API_BASE_URL, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ action: "deletePost", postId })
+    });
+    const data = await res.json();
+
+    if(data.status === "success") {
+      alert("ลบโพสเรียบร้อยแล้ว");
+      fetchPosts(); // โหลดข้อมูลใหม่
+    } else {
+      alert("ลบโพสไม่สำเร็จ: " + data.message);
+    }
+  } catch(err) {
+    alert("เกิดข้อผิดพลาด: " + err.message);
+  }
+}
+
+// โหลดโพสเมื่อหน้าโหลดเสร็จ
+window.onload = fetchPosts;
+</script>
+
 </body>
 </html>
