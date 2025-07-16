@@ -1,9 +1,16 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>กระดานพูดคุย</title>
 <style>
   body {
     background-color: #f0f2f5;
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     margin: 20px auto;
     max-width: 600px;
+    color: #050505;
   }
   #postForm {
     background: white;
@@ -14,14 +21,15 @@
   }
   #postText {
     width: 100%;
-    height: 50px;
+    height: 60px; /* 2-3 บรรทัด */
     resize: vertical;
     font-size: 15px;
-    padding: 10px 12px;
+    padding: 8px 12px;
     border-radius: 8px;
     border: 1px solid #ccd0d5;
     box-sizing: border-box;
     transition: border-color 0.2s ease;
+    font-family: inherit;
   }
   #postText:focus {
     border-color: #1877f2;
@@ -73,7 +81,6 @@
   button[type="submit"]:hover {
     background-color: #165ec9;
   }
-
   .post {
     background: white;
     border-radius: 10px;
@@ -86,6 +93,8 @@
   }
   .post p {
     margin-bottom: 10px;
+    white-space: pre-wrap;
+    word-wrap: break-word;
   }
   .post-images {
     display: flex;
@@ -100,7 +109,17 @@
     border-radius: 8px;
     border: 1px solid #ccc;
   }
-  .share-btn {
+  .post-header {
+    font-weight: 700;
+    margin-bottom: 8px;
+    color: #1877f2;
+  }
+  .post-footer {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+  }
+  .like-btn, .dislike-btn {
     background-color: #1877f2;
     color: white;
     border: none;
@@ -110,14 +129,62 @@
     font-size: 14px;
     font-weight: 600;
     transition: background-color 0.3s ease;
+    margin-right: 8px;
   }
-  .share-btn:hover {
+  .like-btn.liked {
+    background-color: #e0245e;
+  }
+  .dislike-btn.disliked {
+    background-color: #6c757d;
+  }
+  .count-like, .count-dislike {
+    font-weight: 600;
+    margin-right: 12px;
+  }
+  .comments-section {
+    border-top: 1px solid #ccc;
+    padding-top: 10px;
+  }
+  .comment {
+    margin-bottom: 8px;
+    font-size: 14px;
+    color: #333;
+  }
+  .comment strong {
+    color: #1877f2;
+  }
+  .comment-input-container {
+    display: flex;
+    margin-top: 8px;
+  }
+  .comment-input-container input {
+    flex-grow: 1;
+    padding: 8px 12px;
+    border-radius: 20px;
+    border: 1px solid #ccc;
+    font-size: 14px;
+  }
+  .comment-input-container button {
+    background-color: #1877f2;
+    color: white;
+    border: none;
+    border-radius: 20px;
+    padding: 8px 16px;
+    margin-left: 8px;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 14px;
+    transition: background-color 0.3s ease;
+  }
+  .comment-input-container button:hover {
     background-color: #165ec9;
   }
 </style>
+</head>
+<body>
 
 <form id="postForm">
-  <label for="postText" style="color:#050505; font-weight: 600;">ข้อความขายไอดีเกม:</label><br>
+  <label for="postText" style="font-weight: 600;">ข้อความขายไอดีเกม:</label><br>
   <textarea id="postText" placeholder="เขียนข้อความที่นี่..." required></textarea><br>
 
   <label for="postColor">เลือกสีข้อความ:</label>
@@ -136,14 +203,15 @@
 <div id="postsContainer"></div>
 
 <script>
+  const currentUserName = "GameUser123"; // เปลี่ยนตามระบบจริง
+
   const postImagesInput = document.getElementById('postImages');
   const imagePreview = document.getElementById('imagePreview');
   let imageFiles = [];
 
   postImagesInput.addEventListener('change', () => {
-    imageFiles = Array.from(postImagesInput.files).slice(0, 10); // จำกัด 10 รูป
-    imagePreview.innerHTML = ''; // ล้าง preview เก่า
-
+    imageFiles = Array.from(postImagesInput.files).slice(0, 10);
+    imagePreview.innerHTML = '';
     imageFiles.forEach(file => {
       const reader = new FileReader();
       reader.onload = e => {
@@ -153,9 +221,7 @@
       };
       reader.readAsDataURL(file);
     });
-
-    // ถ้าเกิน 10 รูป แจ้งเตือน
-    if (postImagesInput.files.length > 10) {
+    if(postImagesInput.files.length > 10){
       alert('เลือกได้สูงสุด 10 รูปเท่านั้น');
       postImagesInput.value = '';
       imagePreview.innerHTML = '';
@@ -163,74 +229,121 @@
     }
   });
 
-  function copyToClipboard(text) {
-    navigator.clipboard.writeText(text).then(() => {
-      alert('คัดลอกลิงก์โพสต์เรียบร้อย');
-    });
+  function createCommentElement(user, text){
+    const commentDiv = document.createElement('div');
+    commentDiv.className = 'comment';
+    commentDiv.innerHTML = `<strong>${user}:</strong> ${text}`;
+    return commentDiv;
   }
 
-  document.getElementById('postForm').addEventListener('submit', function(e) {
-    e.preventDefault();
-
-    const text = document.getElementById('postText').value.trim();
-    if (!text) return alert("กรุณาใส่ข้อความโพสต์");
-
-    const color = document.getElementById('postColor').value || '#050505';
-
+  function renderPost({userName, text, color, images}) {
     const postDiv = document.createElement('div');
     postDiv.className = 'post';
 
-    // ข้อความพร้อมสี
+    // ชื่อผู้ใช้
+    const userNameDiv = document.createElement('div');
+    userNameDiv.className = 'post-header';
+    userNameDiv.textContent = userName;
+    postDiv.appendChild(userNameDiv);
+
+    // ข้อความโพสต์
     const contentP = document.createElement('p');
     contentP.textContent = text;
     contentP.style.color = color;
     postDiv.appendChild(contentP);
 
     // รูปภาพถ้ามี
-    if (imageFiles.length > 0) {
+    if(images && images.length){
       const imagesDiv = document.createElement('div');
       imagesDiv.className = 'post-images';
-      imageFiles.forEach(file => {
-        const reader = new FileReader();
-        reader.onload = e => {
-          const img = document.createElement('img');
-          img.src = e.target.result;
-          imagesDiv.appendChild(img);
-        };
-        reader.readAsDataURL(file);
+      images.forEach(imgSrc => {
+        const img = document.createElement('img');
+        img.src = imgSrc;
+        imagesDiv.appendChild(img);
       });
       postDiv.appendChild(imagesDiv);
     }
 
-    // ปุ่มแชร์
-    const shareBtn = document.createElement('button');
-    shareBtn.className = 'share-btn';
-    shareBtn.textContent = 'แชร์โพสต์นี้';
-    shareBtn.onclick = function() {
-      if (navigator.share) {
-        navigator.share({
-          title: 'โพสต์ขายไอดีเกม',
-          text: text,
-          url: window.location.href
-        }).then(() => {
-          alert('แชร์สำเร็จ!');
-        }).catch(err => {
-          console.error(err);
-          alert('เกิดข้อผิดพลาดในการแชร์');
-        });
+    // ฟุตเตอร์: ปุ่มถูกใจ/ไม่ถูกใจ และนับจำนวน
+    const postFooter = document.createElement('div');
+    postFooter.className = 'post-footer';
+
+    const likeBtn = document.createElement('button');
+    likeBtn.className = 'like-btn';
+    likeBtn.textContent = 'ถูกใจ';
+
+    const dislikeBtn = document.createElement('button');
+    dislikeBtn.className = 'dislike-btn';
+    dislikeBtn.textContent = 'ไม่ถูกใจ';
+
+    const likeCountSpan = document.createElement('span');
+    likeCountSpan.className = 'count-like';
+    likeCountSpan.textContent = '0';
+
+    const dislikeCountSpan = document.createElement('span');
+    dislikeCountSpan.className = 'count-dislike';
+    dislikeCountSpan.textContent = '0';
+
+    let liked = false;
+    let disliked = false;
+    let likeCount = 0;
+    let dislikeCount = 0;
+
+    likeBtn.onclick = () => {
+      if(liked){
+        liked = false;
+        likeCount--;
+        likeBtn.classList.remove('liked');
       } else {
-        copyToClipboard(window.location.href);
+        liked = true;
+        likeCount++;
+        likeBtn.classList.add('liked');
+        // ถ้ากดไม่ถูกใจไว้ ให้ยกเลิก
+        if(disliked){
+          disliked = false;
+          dislikeCount--;
+          dislikeBtn.classList.remove('disliked');
+        }
       }
+      updateCounts();
     };
-    postDiv.appendChild(shareBtn);
 
-    document.getElementById('postsContainer').prepend(postDiv);
+    dislikeBtn.onclick = () => {
+      if(disliked){
+        disliked = false;
+        dislikeCount--;
+        dislikeBtn.classList.remove('disliked');
+      } else {
+        disliked = true;
+        dislikeCount++;
+        dislikeBtn.classList.add('disliked');
+        // ถ้ากดถูกใจไว้ ให้ยกเลิก
+        if(liked){
+          liked = false;
+          likeCount--;
+          likeBtn.classList.remove('liked');
+        }
+      }
+      updateCounts();
+    };
 
-    // ล้างฟอร์ม
-    document.getElementById('postText').value = '';
-    document.getElementById('postColor').value = '#050505';
-    postImagesInput.value = '';
-    imagePreview.innerHTML = '';
-    imageFiles = [];
-  });
-</script>
+    function updateCounts(){
+      likeCountSpan.textContent = likeCount;
+      dislikeCountSpan.textContent = dislikeCount;
+    }
+
+    postFooter.appendChild(likeBtn);
+    postFooter.appendChild(likeCountSpan);
+    postFooter.appendChild(dislikeBtn);
+    postFooter.appendChild(dislikeCountSpan);
+
+    postDiv.appendChild(postFooter);
+
+    // คอมเมนต์
+    const commentsSection = document.createElement('div');
+    commentsSection.className = 'comments-section';
+
+    const commentsList = document.createElement('div');
+    commentsList.className = 'comments-list';
+
+    commentsSection.appendChild(commentsList);
