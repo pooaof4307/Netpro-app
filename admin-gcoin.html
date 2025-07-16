@@ -2,10 +2,64 @@
 <html lang="th">
 <head>
   <meta charset="UTF-8">
-  <title>ระบบ Gcoin</title>
+  <title>เติม Gcoin ให้ผู้ใช้</title>
+  <style>
+    body { font-family: Arial; background: #f9f9f9; padding: 30px; }
+    h2 { color: #2c3e50; }
+    form {
+      background: white; padding: 20px;
+      border-radius: 8px; box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      max-width: 400px; margin: auto;
+    }
+    input[type="text"], input[type="number"] {
+      width: 100%; padding: 10px; margin-top: 10px; margin-bottom: 20px;
+      border: 1px solid #ccc; border-radius: 5px;
+    }
+    button {
+      background: #27ae60; color: white; padding: 12px 20px;
+      border: none; border-radius: 5px; cursor: pointer;
+    }
+    #result { margin-top: 20px; font-weight: bold; }
+  </style>
 </head>
 <body>
-  <h2>ระบบ Gcoin</h2>
-  <p>ดูยอดเหรียญ เติมเหรียญ หรือแก้ไขยอดสมาชิก</p>
+
+<h2>เติม Gcoin ให้ผู้ใช้</h2>
+<form id="gcoinForm">
+  <label>UID:</label>
+  <input type="text" id="uid" required />
+
+  <label>จำนวน Gcoin ที่ต้องการเติม:</label>
+  <input type="number" id="amount" required min="1" />
+
+  <button type="submit">เติม Gcoin</button>
+</form>
+
+<div id="result"></div>
+
+<script>
+const apiUrl = "https://script.google.com/macros/s/AKfycbxxxxxx/exec"; // เปลี่ยน URL ให้ตรงของคุณ
+
+document.getElementById("gcoinForm").addEventListener("submit", function(e) {
+  e.preventDefault();
+  const uid = document.getElementById("uid").value.trim();
+  const amount = parseInt(document.getElementById("amount").value);
+
+  fetch(apiUrl, {
+    method: "POST",
+    body: JSON.stringify({ action: "add_gcoin", uid, amount }),
+    headers: { "Content-Type": "application/json" }
+  })
+  .then(res => res.json())
+  .then(data => {
+    document.getElementById("result").innerText = data.message;
+  })
+  .catch(err => {
+    console.error(err);
+    document.getElementById("result").innerText = "เกิดข้อผิดพลาด";
+  });
+});
+</script>
+
 </body>
 </html>
