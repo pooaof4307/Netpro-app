@@ -1,36 +1,173 @@
-<!-- post.html -->
 <!DOCTYPE html>
 <html lang="th">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>โพสต์เนื้อหา</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>โพสต์ขายไอดีเกม</title>
   <style>
-    body {
-      font-family: 'Segoe UI', sans-serif;
+    * {
+      box-sizing: border-box;
       margin: 0;
       padding: 0;
-      background: #f9fbfd;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     }
+
+    body {
+      background-color: #f0f2f5;
+      padding: 30px;
+      color: #1c1e21;
+    }
+
     .container {
       max-width: 600px;
-      margin: 40px auto;
+      margin: 0 auto;
+    }
+
+    .post-box {
+      background-color: #fff;
+      border-radius: 12px;
       padding: 20px;
-      background: #fff;
-      border-radius: 16px;
-      box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+      margin-bottom: 20px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
     }
-    h2 {
-      color: #333;
-      text-align: center;
-    }
-    label {
-      font-weight: bold;
-      display: block;
-      margin-top: 15px;
-      color: #444;
-    }
-    input, textarea, select {
+
+    .post-box textarea {
       width: 100%;
-      padding: 10px;
-      margin-top:
+      border: none;
+      resize: none;
+      padding: 15px;
+      font-size: 16px;
+      border-radius: 10px;
+      background: #f0f2f5;
+      margin-bottom: 15px;
+    }
+
+    .post-box button {
+      padding: 10px 20px;
+      background-color: #1877f2;
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    .post {
+      background-color: #fff;
+      border-radius: 12px;
+      padding: 15px 20px;
+      margin-bottom: 20px;
+      box-shadow: 0 3px 10px rgba(0,0,0,0.08);
+    }
+
+    .post .username {
+      font-weight: bold;
+      margin-bottom: 8px;
+    }
+
+    .post .text {
+      margin-bottom: 10px;
+      font-size: 15px;
+    }
+
+    .actions {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      margin-bottom: 10px;
+    }
+
+    .actions button {
+      background: none;
+      border: none;
+      color: #555;
+      cursor: pointer;
+      font-size: 14px;
+    }
+
+    .actions button:hover {
+      color: #1877f2;
+    }
+
+    .comments {
+      margin-top: 10px;
+      padding-left: 10px;
+    }
+
+    .comments .comment {
+      padding: 6px 0;
+      border-bottom: 1px solid #eee;
+      font-size: 14px;
+    }
+
+    .comments input {
+      width: 100%;
+      padding: 8px 10px;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      margin-top: 8px;
+    }
+
+    .comments input:focus {
+      border-color: #1877f2;
+      outline: none;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <!-- ฟอร์มโพสต์ -->
+    <div class="post-box">
+      <textarea id="postText" rows="4" placeholder="เขียนรายละเอียดไอดีเกมที่คุณต้องการขาย..."></textarea>
+      <button onclick="createPost()">โพสต์ขาย</button>
+    </div>
+
+    <!-- โซนแสดงโพสต์ -->
+    <div id="postsContainer"></div>
+  </div>
+
+  <script>
+    const postsContainer = document.getElementById('postsContainer');
+
+    function createPost() {
+      const text = document.getElementById('postText').value.trim();
+      if (!text) return;
+
+      const postEl = document.createElement('div');
+      postEl.className = 'post';
+      postEl.innerHTML = `
+        <div class="username">ผู้ใช้: Gamer123</div>
+        <div class="text">${text}</div>
+        <div class="actions">
+          <button onclick="likePost(this)">👍 ถูกใจ <span>0</span></button>
+        </div>
+        <div class="comments">
+          <div class="comment-list"></div>
+          <input type="text" placeholder="แสดงความคิดเห็น..." onkeydown="addComment(event, this)">
+        </div>
+      `;
+
+      postsContainer.prepend(postEl);
+      document.getElementById('postText').value = '';
+    }
+
+    function likePost(btn) {
+      const span = btn.querySelector('span');
+      let count = parseInt(span.innerText);
+      count++;
+      span.innerText = count;
+    }
+
+    function addComment(event, input) {
+      if (event.key === 'Enter' && input.value.trim()) {
+        const commentList = input.previousElementSibling;
+        const comment = document.createElement('div');
+        comment.className = 'comment';
+        comment.innerText = input.value.trim();
+        commentList.appendChild(comment);
+        input.value = '';
+      }
+    }
+  </script>
+</body>
+</html>
