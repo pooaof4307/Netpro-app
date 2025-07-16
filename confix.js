@@ -2,7 +2,7 @@
 
 // 🔗 URL ของ Google Apps Script ที่ใช้เชื่อมต่อกับ Google Sheets
 // คุณต้องใช้ URL ที่ได้จากการ Deploy > Web App ใน Google Apps Script
-const API_BASE_URL = "https://script.google.com/macros/s/AKfycbyH-iXYKgKcu4Qe2lyLeI42jZZA38iwRPfK-rCfgKQBKrgps8LMpIk-Js3sEd-m4-Dq3Q/exec";
+const API_BASE_URL = "https://script.google.com/macros/s/AKfycbw5SrBrgBHYsgujlcDieqrD4yemWZMqjthJDjqjc0fuQmUcePuKSdCxBOoI6Je5L7IIlg/exec";
 
 // 🧠 ฟังก์ชันรวม (optional): ใช้เรียก API GET
 async function fetchData(action) {
