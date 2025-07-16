@@ -31,4 +31,4 @@ async function postData(payload) {
     return { success: false, message: "ส่งข้อมูลไม่สำเร็จ" };
   }
 }
-const API_URL = "https://script.google.com/macros/s/xxx/exec";  // แก้เป็น URL Web App ของคุณที่ได้จาก Google Apps Script
+const API_URL = "https://script.google.com/macros/s/AKfycbwG6_MYZueOUg6g8Sak-dxg_F-U3zqywZ6rIaC--E1ofSy1Yafv-ucUzUuyuk_GhZW9_g/exec";  // แก้เป็น URL Web App ของคุณที่ได้จาก Google Apps Script
