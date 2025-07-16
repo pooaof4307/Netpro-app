@@ -248,4 +248,56 @@
   function loadCategories() {}
   function loadLogs() {}
 </script></body>
+
+  <script>
+  // ... (ส่วนก่อนหน้าเหมือนเดิม)
+
+  function loadPosts() {
+    fetch(scriptURL + '?action=getPosts')
+      .then(res => res.json())
+      .then(data => {
+        if (!data.posts || data.posts.length === 0) {
+          document.getElementById("postTable").innerHTML = "ไม่มีโพสต์";
+          return;
+        }
+        let html = '<table><thead><tr><th>โพสต์</th><th>ผู้โพสต์</th><th>หมวดหมู่</th><th>ไลก์</th><th>คอมเมนต์</th><th>จัดการ</th></tr></thead><tbody>';
+        data.posts.forEach(p => {
+          html += `<tr>
+            <td>${p.content}</td>
+            <td>${p.username}</td>
+            <td>${p.category}</td>
+            <td>${p.likes}</td>
+            <td>${p.comments}</td>
+            <td>
+              <button class='action-btn red' onclick="deletePost('${p.id}')">ลบ</button>
+            </td>
+          </tr>`;
+        });
+        html += '</tbody></table>';
+        document.getElementById("postTable").innerHTML = html;
+      })
+      .catch(err => {
+        console.error(err);
+        document.getElementById("postTable").innerHTML = "เกิดข้อผิดพลาดในการโหลดโพสต์";
+      });
+  }
+
+  function deletePost(postId) {
+    if (!confirm("ยืนยันการลบโพสต์นี้?")) return;
+    fetch(scriptURL, {
+      method: "POST",
+      body: JSON.stringify({ action: "deletePost", id: postId }),
+      headers: { "Content-Type": "application/json" }
+    })
+    .then(res => res.json())
+    .then(data => {
+      if (data.status === "success") {
+        alert("ลบโพสต์เรียบร้อย");
+        loadPosts();
+      } else {
+        alert("ลบไม่สำเร็จ: " + data.message);
+      }
+    });
+  }
+</script></html>
 </html>
