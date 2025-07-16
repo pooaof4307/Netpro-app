@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8" />
+  <title>Admin โพสต์ฟีด</title>
+  <script src="config.js"></script>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 30px;
+      background: #f9f9f9;
+      max-width: 600px;
+      margin: auto;
+    }
+    h2 {
+      text-align: center;
+      color: #2c3e50;
+      margin-bottom: 20px;
+    }
+    form {
+      background: white;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 0 12px rgba(0, 0, 0, 0.1);
+      margin-bottom: 30px;
+    }
+    textarea {
+      width: 100%;
+      height: 100px;
+      padding: 10px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+      resize: vertical;
+      font-size: 16px;
+      margin-bottom: 15px;
+    }
+    input[type="text"] {
+      width: 100%;
+      padding: 8px;
+      margin-bottom: 15px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+      font-size: 16px;
+    }
+    button {
+      background-color: #2980b9;
+      color: white;
+      padding: 12px 20px;
+      border: none;
+      border-radius: 6px;
+      font-size: 16px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+    button:hover {
+      background-color: #1f6391;
+    }
+    #result {
+      text-align: center;
+      margin-top: 15px;
+      font-weight: bold;
+      color: green;
+    }
+  </style>
+</head>
+<body>
+
+<h2>โพสต์ฟีดโดย Admin</h2>
+
+<form id="adminPostForm">
+  <input type="text" id="postTitle" placeholder="หัวข้อโพสต์ (เช่น ขายไอดีเกม)" required />
+  <textarea id="postContent" placeholder="เนื้อหาโพสต์..." required></textarea>
+  <button type="submit">โพสต์ลงฟีด</button>
+</form>
+
+<div id="result"></div>
+
+<script>
+  document.getElementById("adminPostForm").addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const title = document.getElementById("postTitle").value.trim();
+    const content = document.getElementById("postContent").value.trim();
+
+    if (!title || !content) {
+      alert("กรุณากรอกหัวข้อและเนื้อหาให้ครบ");
+      return;
+    }
+
+    // ส่งข้อมูลโพสต์ไปยัง Google Apps Script
+    const payload = {
+      action: "admin_post_feed",
+      title,
+      content,
+      uid: "admin"  // กำหนด uid ของผู้โพสต์เป็น admin
+    };
+
+    const res = await postData(payload);
+    if (res.success) {
+      document.getElementById("result").innerText = "โพสต์สำเร็จ!";
+      e.target.reset();
+    } else {
+      document.getElementById("result").innerText = "เกิดข้อผิดพลาด: " + res.message;
+    }
+  });
+</script>
+
+</body>
+</html>
