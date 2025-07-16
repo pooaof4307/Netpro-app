@@ -1,76 +1,112 @@
-
 <!DOCTYPE html>
 <html lang="th">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>โพสต์ขายไอดีเกม</title>
-  <link rel="manifest" href="manifest.json">
-  <meta name="theme-color" content="#4CAF50">
   <style>
-    body { font-family: Arial, sans-serif; background: #f5f5f5; margin: 0; padding: 20px; }
-    .post-box { max-width: 600px; margin: auto; background: #fff; padding: 20px; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
-    .form-group { margin-bottom: 15px; }
-    .form-group input, .form-group textarea { width: 100%; padding: 10px; margin-top: 5px; }
-    .image-preview img { width: 80px; height: 80px; object-fit: cover; margin-right: 10px; }
-    .share-buttons button { margin-right: 10px; padding: 8px 12px; }
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background: #121212;
+      color: #fff;
+    }
+    .container {
+      max-width: 500px;
+      margin: 30px auto;
+      background: #1e1e1e;
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 0 10px rgba(0,255,150,0.2);
+    }
+    h2 {
+      text-align: center;
+      color: #4af5c5;
+    }
+    input[type="text"],
+    textarea,
+    input[type="color"] {
+      width: 100%;
+      margin: 8px 0;
+      padding: 10px;
+      border: none;
+      border-radius: 8px;
+      background: #2c2c2c;
+      color: white;
+    }
+    input[type="file"] {
+      margin-top: 10px;
+    }
+    .preview-imgs {
+      display: flex;
+      flex-wrap: wrap;
+      margin-top: 10px;
+    }
+    .preview-imgs img {
+      width: 70px;
+      height: 70px;
+      object-fit: cover;
+      border-radius: 6px;
+      margin: 5px;
+    }
+    button {
+      background: #4af5c5;
+      border: none;
+      padding: 10px 15px;
+      color: #000;
+      font-weight: bold;
+      border-radius: 8px;
+      width: 100%;
+      cursor: pointer;
+      margin-top: 15px;
+    }
+    button:hover {
+      background: #3fdcb2;
+    }
+    .label {
+      margin-top: 10px;
+      font-size: 14px;
+      color: #aaa;
+    }
   </style>
 </head>
 <body>
-  <div class="post-box">
+  <div class="container">
     <h2>โพสต์ขายไอดีเกม</h2>
-    <div><strong>ผู้ใช้:</strong> <span id="usernameDisplay">Guest</span></div>
-    <div class="form-group">
-      <label>ข้อความ</label>
-      <textarea id="postText" rows="4"></textarea>
-    </div>
-    <div class="form-group">
-      <label>พื้นหลัง</label>
-      <input type="color" id="bgColor" value="#ffffff">
-    </div>
-    <div class="form-group">
-      <label>สีตัวอักษร</label>
-      <input type="color" id="textColor" value="#000000">
-    </div>
-    <div class="form-group">
-      <label>แนบรูป (ไม่เกิน 10)</label>
-      <input type="file" id="images" accept="image/*" multiple>
-      <div class="image-preview" id="imagePreview"></div>
-    </div>
-    <div class="form-group">
-      <label>ตำแหน่ง</label>
-      <input type="text" id="location" placeholder="ตำแหน่งหรือให้ระบบหาตำแหน่ง">
-      <button onclick="getLocation()">ดึงตำแหน่ง</button>
-    </div>
+
+    <div class="label">ข้อความ</div>
+    <textarea id="postText" rows="4" placeholder="เขียนโพสต์ของคุณที่นี่..."></textarea>
+
+    <div class="label">สีพื้นหลัง</div>
+    <input type="color" id="bgColor" value="#1e1e1e"/>
+
+    <div class="label">สีข้อความ</div>
+    <input type="color" id="textColor" value="#ffffff"/>
+
+    <div class="label">แนบรูปภาพ (สูงสุด 10 รูป)</div>
+    <input type="file" id="images" accept="image/*" multiple />
+    <div class="preview-imgs" id="imagePreview"></div>
+
+    <div class="label">ตำแหน่ง (Location)</div>
+    <input type="text" id="location" placeholder="หรือกดปุ่มเพื่อใช้ GPS"/>
+    <button onclick="getLocation()">ใช้ GPS</button>
+
     <button onclick="submitPost()">โพสต์</button>
-    <div class="form-group share-buttons">
-      <label>แชร์โพสต์:</label><br>
-      <button onclick="shareFacebook()">Facebook</button>
-      <button onclick="shareLine()">LINE</button>
-      <button onclick="shareTwitter()">Twitter</button>
-    </div>
-    <div id="preview"></div>
   </div>
 
   <script>
-    if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('service-worker.js')
-        .then(reg => console.log('SW registered!', reg))
-        .catch(err => console.log('SW failed!', err));
-    }
+    const API_URL = "https://script.google.com/macros/s/AKfycbzTihf3VHZHV95RGR3R9VQyKOJswdBifNnGjIOWQ9wdXNRCrZnZGoXB_xQpUTB8UF30bA/exec";
 
-    let username = localStorage.getItem("username") || "Guest";
-    document.getElementById("usernameDisplay").textContent = username;
+    const imageInput = document.getElementById("images");
+    const previewContainer = document.getElementById("imagePreview");
 
-    const imageInput = document.getElementById('images');
-    const previewContainer = document.getElementById('imagePreview');
-
-    imageInput.addEventListener('change', () => {
+    imageInput.addEventListener("change", () => {
       previewContainer.innerHTML = "";
       const files = Array.from(imageInput.files).slice(0, 10);
       files.forEach(file => {
         const reader = new FileReader();
         reader.onload = e => {
-          const img = document.createElement('img');
+          const img = document.createElement("img");
           img.src = e.target.result;
           previewContainer.appendChild(img);
         };
@@ -83,27 +119,55 @@
         navigator.geolocation.getCurrentPosition(pos => {
           document.getElementById("location").value = pos.coords.latitude + "," + pos.coords.longitude;
         });
+      } else {
+        alert("เบราว์เซอร์ไม่รองรับการหาตำแหน่ง");
       }
     }
 
-    function submitPost() {
-      alert("ระบบโพสต์เสร็จสิ้น (ตัวอย่าง)");
+    async function submitPost() {
+      const text = document.getElementById("postText").value;
+      const bgColor = document.getElementById("bgColor").value;
+      const textColor = document.getElementById("textColor").value;
+      const location = document.getElementById("location").value;
+      const username = localStorage.getItem("username") || "Guest";
+
+      const images = Array.from(imageInput.files).slice(0, 10);
+      const imageBase64 = [];
+
+      for (let img of images) {
+        const base64 = await toBase64(img);
+        imageBase64.push(base64);
+      }
+
+      const data = {
+        username,
+        text,
+        bgColor,
+        textColor,
+        location,
+        images: imageBase64
+      };
+
+      fetch(API_URL, {
+        method: "POST",
+        body: JSON.stringify(data),
+        headers: { "Content-Type": "application/json" }
+      })
+        .then(res => res.text())
+        .then(res => {
+          alert("โพสต์สำเร็จ!");
+          window.location.reload();
+        })
+        .catch(err => alert("เกิดข้อผิดพลาด"));
     }
 
-    function shareFacebook() {
-      const url = encodeURIComponent(window.location.href);
-      window.open(`https://www.facebook.com/sharer/sharer.php?u=${url}`, '_blank');
-    }
-
-    function shareLine() {
-      const url = encodeURIComponent(window.location.href);
-      window.open(`https://social-plugins.line.me/lineit/share?url=${url}`, '_blank');
-    }
-
-    function shareTwitter() {
-      const url = encodeURIComponent(window.location.href);
-      const text = encodeURIComponent("ดูโพสต์ของฉันบนเว็บ!");
-      window.open(`https://twitter.com/intent/tweet?url=${url}&text=${text}`, '_blank');
+    function toBase64(file) {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(reader.result);
+        reader.onerror = error => reject(error);
+        reader.readAsDataURL(file);
+      });
     }
   </script>
 </body>
