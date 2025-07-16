@@ -32,3 +32,6 @@ async function postData(payload) {
   }
 }
 const API_URL = "https://script.google.com/macros/s/AKfycbwG6_MYZueOUg6g8Sak-dxg_F-U3zqywZ6rIaC--E1ofSy1Yafv-ucUzUuyuk_GhZW9_g/exec";  // แก้เป็น URL Web App ของคุณที่ได้จาก Google Apps Script
+
+// config.js
+const API_BASE_URL = "https://script.google.com/macros/s/AKfycbzTihf3VHZHV95RGR3R9VQyKOJswdBifNnGjIOWQ9wdXNRCrZnZGoXB_xQpUTB8UF30bA/exec";
