@@ -1,112 +1,175 @@
 <!DOCTYPE html>
 <html lang="th">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>สมัครสมาชิก</title>
   <style>
+    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap');
+
+    * {
+      box-sizing: border-box;
+    }
     body {
-      font-family: Arial, sans-serif;
-      background: #f0f2f5;
-      padding: 40px;
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(135deg, #4c67f6, #3bb2f6);
+      height: 100vh;
+      margin: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      color: #333;
     }
-
-    .container {
-      background: white;
-      max-width: 400px;
-      margin: auto;
-      padding: 30px;
+    .register-container {
+      background: #fff;
       border-radius: 15px;
-      box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+      padding: 2.5rem 3rem;
+      width: 350px;
+      box-shadow: 0 12px 25px rgba(0,0,0,0.15);
+      text-align: center;
+      transition: box-shadow 0.3s ease;
     }
-
+    .register-container:hover {
+      box-shadow: 0 15px 35px rgba(0,0,0,0.25);
+    }
     h2 {
-      text-align: center;
-      margin-bottom: 25px;
+      margin-bottom: 1.8rem;
+      font-weight: 700;
+      font-size: 1.9rem;
+      color: #2a3f72;
     }
-
-    input[type="text"], input[type="email"], input[type="password"] {
-      width: 100%;
-      padding: 12px;
-      margin-bottom: 15px;
+    form {
+      display: flex;
+      flex-direction: column;
+      gap: 1.3rem;
+    }
+    label {
+      font-weight: 600;
+      text-align: left;
+      font-size: 0.95rem;
+      color: #4a5a7a;
+    }
+    input[type="text"],
+    input[type="email"],
+    input[type="password"] {
+      padding: 12px 15px;
+      border: 2px solid #d2d7e0;
       border-radius: 10px;
-      border: 1px solid #ccc;
-      font-size: 15px;
+      font-size: 1rem;
+      transition: border-color 0.3s ease;
+      outline-offset: 2px;
     }
-
+    input[type="text"]:focus,
+    input[type="email"]:focus,
+    input[type="password"]:focus {
+      border-color: #3bb2f6;
+      box-shadow: 0 0 8px rgba(59, 178, 246, 0.5);
+      outline: none;
+    }
     button {
-      width: 100%;
-      padding: 12px;
-      background: #1877f2;
-      border: none;
+      margin-top: 10px;
+      padding: 13px 0;
+      background: #3bb2f6;
       color: white;
-      font-size: 16px;
-      font-weight: bold;
-      border-radius: 10px;
+      font-weight: 700;
+      font-size: 1.1rem;
+      border: none;
+      border-radius: 12px;
       cursor: pointer;
+      transition: background-color 0.3s ease;
+      box-shadow: 0 4px 10px rgba(59, 178, 246, 0.5);
     }
-
+    button:hover {
+      background: #357ecc;
+      box-shadow: 0 6px 15px rgba(53, 126, 204, 0.7);
+    }
     .message {
-      margin-top: 15px;
-      text-align: center;
-      font-size: 14px;
-      color: green;
+      margin-top: 1.3rem;
+      font-weight: 600;
+      font-size: 0.95rem;
+      min-height: 1.4em;
+      transition: color 0.3s ease;
+    }
+    .message.error {
+      color: #e04848;
+    }
+    .message.success {
+      color: #2b8a3e;
+    }
+    @media (max-width: 400px) {
+      .register-container {
+        width: 90vw;
+        padding: 2rem;
+      }
     }
   </style>
 </head>
 <body>
-  <div class="container">
+  <div class="register-container">
     <h2>สมัครสมาชิก</h2>
-    <input type="text" id="username" placeholder="ชื่อผู้ใช้" required />
-    <input type="email" id="email" placeholder="อีเมล" required />
-    <input type="password" id="password" placeholder="รหัสผ่าน" required />
-    <button onclick="register()">สมัครสมาชิก</button>
-    <div class="message" id="message"></div>
+    <form id="registerForm" autocomplete="off">
+      <label for="username">ชื่อผู้ใช้ (Username)</label>
+      <input type="text" id="username" name="username" placeholder="กรอกชื่อผู้ใช้" required minlength="3" maxlength="20" />
+
+      <label for="email">อีเมล (Email)</label>
+      <input type="email" id="email" name="email" placeholder="example@mail.com" required />
+
+      <label for="password">รหัสผ่าน (Password)</label>
+      <input type="password" id="password" name="password" placeholder="อย่างน้อย 6 ตัวอักษร" required minlength="6" />
+
+      <button type="submit">สมัครสมาชิก</button>
+    </form>
+    <div id="message" class="message"></div>
   </div>
 
   <script>
-    const REGISTER_API = "https://script.google.com/macros/s/AKfycby9i10rWvz_uhXLYqQf58O-XFr47lEjKslxXzbB7-kCcFAktrCQWTYBnf_FT0BwDaBG/exec";
+    const form = document.getElementById("registerForm");
+    const messageDiv = document.getElementById("message");
+    const API_URL = "https://script.google.com/macros/s/AKfycby9i10rWvz_uhXLYqQf58O-XFr47lEjKslxXzbB7-kCcFAktrCQWTYBnf_FT0BwDaBG/exec";
 
-    function register() {
-      const username = document.getElementById("username").value.trim();
-      const email = document.getElementById("email").value.trim();
-      const password = document.getElementById("password").value.trim();
-      const messageEl = document.getElementById("message");
+    form.addEventListener("submit", (e) => {
+      e.preventDefault();
 
-      if (!username || !email || !password) {
-        messageEl.style.color = "red";
-        messageEl.textContent = "กรุณากรอกข้อมูลให้ครบถ้วน";
+      messageDiv.textContent = "";
+      messageDiv.className = "message";
+
+      const username = form.username.value.trim();
+      const email = form.email.value.trim();
+      const password = form.password.value;
+
+      if (username.length < 3) {
+        messageDiv.textContent = "กรุณาใส่ชื่อผู้ใช้ อย่างน้อย 3 ตัวอักษร";
+        messageDiv.classList.add("error");
+        return;
+      }
+      if (password.length < 6) {
+        messageDiv.textContent = "รหัสผ่านต้องมีอย่างน้อย 6 ตัวอักษร";
+        messageDiv.classList.add("error");
         return;
       }
 
-      const payload = {
-        username: username,
-        email: email,
-        password: password
-      };
-
-      fetch(REGISTER_API, {
+      fetch(API_URL, {
         method: "POST",
-        body: JSON.stringify(payload),
-        headers: {
-          "Content-Type": "application/json"
-        }
+        body: JSON.stringify({ username, email, password }),
+        headers: { "Content-Type": "application/json" }
       })
-      .then(res => res.json())
-      .then(data => {
-        if (data.status === "success") {
-          messageEl.style.color = "green";
-          messageEl.innerHTML = `✅ สมัครสมาชิกสำเร็จ!<br>UID ของคุณคือ: <b>${data.uid}</b><br>คุณได้รับโบนัส <b>${data.gcoin} Gcoin</b>`;
-        } else {
-          messageEl.style.color = "red";
-          messageEl.textContent = "เกิดข้อผิดพลาดในการสมัคร";
-        }
-      })
-      .catch(error => {
-        console.error(error);
-        messageEl.style.color = "red";
-        messageEl.textContent = "ไม่สามารถเชื่อมต่อ API ได้";
-      });
-    }
+        .then(res => res.json())
+        .then(data => {
+          if (data.status === "success") {
+            messageDiv.textContent = "สมัครสมาชิกสำเร็จ! UID ของคุณ: " + data.uid;
+            messageDiv.classList.add("success");
+            form.reset();
+          } else {
+            messageDiv.textContent = "เกิดข้อผิดพลาดในการสมัครสมาชิก";
+            messageDiv.classList.add("error");
+          }
+        })
+        .catch(err => {
+          messageDiv.textContent = "ไม่สามารถเชื่อมต่อ API ได้";
+          messageDiv.classList.add("error");
+          console.error(err);
+        });
+    });
   </script>
 </body>
 </html>
