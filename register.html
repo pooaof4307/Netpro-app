@@ -125,7 +125,7 @@
   <script>
     const form = document.getElementById("registerForm");
     const messageDiv = document.getElementById("message");
-    const API_URL = "https://script.google.com/macros/s/AKfycbyCqawx0pVu_ejzwRFV1MY-DyYaYyYdArTb8INviG3uYw3V7gJsunclNeK0GqIoc94/exec";
+    const API_URL = "https://script.google.com/macros/s/AKfycbzkfSpniJzwUDqv8BorTUvrnhnJQ1MLESHReWEfP9x_87cFmCqWp2R1DZuqFK3XigFz/exec";
 
     form.addEventListener("submit", (e) => {
       e.preventDefault();
@@ -137,13 +137,13 @@
       const email = form.email.value.trim();
       const password = form.password.value;
 
-      if (username.length < 3) {
-        messageDiv.textContent = "กรุณาใส่ชื่อผู้ใช้ อย่างน้อย 3 ตัวอักษร";
+      if (username.length < 6) {
+        messageDiv.textContent = "กรุณาใส่ชื่อผู้ใช้ อย่างน้อย 6 ตัวอักษร";
         messageDiv.classList.add("error");
         return;
       }
-      if (password.length < 6) {
-        messageDiv.textContent = "รหัสผ่านต้องมีอย่างน้อย 6 ตัวอักษร";
+      if (password.length < 8) {
+        messageDiv.textContent = "รหัสผ่านต้องมีอย่างน้อย 8 ตัวอักษร";
         messageDiv.classList.add("error");
         return;
       }
