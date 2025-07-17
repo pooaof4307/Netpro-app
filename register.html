@@ -149,25 +149,30 @@
       }
 
       fetch(API_URL, {
-        method: "POST",
-        body: JSON.stringify({ username, email, password }),
-        headers: { "Content-Type": "application/json" }
-      })
-        .then(res => res.json())
-        .then(data => {
-          if (data.status === "success") {
-            messageDiv.textContent = "สมัครสมาชิกสำเร็จ! UID ของคุณ: " + data.uid;
-            messageDiv.classList.add("success");
-            form.reset();
-          } else {
-            messageDiv.textContent = "เกิดข้อผิดพลาดในการสมัครสมาชิก";
-            messageDiv.classList.add("error");
-          }
-        })
-        .catch(err => {
-          messageDiv.textContent = "ไม่สามารถเชื่อมต่อ API ได้";
-          messageDiv.classList.add("error");
-          console.error(err);
+  method: "POST",
+  headers: {
+    "Content-Type": "application/json"
+  },
+  body: JSON.stringify({ username, email, password })
+})
+.then(res => {
+  if (!res.ok) throw new Error("HTTP error " + res.status);
+  return res.json();
+})
+.then(data => {
+  if (data.status === "success") {
+    messageDiv.textContent = "สมัครสมาชิกสำเร็จ! UID ของคุณ: " + data.uid;
+    messageDiv.classList.add("success");
+    form.reset();
+  } else {
+    messageDiv.textContent = "เกิดข้อผิดพลาดในการสมัครสมาชิก";
+    messageDiv.classList.add("error");
+  }
+})
+.catch(err => {
+  messageDiv.textContent = "ไม่สามารถเชื่อมต่อ API ได้: " + err.message;
+  messageDiv.classList.add("error");
+  console.error(err);
         });
     });
   </script>
