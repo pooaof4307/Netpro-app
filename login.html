@@ -62,7 +62,7 @@
   </div>
 
   <script>
-    const LOGIN_API = "https://script.google.com/macros/s/AKfycbw5SrBrgBHYsgujlcDieqrD4yemWZMqjthJDjqjc0fuQmUcePuKSdCxBOoI6Je5L7IIlg/exec";
+    const LOGIN_API = "https://script.google.com/macros/s/AKfycbwu4y2gUyOdjzVA2QzicYY7K3XItzKGpnR-eesXUr7U_VTAifMctL_lENBqzxtfZrBreQ/exec";
 
     function login() {
       const email = document.getElementById("email").value.trim();
@@ -71,7 +71,7 @@
 
       if (!email || !password) {
         messageEl.style.color = "red";
-        messageEl.textContent = "กรุณากรอกอีเมลและรหัสผ่าน";
+        messageEl.textContent = "กรุณากรอกชื่อผู้ใช้และรหัสผ่าน";
         return;
       }
 
@@ -97,7 +97,7 @@
           // localStorage.setItem("user", JSON.stringify(data));
         } else {
           messageEl.style.color = "red";
-          messageEl.textContent = "อีเมลหรือรหัสผ่านไม่ถูกต้อง";
+          messageEl.textContent = "ชื่อผู้ใช้หรือรหัสผ่านไม่ถูกต้อง";
         }
       })
       .catch(error => {
